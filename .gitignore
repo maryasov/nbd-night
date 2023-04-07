@@ -282,3 +282,5 @@ fabric.properties
 /.idea/NobodysNightRemote.iml
 /.idea/modules.xml
 /.idea/.gitignore
+/server.yml
+/.idea/NobodysNightLocal.iml
