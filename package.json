@@ -13,7 +13,7 @@
   "repository": "ScreepsQuorum/screeps-quorum",
   "scripts": {
     "uploadMax": "grunt screeps --user=max",
-    "uploadDen": "grunt screeps --user=den",
+    "uploadDis": "grunt screeps --user=dis",
     "uploadDan": "grunt screeps --user=dan",
     "local": "grunt private"
   },
