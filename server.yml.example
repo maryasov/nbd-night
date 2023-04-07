@@ -1,0 +1,4 @@
+# this file only needed for local server source
+host: '127.0.0.1'
+port: 21025
+http: true

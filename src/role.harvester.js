@@ -5,6 +5,7 @@ const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
 
 module.exports = {
     name: "harvester",
+   // TODO config for kikstart
     carryConfigs: [
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],

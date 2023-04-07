@@ -1,3 +1,10 @@
+#user1:
+#  email: 'user1@mailserver.com'
+#  for official servers you need token option
+#  token: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+#  for local servers you need password option
+#  password: 'xxxxxxxxxxxx'
+
 user1:
   email: 'user1@mailserver.com'
   token: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'

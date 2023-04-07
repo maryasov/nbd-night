@@ -238,7 +238,7 @@ module.exports.loop = function() {
             bucket = [];
         }
 
-
+        //if (Game.cpu.bucket < 150) {return;}
 
         // suppressErrors(() => ShardTravel.loadArrivals());
         // const startCreeps = Game.cpu.getUsed();
