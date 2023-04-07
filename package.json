@@ -1,0 +1,25 @@
+{
+  "name": "nbd-night",
+  "version": "0.1.0",
+  "description": "Screeps Self Managing and Playing Codebase",
+  "keywords": [
+    "screeps"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist/*"
+  ],
+  "main": "dist/main.js",
+  "repository": "ScreepsQuorum/screeps-quorum",
+  "scripts": {
+    "uploadMax": "grunt screeps --user=max",
+    "uploadDan": "grunt screeps --user=dan",
+    "local": "grunt private"
+  },
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-rsync": "^3.0.0",
+    "grunt-screeps": "^1.5.0",
+    "yaml": "^2.2.1"
+  }
+}

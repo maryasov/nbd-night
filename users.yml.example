@@ -1,0 +1,6 @@
+user1:
+  email: 'user1@mailserver.com'
+  token: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+user2:
+  email: 'user2@mailserver.com'
+  token: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
