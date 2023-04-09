@@ -53,6 +53,7 @@ module.exports = class DefenseAspect {
             this.roomai.labs.requestBoost("XLHO2", 149);
         } else {
             this.roomai.labs.requestBoost("XUH2O", 80);
+            this.roomai.labs.requestBoost("XLHO2", 79);
         }
 
         if(this.defense.defcon < 1) return;
