@@ -46,9 +46,11 @@ module.exports = class DefenseAspect {
             // XKH2O 150 - carry +150%
             // XUHO2 150 - harvest +600%
             // XLH2O 150 - build +100%
+            // XLHO2 150 - heal +300%
             // XUH2O 10 - boost power miners
             //
             this.roomai.labs.requestBoost("XUH2O", 150);
+            this.roomai.labs.requestBoost("XLHO2", 149);
         } else {
             this.roomai.labs.requestBoost("XUH2O", 80);
         }

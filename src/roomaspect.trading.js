@@ -217,7 +217,7 @@ module.exports = class TradingAspect {
         }
 
         if(!minPrice) {
-            console.log(`Could not determine minimum price for ${resource}. Giving up.`);
+            // console.log(`Could not determine minimum price for ${resource}. Giving up.`);
             return false;
         }
 
