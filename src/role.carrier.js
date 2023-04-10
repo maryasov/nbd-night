@@ -31,9 +31,9 @@ module.exports = {
             logistic.pickupSpareEnergy(creep);
         }
 
-        if(creep.body[0].type === CARRY) {
-            if(boosting.accept(creep, "XKH2O", "KH2O")) return;
-        }
+        // if(creep.body[0].type === CARRY) {
+        //     if(boosting.accept(creep, "XKH2O", "KH2O")) return;
+        // }
 
         if(_.sum(creep.store) > 0 && !this.shouldWait(creep)) {
             if(this.deliver(creep)) this.pickup(creep);

@@ -17,6 +17,10 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if(_.some(creep.body, (p) => p.type === CARRY)) {
+            // console.log('accept', creep.name);
+            if(boosting.accept(creep, "XKH2O")) return;
+        }
         if(creep.memory.returningHome) {
             this.returnHome(creep);
         } else {
@@ -173,4 +177,5 @@ module.exports = {
 };
 
 const profiler = require("screeps-profiler");
+const boosting = require("./helper.boosting");
 profiler.registerObject(module.exports, 'scooper');
