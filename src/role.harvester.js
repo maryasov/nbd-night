@@ -27,7 +27,7 @@ module.exports = {
             creep.drop(wrongCarryResource);
         }
 
-        if(boosting.accept(creep, "XKH2O")) return;
+        // if(boosting.accept(creep, "XKH2O")) return;
 
         if(creep.memory.delivering && creep.store.energy == 0) {
             creep.memory.delivering = false;

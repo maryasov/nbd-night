@@ -100,12 +100,12 @@ const roleLimit = {
 }
 
 const powerStop = [
-    "builder",
+    // "builder",
     "attacker",
     "carrier",
     "mover",
     // "observer",
-    "scientist",
+    // "scientist",
     "factoryWorker",
     "powerRefiner",
     // "harvester",

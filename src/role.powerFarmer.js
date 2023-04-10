@@ -3,7 +3,7 @@ const spawnHelper = require("helper.spawning");
 
 module.exports = {
     name: "powerFarmer",
-    partsBoost: spawnHelper.makeParts(20, MOVE, 10, ATTACK),
+    partsBoost: spawnHelper.makeParts(20, MOVE, 20, ATTACK),
     parts: spawnHelper.makeParts(20, MOVE, 20, ATTACK),
     run: function(creep) {
         if(_.some(creep.body, (p) => p.type === ATTACK)) {

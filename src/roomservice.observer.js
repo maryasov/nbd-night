@@ -5,7 +5,7 @@ module.exports = class Observer {
                 queue: []
             };
         }
-        
+
         this.memory = room.memory.observer;
         this.observer = room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_OBSERVER })[0];
     }
@@ -17,20 +17,21 @@ module.exports = class Observer {
     observeNow(roomName) {
         this.memory.queue = _.reject(this.memory.queue, (r) => r === roomName)
         this.memory.queue.unshift(roomName);
+        //console.log('this.memory.queue', this.memory.queue)
     }
-    
+
     observeLater(roomName) {
         if(_.any(this.memory.queue, (r) => r === roomName)) return;
-        
+
         this.memory.queue.push(roomName);
     }
 
     performObservation() {
         if(!this.isAvailable()) return;
-        
+
         let target = this.memory.queue.shift();
         if(!target) return;
-        
+
         let result = this.observer.observeRoom(target);
         if(result !== OK) {
             this.memory.queue.push(target);

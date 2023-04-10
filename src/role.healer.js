@@ -21,13 +21,20 @@ module.exports = {
       return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, HEAL, 10, MOVE);
     },
     run: function(creep) {
+        // if(boosting.accept(creep, "XLHO2")) return;
         if(creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
-        if(creep.body[0].type === TOUGH) {
-            if(boosting.accept(creep, "XZHO2", "XLHO2", "XGHO2")) return;
-        } else {
+        if(_.some(creep.body, (p) => p.type === HEAL)) {
+            // console.log('accept', creep.name);
             if(boosting.accept(creep, "XLHO2")) return;
         }
+
+
+        // if(creep.body[0].type === TOUGH) {
+        //     if(boosting.accept(creep, "XZHO2", "XLHO2", "XGHO2")) return;
+        // } else {
+        //     if(boosting.accept(creep, "XLHO2")) return;
+        // }
 
         if (creep.memory.targetType === 'powerFarmer') {
             let pb = creep.pos.findClosestByRange(FIND_STRUCTURES,

@@ -53,6 +53,7 @@ module.exports = class RoomAI {
         for(let aspect of aspectsLite) {
             new aspect(this).run();
         }
+        this.observer.performObservation();
         this.links.fullfillRequests();
     }
 
@@ -65,7 +66,6 @@ module.exports = class RoomAI {
         //     structureTower.run(tower);
         // }
 
-        this.observer.performObservation();
         // this.links.fullfillRequests();
         this.links.replaceNextContainerByLink();
         this.labs.selectPrioritizedBoosts();

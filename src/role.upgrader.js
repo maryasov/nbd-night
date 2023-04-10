@@ -22,7 +22,7 @@ module.exports = {
     },
     run: function(creep) {
 
-        if(boosting.accept(creep, "XGH2O")) return;
+        // if(boosting.accept(creep, "XGH2O")) return;
 
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
