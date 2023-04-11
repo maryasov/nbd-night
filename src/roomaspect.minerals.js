@@ -59,6 +59,7 @@ module.exports = class MineralsAspect {
 
         if(!this.room.storage) return;
 
+        // TODO ограничить размер кериера
         let parts = spawnHelper.bestAvailableParts(this.room, carrier.partConfigs);
         let memory = {
             role: carrier.name,

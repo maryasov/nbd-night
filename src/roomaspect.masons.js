@@ -43,7 +43,7 @@ module.exports = class MasonsAspect {
     }
 
     neededForWalls() {
-        // TODO move to tower
+        // TODO перенести укрепление стен на башни
         return false;
         let wallHeight = _.min(_.map(this.room.ai().defense.borderStructures, (s) => s.hits));
 
