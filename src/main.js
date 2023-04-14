@@ -106,7 +106,7 @@ const powerStop = [
     "mover",
     // "observer",
     // "scientist",
-    "factoryWorker",
+    // "factoryWorker",
     "powerRefiner",
     // "harvester",
     // "healer",

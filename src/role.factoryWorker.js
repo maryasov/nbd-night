@@ -19,10 +19,17 @@ module.exports = {
         } else {
             if(!this.carryTo(creep, storage)) {
                 creep.memory.importing = true;
+                let amount = creep.carryCapacity;
+                let factorySpace = Math.max(0, factory.structure.storeCapacity * 0.9 - _.sum(factory.structure.store))
+
+                if (factorySpace < amount) {
+                    amount = factorySpace
+                }
 
                 let importResource = _.filter(factory.importableResources(), (r) => storage.store[r] > 0)[0];
+                // console.log('amount', amount, factorySpace)
                 if(importResource) {
-                    creep.withdraw(storage, importResource);
+                    creep.withdraw(storage, importResource, amount);
                 }
             }
         }

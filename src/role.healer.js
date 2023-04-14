@@ -41,12 +41,12 @@ module.exports = {
                 { filter: (s) => s.structureType == STRUCTURE_POWER_BANK });
             let dist = creep.pos.getRangeTo(pb);
             if (dist < 2) {
-                console.log('healerCreep too close', creep.name, dist);
+                // console.log('healerCreep too close', creep.name, dist);
                 let dir = creep.pos.getDirectionTo(pb)
                 let opDir = inverseDirection(dir);
                 // creep.cancelOrder('heal');
                 let res = creep.move(opDir);
-                console.log('healer pos', creep.pos, dist, dir, opDir, res);
+                // console.log('healer pos', creep.pos, dist, dir, opDir, res);
                 return;
             }
 
