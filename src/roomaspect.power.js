@@ -17,7 +17,7 @@ module.exports = class PowerAspect {
 
         this.powerSpawn.processPower();
 
-        if(!this.room.storage || this.room.storage.store.energy <  4000 || !this.room.storage.store[RESOURCE_POWER]) return;
+        if(!this.room.storage || this.room.storage.store.energy <  50000 || !this.room.storage.store[RESOURCE_POWER]) return;
         if(Memory.sellPower && this.room.storage.store.energy < 500000) return;
         if(!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, refiner.name) >= 1) return;
 
