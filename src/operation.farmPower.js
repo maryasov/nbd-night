@@ -145,7 +145,9 @@ module.exports = class FarmPowerOperation {
     }
     checkScoopers(power){
         let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.target == this.targetRoomName);
-        if(_.sum(scoopers, (c) => c.getActiveBodyparts(CARRY) * 2.5 * CARRY_CAPACITY) < power) {
+        let scoopersCapacity = _.sum(scoopers, (c) => c.getActiveBodyparts(CARRY) * 2.5 * CARRY_CAPACITY)
+        if(scoopersCapacity < power) {
+            console.log('needMoreScoopers', this.targetRoomName, scoopersCapacity, power)
             this.roomai.spawn(scooper.configs(500)[0], { role: scooper.name, target: this.targetRoomName, home: this.room.name, operation: this.operation });
         }
     }

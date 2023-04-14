@@ -154,7 +154,7 @@ function runCreeps() {
 
         let cnt = creeps.length;
         let runLimit = cnt / free;
-        if (Memory.powerOperation) {
+        if (Memory.powerOperation && bt < 1000) {
             // console.log('po', role.name)
             if (powerStop.indexOf(role.name) > -1) {
                 // console.log('list')
