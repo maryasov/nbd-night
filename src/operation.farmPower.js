@@ -118,6 +118,7 @@ module.exports = class FarmPowerOperation {
             if(powerBank && powerBank.hits < 600000) {
                 this.checkScoopers(powerBank.power);
             }
+            // TODO расчитывать скорость разрушения источника
             if (powerBank && powerBank.hits > 200000) {
                 //console.log('pb')
                 let remainingDamage = _.sum(farmers, (c) => (c.ticksToLive || 0) * c.getActiveBodyparts(ATTACK).length * ATTACK_POWER * 4);
