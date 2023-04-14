@@ -144,7 +144,7 @@ module.exports = class FarmPowerOperation {
         }
     }
     checkScoopers(power){
-        let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.target == this.targetRoomName);
+        let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.operation == this.operation);
         // let scoopersCapacity = _.sum(scoopers, (c) => c.getActiveBodyparts(CARRY) * 2.5 * CARRY_CAPACITY)
         let scoopersCapacity = _.sum(scoopers, (c) => c.carryCapacity)
         // console.log('scoopersCapacity', scoopersCapacity)
