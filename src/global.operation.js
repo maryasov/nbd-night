@@ -151,6 +151,64 @@ global.Operation = class Operation {
         Memory.lastCount = total;
     }
 
+    static boosts(material, byRooms, base ) {
+        if (material === '') {material = undefined}
+        if (base === undefined) {base = true}
+        if (byRooms === undefined) {byRooms = false}
+        let store = {};
+        let rooms = [];
+        let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2'];
+        let myRooms = _.filter(Game.rooms, r=>r.controller && r.controller.owner && r.controller.my);
+        _.forEach(myRooms, (cr)=>{
+            rooms.push(cr.name)
+        });
+        _.forEach(rooms, (cr)=>{
+            const room = Game.rooms[cr];
+            if (room.storage && room.storage.store) {
+                _.forEach(room.storage.store, (amount, mat)=>{
+                    if (material && material !== mat) {return;}
+                    if (base && baseMaterials.indexOf(mat) < 0) { return; }
+                    if (store[mat] === undefined) {store[mat] = []}
+                    store[mat].push({r: room.name, a: amount})
+                });
+            }
+            if (room.terminal && room.terminal.store) {
+                _.forEach(room.terminal.store, (amount, mat)=>{
+                    if (material && material !== mat) {return;}
+                    if (base && baseMaterials.indexOf(mat) < 0) { return; }
+                    if (store[mat] === undefined) {store[mat] = []}
+                    store[mat].push({r: room.name, a: amount})
+                });
+            }
+        });
+        console.log('Total materials');
+        let total = {};
+        if (byRooms) {
+            _.forEach(store, (data, mat)=>{
+                let mTotal = 0;
+                _.forEach(data, (amount)=>{
+                    if (total[mat] === undefined) {total[mat] = {}}
+                    total[mat][amount.r] = total[mat][amount.r] !== undefined ? total[mat][amount.r] + amount.a : amount.a;
+                    mTotal = mTotal + amount.a;
+                });
+                console.log(mat, ' (' + mTotal + ')');
+                _.forEach(total[mat], (a, r)=>{
+                    console.log(r, a);
+                });
+            });
+        } else {
+            _.forEach(store, (data, mat)=>{
+                let mTotal = 0;
+                _.forEach(data, (amount)=>{
+                    total[mat] = total[mat] !== undefined ? total[mat] + amount.a : amount.a;
+                    mTotal = mTotal + amount.a;
+                });
+                console.log(mat, ' (' + mTotal + ')');
+            });
+        }
+        Memory.lastCount = total;
+    }
+
     static addEnemy(room) {
         Memory.enemyRooms.push(room);
         console.log('Memory.enemyRooms', JSON.stringify(Memory.enemyRooms))

@@ -17,7 +17,7 @@ module.exports = class SourcesAspect {
     }
 
     run() {
-        if (this.roomai.mode === "store") return;
+        //if (this.roomai.mode === "store") return;
         this.buildRoads();
         this.buildMiners();
     }

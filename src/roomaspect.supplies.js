@@ -59,7 +59,7 @@ module.exports = class SuppliesAspect {
         var ignoreReserved = false;
         if( numHarv == 0) {
             if (Memory.rooms[this.room.name].failBuildHarvester > 20) {
-                parts = ['carry', 'move'];
+                parts = spawnHelper.bestAffordableParts(this.room, partConfigs);
                 ignoreReserved = true;
             } else {
                 parts = spawnHelper.bestAffordableParts(this.room, partConfigs);

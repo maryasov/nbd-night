@@ -10,6 +10,7 @@ module.exports = {
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
         [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [CARRY, CARRY, MOVE, MOVE],
         [CARRY, MOVE]
     ],
     miningConfigs: [

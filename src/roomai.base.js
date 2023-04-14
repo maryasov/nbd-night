@@ -1,5 +1,7 @@
 const aspectsLite = [
-    require("roomaspect.controller")
+    require("roomaspect.controller"),
+    require("roomaspect.manualOperations"),
+    require("roomaspect.power"),
 ];
 
 const aspects = [
@@ -17,8 +19,6 @@ const aspects = [
     require("roomaspect.labs"),
     require("roomaspect.factory"),
     require("roomaspect.operations"),
-    require("roomaspect.manualOperations"),
-    require("roomaspect.power"),
     require("roomaspect.nuker")
 ];
 

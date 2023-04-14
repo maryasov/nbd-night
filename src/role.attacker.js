@@ -12,7 +12,8 @@ module.exports = {
         options = options || {};
         var configs = [];
         for(var attack = (options.maxAttack || 25); attack >= (options.minAttack || 1); attack -= 1) {
-            let config = Array(attack).fill(RANGED_ATTACK).concat(Array(attack).fill(MOVE)).concat(Array(5).fill(HEAL));
+            // RANGED_ATTACK or ATTACK
+            let config = Array(attack).fill(ATTACK).concat(Array(attack).fill(MOVE)).concat(Array(5).fill(HEAL));
             let shuffled = config
                 .map((value) => ({ value, sort: Math.random() }))
                 .sort((a, b) => a.sort - b.sort)

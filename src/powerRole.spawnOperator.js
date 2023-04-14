@@ -5,6 +5,7 @@ module.exports = class SpawnOperator {
 
     run() {
         this.generateOps();
+        //this.storeOps();
         if(this.goHome()) return;
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
@@ -23,6 +24,16 @@ module.exports = class SpawnOperator {
     generateOps() {
         if(this.creep.powers[PWR_GENERATE_OPS].cooldown == 0) {
             this.creep.usePower(PWR_GENERATE_OPS);
+        }
+    }
+
+    storeOps() {
+        let toStore = 0;
+        if (this.creep.carryCapacity * 0.9 > _.sum(this.creep.store['ops'])) {
+            toStore = _.sum(this.creep.store['ops']) - this.creep.carryCapacity * 0.8;
+        }
+        if (toStore > 0) {
+
         }
     }
 

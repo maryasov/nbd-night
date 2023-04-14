@@ -35,7 +35,7 @@ module.exports = class FactoryAspect {
 
     buildWorkers() {
         if(!this.roomai.canSpawn()) return;
-        if(this.room.storage.store.energy < 20000) return;
+        if(this.room.storage.store.energy < 1000) return;
 
         let needToWork = this.factory.product; // TODO: figure out whether spawning is necessary
         if(needToWork) {

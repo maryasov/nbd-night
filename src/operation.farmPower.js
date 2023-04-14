@@ -21,6 +21,7 @@ module.exports = class FarmPowerOperation {
         if(this.roomai.defense.defcon >= 4) return;
 
         let targetRoom = Game.rooms[this.targetRoomName];
+        //console.log('targetRoom', targetRoom, this.targetRoomName)
         let powerBank = targetRoom && targetRoom.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
@@ -29,10 +30,11 @@ module.exports = class FarmPowerOperation {
         // let harvesterNum = spawnHelper.numberOfLocalCreeps(this.roomai, 'harvester');
         let scoopers = _.filter(spawnHelper.globalCreepsWithRole('scooper'), (c) => c.memory.operation == this.operation);
 
-        if(this.roomai.observer.isAvailable()) {
+        if(!targetRoom && this.roomai.observer.isAvailable()) {
             // console.log('observer.isAvailable');
             // this.roomai.observer.observeLater(this.targetRoomName);
             let resObs = this.roomai.observer.observeNow(this.targetRoomName);
+            // console.log('observe now', this.targetRoomName, resObs)
         }
 
         // fix target
@@ -112,10 +114,12 @@ module.exports = class FarmPowerOperation {
 
         // console.log('targetRoom', targetRoom)
         if(targetRoom) {
+            //console.log('tr')
             if(powerBank && powerBank.hits < 600000) {
                 this.checkScoopers(powerBank.power);
             }
-            if (powerBank && powerBank.hits > 100000) {
+            if (powerBank && powerBank.hits > 200000) {
+                //console.log('pb')
                 let remainingDamage = _.sum(farmers, (c) => (c.ticksToLive || 0) * c.getActiveBodyparts(ATTACK).length * ATTACK_POWER * 4);
                 let targetDistance = Game.map.getRoomLinearDistance(this.room.name, this.targetRoomName) + 1;
                 let ticksToDecay = powerBank.ticksToDecay;
@@ -124,7 +128,7 @@ module.exports = class FarmPowerOperation {
                 if(powerBank && timeToArrival < ticksToDecay && remainingDamage <= powerBank.hits && _.filter(farmers, (c) => !c.ticksToLive || c.ticksToLive > timeToArrival).length < this.farmerCount) {
                     const parts = this.room.controller.level < 8 ? powerFarmer.parts : powerFarmer.partsBoost;
                     let resPow = this.roomai.spawn(parts, { role: powerFarmer.name, target: this.targetRoomName, operation: this.operation });
-                    //if (resPow !== 0) {console.log('cant spawn', JSON.stringify(parts))}
+                    // if (resPow !== 0) {console.log('cant spawn', JSON.stringify(parts))}
                 }
                 Memory.powerOperation = true;
             } else if (dropedPower) {
