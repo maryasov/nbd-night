@@ -115,7 +115,7 @@ module.exports = class FarmPowerOperation {
         // console.log('targetRoom', targetRoom)
         if(targetRoom) {
             //console.log('tr')
-            if(powerBank && powerBank.hits < 600000) {
+            if(powerBank && powerBank.hits < 800000) {
                 this.checkScoopers(powerBank.power);
             }
             // TODO расчитывать скорость разрушения источника

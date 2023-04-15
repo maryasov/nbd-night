@@ -118,7 +118,7 @@ module.exports = {
             return;
         }
 
-        const ignoreResources = []
+        const ignoreResources = ['energy']
 
         let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'H' });
         if(!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
