@@ -46,6 +46,12 @@ module.exports = class ControllerAspect {
         let parts = spawnHelper.bestAvailableParts(this.room, upgrader.configsForEnergyPerTick(Math.floor(this.energyPerTick() / this.upgraderCount() * mult)));
         let spawnDuration = spawnHelper.spawnDuration(parts);
         let existingUpgraders = _.filter(spawnHelper.localCreepsWithRole(this.roomai, upgrader.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
+        let uCount = this.upgraderCount();
+        let hCount = spawnHelper.localCreepsWithRole(this.roomai, 'harvester').length;
+        // console.log('hCount', hCount, uCount)
+        if (uCount > hCount) {
+            return;
+        }
         if(!this.roomai.canSpawn() || existingUpgraders.length >= this.upgraderCount()) {
             return;
         }

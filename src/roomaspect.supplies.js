@@ -36,6 +36,7 @@ module.exports = class SuppliesAspect {
 
     buildHarvesters(source) {
         var partConfigs = harvester.carryConfigs;
+        var partConfigsMine = harvester.miningConfigs;
         var neededHarvesters = 2;
         if (this.room.controller && this.room.controller.level == 5) {
             neededHarvesters = 3;
@@ -59,7 +60,7 @@ module.exports = class SuppliesAspect {
         var ignoreReserved = false;
         if( numHarv == 0) {
             if (Memory.rooms[this.room.name].failBuildHarvester > 20) {
-                parts = spawnHelper.bestAffordableParts(this.room, partConfigs);
+                parts = spawnHelper.bestAffordableParts(this.room, partConfigsMine);
                 ignoreReserved = true;
             } else {
                 parts = spawnHelper.bestAffordableParts(this.room, partConfigs);
