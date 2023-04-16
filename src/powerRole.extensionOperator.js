@@ -9,9 +9,17 @@ module.exports = class ExtensionOperator {
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
         if(this.operateExtentions()) return;
-        if (this.creep.powers[PWR_REGEN_SOURCE]) {
-            if(this.regenSources()) return;
-        }
+        if(this.regenSources()) return;
+        this.findPosition();
+    }
+
+    findPosition() {
+        let room = this.creep.room;
+        let positions = room.memory.constructions['powerPosition'];
+        const byDist = _.sortBy(positions, (t) => this.creep.pos.getRangeTo(this.creep.room.getPositionAt(t.x, t.y)));
+        let closest = byDist[0]
+        this.creep.moveTo(closest.x, closest.y);
+        // console.log('findPosition', room, positions, JSON.stringify(byDist))
     }
 
     runUnspawned() {
@@ -76,12 +84,22 @@ module.exports = class ExtensionOperator {
 
         let powerMetadata = POWER_INFO[PWR_OPERATE_EXTENSION];
 
+        var targetsAll = this.creep.room.find(FIND_MY_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
+                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+        });
+
+        if (!targetsAll.length) return;
+
         if(this.creep.pos.getRangeTo(storage) <= powerMetadata.range) {
             if(this.creep.store.ops < powerMetadata.ops) return;
             if(this.creep.powers[PWR_OPERATE_EXTENSION].cooldown > 0) return;
             this.creep.usePower(PWR_OPERATE_EXTENSION, storage);
         } else {
             this.creep.goTo(storage, { range: powerMetadata.range });
+            return true;
         }
     }
 
@@ -108,8 +126,10 @@ module.exports = class ExtensionOperator {
                 if(this.creep.store.ops < powerMetadata.ops) return;
                 if(this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
                 this.creep.usePower(PWR_REGEN_SOURCE, source);
+                return true;
             } else {
                 this.creep.goTo(source, { range: powerMetadata.range });
+                return true;
             }
 
         }
