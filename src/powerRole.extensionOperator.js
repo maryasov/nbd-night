@@ -92,7 +92,7 @@ module.exports = class ExtensionOperator {
         const room = roomai.room;
         let sources = room.find(FIND_SOURCES);
         let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 50);
-        let pureSources = _.filter(emptySources, (s) => s.effects && s.effects.length === 0);
+        let pureSources = _.filter(emptySources, (s) => !s.effects || s.effects && s.effects.length === 0);
 
         // console.log('sources', sources, emptySources, pureSources)
 
