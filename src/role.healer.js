@@ -83,13 +83,13 @@ module.exports = {
         }
 
         if(target) {
-            if (target.hits < target.hitsMax) this.heal(creep, target);
+            this.heal(creep, target);
         } else {
             this.findNewTarget(creep);
         }
     },
     heal: function(creep, target) {
-        let healResult = creep.heal(target);
+        let healResult = target.hits < target.hitsMax && creep.heal(target);
         if(healResult === OK) {
             this.moveWhileNearTarget(creep, target);
         } else if(healResult == ERR_NOT_IN_RANGE) {
