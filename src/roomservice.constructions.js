@@ -3,6 +3,7 @@ const ConstructionSpaceFinder = require("constructionSpaceFinder");
 
 const constructions = new Map([
     ["booster", require("construction.booster")],
+    ["powerPosition", require("construction.powerPosition")],
     ["reactor", require("construction.reactor")],
     ["spawn", require("construction.spawn")],
     ["storage", require("construction.storage")],
