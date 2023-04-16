@@ -9,6 +9,7 @@ module.exports = class ExtensionOperator {
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
         if(this.operateSpawns()) return;
+        if(this.regenSources()) return;
     }
 
     runUnspawned() {
@@ -79,6 +80,33 @@ module.exports = class ExtensionOperator {
             this.creep.usePower(PWR_OPERATE_EXTENSION, storage);
         } else {
             this.creep.goTo(storage, { range: powerMetadata.range });
+        }
+    }
+
+    regenSources() {
+        let roomai = this.creep.room.ai();
+        if(!roomai) return;
+
+        const room = roomai.room;
+        let sources = room.find(FIND_SOURCES);
+        let pureSources = _.filter(sources, (s) => !s.effects);
+
+        if (pureSources.length > 0) {
+            const byDist = _.sortBy(pureSources, (t) => this.creep.pos.getRangeTo(t));
+            let source = byDist[0]
+            // console.log('closest', spawn);
+            if(!source) return;
+
+            let powerMetadata = POWER_INFO[PWR_REGEN_SOURCE];
+
+            if(this.creep.pos.getRangeTo(source) <= powerMetadata.range) {
+                if(this.creep.store.ops < powerMetadata.ops) return;
+                if(this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
+                this.creep.usePower(PWR_REGEN_SOURCE, source);
+            } else {
+                this.creep.goTo(source, { range: powerMetadata.range });
+            }
+
         }
     }
 }

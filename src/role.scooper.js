@@ -17,9 +17,15 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        if(_.some(creep.body, (p) => p.type === CARRY)) {
-            // console.log('accept', creep.name);
-            if(boosting.accept(creep, "XKH2O")) return;
+        if (creep.memory.operation) {
+            let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.operation == creep.memory.operation);
+            let scoopersCapacity = _.sum(scoopers, (c) => c.carryCapacity)
+            if(scoopersCapacity < creep.memory.power) {
+                if(_.some(creep.body, (p) => p.type === CARRY)) {
+                    // console.log('accept', creep.name);
+                    if(boosting.accept(creep, "XKH2O")) return;
+                }
+            }
         }
         if(creep.memory.returningHome) {
             this.returnHome(creep);
@@ -178,4 +184,5 @@ module.exports = {
 
 const profiler = require("screeps-profiler");
 const boosting = require("./helper.boosting");
+const spawnHelper = require("./helper.spawning");
 profiler.registerObject(module.exports, 'scooper');
