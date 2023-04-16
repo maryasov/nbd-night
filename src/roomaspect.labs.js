@@ -32,6 +32,8 @@ module.exports = class LabsAspect {
             return;
         }
 
+        if (Memory.powerOperation) return;
+
         this.updateDeficits();
         if(this.reactor) {
             this.setCurrentReaction();

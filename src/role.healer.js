@@ -83,7 +83,7 @@ module.exports = {
         }
 
         if(target) {
-            this.heal(creep, target);
+            if (target.hits < target.hitsMax) this.heal(creep, target);
         } else {
             this.findNewTarget(creep);
         }

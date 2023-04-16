@@ -8,8 +8,10 @@ module.exports = class ExtensionOperator {
         if(this.goHome()) return;
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
-        if(this.operateSpawns()) return;
-        if(this.regenSources()) return;
+        if(this.operateExtentions()) return;
+        if (this.creep.powers[PWR_REGEN_SOURCE]) {
+            if(this.regenSources()) return;
+        }
     }
 
     runUnspawned() {
@@ -64,7 +66,7 @@ module.exports = class ExtensionOperator {
         return true;
     }
 
-    operateSpawns() {
+    operateExtentions() {
         let roomai = this.creep.room.ai();
         if(!roomai) return;
 
@@ -89,7 +91,7 @@ module.exports = class ExtensionOperator {
 
         const room = roomai.room;
         let sources = room.find(FIND_SOURCES);
-        let emptySources = _.filter(sources, (s) => s.energy === 0);
+        let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 50);
         let pureSources = _.filter(emptySources, (s) => s.effects && s.effects.length === 0);
 
         // console.log('sources', sources, emptySources, pureSources)

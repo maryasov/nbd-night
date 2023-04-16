@@ -17,7 +17,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        if (creep.memory.operation) {
+        if (creep.memory.operation && Memory.powerOperation) {
             let scoopers = _.filter(spawnHelper.globalCreepsWithRole(creep.memory.role), (c) => c.memory.operation == creep.memory.operation);
             let scoopersCapacity = _.sum(scoopers, (c) => c.carryCapacity)
             if(scoopersCapacity < creep.memory.power) {

@@ -154,9 +154,9 @@ function runCreeps() {
 
         let cnt = creeps.length;
         let runLimit = cnt / free;
-        if (Memory.powerOperation && bt < 1000) {
+        if (Memory.powerOperation) {
             // console.log('po', role.name)
-            if (powerStop.indexOf(role.name) > -1) {
+            if (powerStop.indexOf(role.name) > -1 && bt < 1000) {
                 // console.log('list')
                 if (Game.time % 4 === 0) {
                     // console.log('limit')
@@ -238,7 +238,7 @@ module.exports.loop = function() {
             bucket = [];
         }
 
-        if (Game.cpu.bucket < 150) {return;}
+        // if (Game.cpu.bucket < 150) {return;}
 
         // suppressErrors(() => ShardTravel.loadArrivals());
         // const startCreeps = Game.cpu.getUsed();
@@ -286,7 +286,7 @@ module.exports.loop = function() {
 
         if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
 
-        // if (Game.cpu.bucket < 230) {return;}
+        if (Game.cpu.bucket < 230) {return;}
 
 
 
