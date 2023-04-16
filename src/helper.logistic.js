@@ -13,10 +13,12 @@ module.exports = {
         pickedUp: 4,
         empty: 5
     },
-    obtainEnergy: function(creep, source, considerStorage) {
+    obtainEnergy: function(creep, source, considerStorage, full=false) {
         this.pickupSpareEnergy(creep);
         var terminalStore = creep.room.terminal
         var getFromTerminal = false
+        var need = creep.carryCapacity - _.sum(creep.store);
+        // console.log('need', creep.memory.role, need);
         var currStore;
         if (terminalStore && creep.room.storage && creep.room.storage.store.energy < 3000 && terminalStore.store.energy > creep.room.storage.store.energy) {
             getFromTerminal = true
@@ -26,6 +28,9 @@ module.exports = {
             let target;
             let targets = [];
             targets = targets.concat(creep.room.find(FIND_STRUCTURES, {filter: (s) => storeStructures.includes(s.structureType) && _.sum(s.store) > 0/*(creep.storeCapacity - _.sum(creep.store))*/}));
+            if (full) {
+                targets = _.filter(targets, (t)=>t.store.energy > need)
+            }
             if(targets.length > 0) {
                 var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
                 // console.log('dist', JSON.stringify(targetsByDistance))
