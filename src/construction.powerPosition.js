@@ -3,7 +3,7 @@ module.exports = {
         let x = booster.x,
             y = booster.y;
 
-        room.visual.circle(x, y, { stroke: "#e81050", radius: 0.25, fill: null });
+        room.visual.circle(x, y, { stroke: "#0023fd", radius: 0.25, fill: null });
     },
     build: function(proxy, booster, roomai) {
         // proxy.planConstruction(booster.x, booster.y, STRUCTURE_LAB);

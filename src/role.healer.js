@@ -89,7 +89,14 @@ module.exports = {
         }
     },
     heal: function(creep, target) {
-        let healResult = target.hits < target.hitsMax && creep.heal(target);
+        let healResult;
+        if (target.hits < target.hitsMax) {
+            healResult = creep.heal(target);
+        } else {
+            if (creep.pos.getRangeTo(target) > 5) {
+                creep.goTo(target);
+            }
+        }
         if(healResult === OK) {
             this.moveWhileNearTarget(creep, target);
         } else if(healResult == ERR_NOT_IN_RANGE) {
