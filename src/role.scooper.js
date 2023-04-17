@@ -85,6 +85,7 @@ module.exports = {
         }
     },
     scoopWay: function(creep) {
+        const ignoreResources = [];
         if(creep.store.getFreeCapacity() < creep.store.getCapacity() * 0.1) {
             creep.memory.returningHome = true;
             return;
@@ -107,7 +108,7 @@ module.exports = {
         let result = null;
         if(target.store) {
             let objs;
-            objs = _.filter(Object.keys(target.store), (e)=>['energy', 'H', 'Z', 'U', 'L', 'O', 'X'].indexOf(e) < 0 )
+            objs = _.filter(Object.keys(target.store), (e)=>ignoreResources.indexOf(e) < 0 )
             result = creep.withdraw(target, _.last(objs));
         } else {
             result = creep.pickup(target);
@@ -124,7 +125,7 @@ module.exports = {
             return;
         }
 
-        const ignoreResources = ['energy']
+        const ignoreResources = []
 
         let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'H' });
         if(!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
@@ -161,11 +162,11 @@ module.exports = {
         let result = null;
         let objs = [];
         if(target.store) {
-            if (creep.room.name =='W13S11') {
+            // if (creep.room.name =='W13S11') {
                 objs = _.filter(Object.keys(target.store), (e)=>ignoreResources.indexOf(e) < 0 )
-            } else {
-                objs = Object.keys(target.store);
-            }
+            // } else {
+            //     objs = Object.keys(target.store);
+            // }
             if (objs.length > 0) {
                 result = creep.withdraw(target, _.first(objs));
             }

@@ -105,10 +105,10 @@ const powerStop = [
     "carrier",
     "mover",
     // "observer",
-    // "scientist",
+    "scientist",
     "factoryWorker",
     "powerRefiner",
-    // "harvester",
+    "harvester",
     // "healer",
     // "powerFarmer",
     "upgrader",
@@ -117,7 +117,7 @@ const powerStop = [
     "discoverer",
     // "scooper",
     "linkCollector",
-    // "miner",
+    "miner",
     // "trader",
 ];
 
@@ -171,7 +171,7 @@ function runCreeps() {
         let endCreeps;
         for(const [idx, creep] of creeps.entries()) {
             let mustBreake = false
-            if (idx >= runLimit && role.name !== 'miner') {
+            if (idx >= runLimit /*&& role.name !== 'miner'*/) {
                 // rls[role.name] = {}
                 // console.log('off', `role: ${role.name} cnt: ${cnt} limit: ${runLimit} free: ${free} idx: ${idx} bt: ${bt}`);
                 // console.log('off', cnt, runLimit, free, idx, bt);
@@ -286,7 +286,7 @@ module.exports.loop = function() {
 
         if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
 
-        if (Game.cpu.bucket < 230) {return;}
+        if (Game.cpu.bucket < (Memory.powerOperation ? 500:230)) {return;}
 
 
 

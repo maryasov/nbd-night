@@ -270,7 +270,7 @@ module.exports = class Labs {
     }
 
     getPureLabs() {
-        this.pureLabs = _.filter(this.outputs, (s) => !s.effects);
+        this.pureLabs = _.filter(this.outputs, (s) => !s.effects || s.effects && s.effects.length === 0);
         return this.pureLabs;
     }
 
