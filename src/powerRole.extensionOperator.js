@@ -9,8 +9,13 @@ module.exports = class ExtensionOperator {
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
         if(this.operateExtentions()) return;
+        // console.log('1');
         if(this.operateLabs()) return;
+        // console.log('2');
+        if(this.operateSpawns()) return;
+        // console.log('3');
         if(this.regenSources()) return;
+        // console.log('4');
         this.findPosition();
     }
 
@@ -94,9 +99,9 @@ module.exports = class ExtensionOperator {
 
         if (!targetsAll.length) return;
 
+        if(this.creep.store.ops < powerMetadata.ops) return;
+        if(this.creep.powers[PWR_OPERATE_EXTENSION].cooldown > 0) return;
         if(this.creep.pos.getRangeTo(storage) <= powerMetadata.range) {
-            if(this.creep.store.ops < powerMetadata.ops) return;
-            if(this.creep.powers[PWR_OPERATE_EXTENSION].cooldown > 0) return;
             this.creep.usePower(PWR_OPERATE_EXTENSION, storage);
         } else {
             this.creep.goTo(storage, { range: powerMetadata.range });
@@ -118,9 +123,9 @@ module.exports = class ExtensionOperator {
 
             let powerMetadata = POWER_INFO[PWR_OPERATE_LAB];
 
+            if(this.creep.store.ops < powerMetadata.ops) return;
+            if(this.creep.powers[PWR_OPERATE_LAB].cooldown > 0) return;
             if(this.creep.pos.getRangeTo(lab) <= powerMetadata.range) {
-                if(this.creep.store.ops < powerMetadata.ops) return;
-                if(this.creep.powers[PWR_OPERATE_LAB].cooldown > 0) return;
                 this.creep.usePower(PWR_OPERATE_LAB, lab);
             } else {
                 this.creep.goTo(lab, { range: powerMetadata.range });
@@ -130,13 +135,41 @@ module.exports = class ExtensionOperator {
     }
 
 
+    operateSpawns() {
+        let roomai = this.creep.room.ai();
+        if(!roomai) return;
+        if (!this.creep.powers[PWR_OPERATE_SPAWN]) return;
+        if (!Memory.powerOperation) return;
+        if (this.creep.powers[PWR_OPERATE_SPAWN].cooldown > 0) return;
+
+        let spawns = roomai.spawns.getBusySpawns();
+        // console.log('spawns', JSON.stringify(spawns))
+        if (spawns.length > 0) {
+            const byDist = _.sortBy(spawns, (t) => this.creep.pos.getRangeTo(t));
+            let spawn = byDist[0]
+            // console.log('closest', spawn);
+            if(!spawn) return;
+
+            let powerMetadata = POWER_INFO[PWR_OPERATE_SPAWN];
+
+            if(this.creep.store.ops < powerMetadata.ops) return;
+            if(this.creep.powers[PWR_OPERATE_SPAWN].cooldown > 0) return;
+            if(this.creep.pos.getRangeTo(spawn) <= powerMetadata.range) {
+                this.creep.usePower(PWR_OPERATE_SPAWN, spawn);
+            } else {
+                this.creep.goTo(spawn, { range: powerMetadata.range });
+                return true;
+            }
+        }
+    }
+
     regenSources() {
         let roomai = this.creep.room.ai();
         if(!roomai) return;
 
         const room = roomai.room;
         let sources = room.find(FIND_SOURCES);
-        let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 50);
+        let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 25);
         let pureSources = _.filter(emptySources, (s) => !s.effects || s.effects && s.effects.length === 0);
 
         // console.log('sources', sources, emptySources, pureSources)
@@ -149,9 +182,9 @@ module.exports = class ExtensionOperator {
 
             let powerMetadata = POWER_INFO[PWR_REGEN_SOURCE];
 
+            if(this.creep.store.ops < powerMetadata.ops) return;
+            if(this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
             if(this.creep.pos.getRangeTo(source) <= powerMetadata.range) {
-                if(this.creep.store.ops < powerMetadata.ops) return;
-                if(this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
                 this.creep.usePower(PWR_REGEN_SOURCE, source);
                 return true;
             } else {

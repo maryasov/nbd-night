@@ -11,7 +11,7 @@ const targetCompounds = [
     "XKHO2", /*range +300*/
     "G", /*nuke*/
 ];
-const reactionCycleAmount = 100;
+const reactionCycleAmount = 1100;
 
 module.exports = class LabsAspect {
     constructor(roomai) {
@@ -28,11 +28,11 @@ module.exports = class LabsAspect {
 
     run() {
         if(!this.room.storage || !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0)) return;
-        if(Game.cpu.bucket < 190) {
-            return;
-        }
-
-        if (Memory.powerOperation) return;
+        // if(Game.cpu.bucket < 190) {
+        //     return;
+        // }
+        //
+        // if (Memory.powerOperation) return;
 
         this.updateDeficits();
         if(this.reactor) {
@@ -66,7 +66,14 @@ module.exports = class LabsAspect {
     isCurrentReactionFinished() {
         let currentReaction = this.reactor.compound;
         if(!currentReaction) return true;
-        if(_.any(this.decompose(currentReaction), (r) => this.amount(r) < LAB_REACTION_AMOUNT)) return true;
+        // console.log('r', _.any(this.reactor.inputs, (r) => _.sum(r.store) < (LAB_REACTION_AMOUNT + 6)), this.amount(currentReaction), this.reactor.targetAmount, this.amount(currentReaction) >= this.reactor.targetAmount, JSON.stringify(this.reactor.inputs))
+        if(_.any(this.reactor.inputs, (r) => _.sum(r.store) < (LAB_REACTION_AMOUNT + 6))) {
+            console.log('reaction finished', this.decompose(currentReaction))
+            return true;
+        }
+        if(_.any(this.decompose(currentReaction), (r) => {
+            // console.log('a', r, this.amount(r));
+            return this.amount(r) < (LAB_REACTION_AMOUNT + 6)})) return true;
 
         return this.amount(currentReaction) >= this.reactor.targetAmount;
     }
@@ -77,7 +84,7 @@ module.exports = class LabsAspect {
             let missing = [target];
             while(missing.length > 0) {
                 let nextReaction = missing[0];
-                missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) < LAB_REACTION_AMOUNT);
+                missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) < (LAB_REACTION_AMOUNT + 6));
                 if(missing.length === 0) return nextReaction;
 
                 // filter uncookable resources (e.g. H). Can't get those using reactions.
@@ -91,7 +98,8 @@ module.exports = class LabsAspect {
     amount(resource) {
         if(!resource) return 0;
         let storageAmount = this.room.storage.store[resource] || 0;
-        let terminalAmount = (this.room.terminal && this.room.terminal.store[resource]) || 0;
+        // let terminalAmount = (this.room.terminal && this.room.terminal.store[resource]) || 0;
+        let terminalAmount = 0;
         let labAmount = _.sum(_.filter(this.labs, (l) => l.mineralType == resource), (l) => l.mineralAmount);
         let scientistAmount = _.sum(this.scientists, (c) => c.carry[resource] || 0);
 

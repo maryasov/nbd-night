@@ -3,6 +3,7 @@ module.exports = class Spawns {
         this.room = room;
         this.spawns = room.find(FIND_MY_SPAWNS);
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
+        this.busySpawns = _.filter(this.spawns, (s) => s.spawning && !s.effects || s.effects && s.effects.length === 0);
         this.pureSpawns = _.filter(this.spawns, (s) => !s.effects);
         this.primary = this.spawns[0];
     }
@@ -38,6 +39,10 @@ module.exports = class Spawns {
 
     getPureSpawns() {
         return this.pureSpawns;
+    }
+
+    getBusySpawns() {
+        return this.busySpawns;
     }
 
     getExtensions() {

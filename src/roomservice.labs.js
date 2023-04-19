@@ -261,6 +261,10 @@ module.exports = class Labs {
       return this.reactor && this.reactor.outputs;
     }
 
+    get inputs() {
+      return this.reactor && this.reactor.inputs;
+    }
+
     get boosters() {
         if(!this._boosters) {
             this._boosters = _.map(this.memory.boosters, (mem) => new Booster(mem, this));
@@ -270,7 +274,7 @@ module.exports = class Labs {
     }
 
     getPureLabs() {
-        this.pureLabs = _.filter(this.outputs, (s) => !s.effects || s.effects && s.effects.length === 0);
+        this.pureLabs = _.filter(this.outputs/*.concat(this.inputs)*/, (s) => !s.effects || s.effects && s.effects.length === 0);
         return this.pureLabs;
     }
 
