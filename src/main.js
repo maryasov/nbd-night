@@ -19,7 +19,7 @@ const roles = [
     require("role.healer"),
     require("role.hopper"),
     require("role.observer"),
-    require("role.discoverer"),
+    // require("role.discoverer"),
     require("role.trader"),
     require("role.factoryWorker"),
     require("role.picker"),

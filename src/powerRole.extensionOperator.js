@@ -139,6 +139,7 @@ module.exports = class ExtensionOperator {
         let roomai = this.creep.room.ai();
         if(!roomai) return;
         if (!this.creep.powers[PWR_OPERATE_SPAWN]) return;
+        // console.log('Memory.powerOperation', Memory.powerOperation)
         if (!Memory.powerOperation) return;
         if (this.creep.powers[PWR_OPERATE_SPAWN].cooldown > 0) return;
 
