@@ -5,6 +5,7 @@ module.exports = class ExtensionOperator {
 
     run() {
         this.generateOps();
+        // return;
         if(this.goHome()) return;
         if(this.renewPower()) return;
         if(this.enableRoom()) return;

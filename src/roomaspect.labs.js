@@ -11,7 +11,7 @@ const targetCompounds = [
     "XKHO2", /*range +300*/
     "G", /*nuke*/
 ];
-const reactionCycleAmount = 1100;
+const reactionCycleAmount = 500;
 
 module.exports = class LabsAspect {
     constructor(roomai) {
