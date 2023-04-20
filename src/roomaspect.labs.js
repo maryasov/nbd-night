@@ -68,7 +68,7 @@ module.exports = class LabsAspect {
         if(!currentReaction) return true;
         // console.log('r', _.any(this.reactor.inputs, (r) => _.sum(r.store) < (LAB_REACTION_AMOUNT + 6)), this.amount(currentReaction), this.reactor.targetAmount, this.amount(currentReaction) >= this.reactor.targetAmount, JSON.stringify(this.reactor.inputs))
         if(_.any(this.reactor.inputs, (r) => _.sum(r.store) < (LAB_REACTION_AMOUNT + 6))) {
-            console.log('reaction finished', this.decompose(currentReaction))
+            // console.log('reaction finished', this.decompose(currentReaction))
             return true;
         }
         if(_.any(this.decompose(currentReaction), (r) => {
