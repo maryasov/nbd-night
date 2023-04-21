@@ -222,6 +222,7 @@ module.exports = class Trading {
 
         if(t3Boosts.includes(resource)) return 10000;
         if(resource === "G") return 5000;
+        if(resource === "ops") return 5000;
 
         // ensures that compounds don't get stuck in terminal
         // TODO: should we actually consider the current reaction for this,
@@ -267,6 +268,7 @@ module.exports = class Trading {
         if(baseMinerals.includes(resource)) return 50000;
         if(t3Boosts.includes(resource)) return 25000;
         if(resource === "G") return 10000;
+        if(resource === "ops") return 10000;
 
         if(rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
             if(this.room.ai().factory.isAvailable() && this.room.ai().factory.usableResources.includes(resource)) {
