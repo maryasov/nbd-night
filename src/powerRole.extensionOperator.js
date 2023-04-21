@@ -9,6 +9,10 @@ module.exports = class ExtensionOperator {
         if(this.goHome()) return;
         if(this.renewPower()) return;
         if(this.enableRoom()) return;
+
+        if(this.getOps()) return;
+        if(this.storeOps()) return;
+
         if(this.operateExtentions()) return;
         // console.log('1');
         if(this.operateLabs()) return;
@@ -93,7 +97,7 @@ module.exports = class ExtensionOperator {
 
         var targetsAll = this.creep.room.find(FIND_MY_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
+                return (structure.structureType == STRUCTURE_EXTENSION) &&
                     structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
             }
         });
@@ -106,6 +110,51 @@ module.exports = class ExtensionOperator {
             this.creep.usePower(PWR_OPERATE_EXTENSION, storage);
         } else {
             this.creep.goTo(storage, { range: powerMetadata.range });
+            return true;
+        }
+    }
+
+    getOps() {
+        let roomai = this.creep.room.ai();
+        if(!roomai) return;
+
+        const room = roomai.room;
+        let storage = room.storage;
+        if(!storage) return;
+
+        if(this.creep.store.ops > 300) return;
+
+        const max = Math.min(500, this.creep.carryCapacity);
+        const amount = max - this.creep.store.ops;
+        let transferResult = this.creep.withdraw(storage, 'ops', amount)
+
+        if(transferResult == OK) {
+            if (!this.creep.memory['storedOps']) this.creep.memory['storedOps'] = 0;
+            this.creep.memory['storedOps'] -= amount;
+        } else if (transferResult == ERR_NOT_IN_RANGE){
+            this.creep.goTo(storage);
+            return true;
+        }
+    }
+
+    storeOps() {
+        let roomai = this.creep.room.ai();
+        if(!roomai) return;
+
+        const room = roomai.room;
+        let storage = room.storage;
+        if(!storage) return;
+
+        if(this.creep.store.ops < 1000) return;
+
+        const amount = this.creep.store.ops - 800;
+        let transferResult = this.creep.transfer(storage, 'ops', amount)
+
+        if(transferResult == OK) {
+            if (!this.creep.memory['storedOps']) this.creep.memory['storedOps'] = 0;
+            this.creep.memory['storedOps'] += amount;
+        } else if (transferResult == ERR_NOT_IN_RANGE){
+            this.creep.goTo(storage);
             return true;
         }
     }
