@@ -43,6 +43,14 @@ module.exports = {
         if(!config) return 0;
         return config.length * CREEP_SPAWN_TIME;
     },
+    anyCreepInRoom: function(roomName) {
+        let room = Game.rooms[roomName];
+        if (!room) return false;
+        let creeps = room.find(FIND_MY_CREEPS);
+        if (!creeps) return false;
+        // creeps = creeps.concat(_.compact(_.map(room.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));
+        return creeps.length > 0;
+    },
     localCreepsWithRole: function(roomai, role) {
         let creeps = roomai.room.find(FIND_MY_CREEPS);
         creeps = creeps.concat(_.compact(_.map(roomai.spawns.spawns, (spawn) => spawn.spawning && Game.creeps[spawn.spawning.name])));

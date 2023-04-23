@@ -147,7 +147,13 @@ module.exports = {
                 // Wait at a parking position.
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES,
                     { filter: (s) => parkStructures.includes(s.structureType) });
-                if(!target) target = { pos: creep.room.getPositionAt(25, 25) };
+                if(!target) {
+                    if (creep.memory.targetPos) {
+                        target = { pos: creep.room.getPositionAt(creep.memory.targetPos.x, creep.memory.targetPos.y) };
+                    } else {
+                        target = { pos: creep.room.getPositionAt(25, 25) };
+                    }
+                }
                 if(creep.pos.getRangeTo(target) <= 5) {
                     creep.memory.stopped = true;
                 } else {

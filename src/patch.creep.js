@@ -32,4 +32,8 @@ Creep.prototype.canAttack = function() {
     return _.some(this.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK);
 }
 
+Creep.prototype.check = function() {
+    return _.some(this.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK);
+}
+
 Creep.prototype.isCreep = true;

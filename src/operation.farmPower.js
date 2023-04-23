@@ -24,17 +24,20 @@ module.exports = class FarmPowerOperation {
         //console.log('targetRoom', targetRoom, this.targetRoomName)
         let powerBank = targetRoom && targetRoom.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
+        let observers = spawnHelper.globalCreepsWithRole(observer.name);
+        let roomObservers = _.any(observers, (c) => c.room == this.targetRoomName);
+        let targetObservers = _.any(observers, (c) => c.memory.target == this.targetRoomName);
         let healers = spawnHelper.globalCreepsWithRole(healer.name);
         let farmers = _.filter(spawnHelper.globalCreepsWithRole(powerFarmer.name), (c) => c.memory.operation == this.operation);
         let dropedPower = false;
         // let harvesterNum = spawnHelper.numberOfLocalCreeps(this.roomai, 'harvester');
         let scoopers = _.filter(spawnHelper.globalCreepsWithRole('scooper'), (c) => c.memory.operation == this.operation);
 
-        if(!targetRoom && this.roomai.observer.isAvailable()) {
+        if(this.roomai.observer.isAvailable() && !targetObservers && !roomObservers) {
             // console.log('observer.isAvailable');
             // this.roomai.observer.observeLater(this.targetRoomName);
             let resObs = this.roomai.observer.observeNow(this.targetRoomName);
-            // console.log('observe now', this.targetRoomName, resObs)
+            // console.log('observe now', targetRoom, this.targetRoomName, resObs, powerBank)
         }
 
         // fix target
@@ -47,6 +50,7 @@ module.exports = class FarmPowerOperation {
         for(let scooperCreep of scoopers) {
             if (Game.creeps[scooperCreep.name].memory.target !== this.targetRoomName) {
                 Game.creeps[scooperCreep.name].memory.target = this.targetRoomName;
+                Game.creeps[scooperCreep.name].memory.targetPos = this.targetFlag.pos;
             }
         }
 
@@ -138,7 +142,7 @@ module.exports = class FarmPowerOperation {
                 Memory.powerOperation = false;
             }
         } else {
-            if(!this.roomai.observer.isAvailable() && !_.any(spawnHelper.globalCreepsWithRole(observer.name), (c) => c.memory.target == this.targetRoomName)) {
+            if(!targetObservers) {
                 this.roomai.spawn(observer.parts, { role: observer.name, target: this.targetRoomName });
             }
         }
@@ -150,7 +154,7 @@ module.exports = class FarmPowerOperation {
         // console.log('scoopersCapacity', scoopersCapacity)
         if(scoopersCapacity < power) {
             console.log('needMoreScoopers', this.targetRoomName, scoopersCapacity, power)
-            this.roomai.spawn(scooper.configs(500)[0], { role: scooper.name, target: this.targetRoomName, home: this.room.name, operation: this.operation, power: power });
+            this.roomai.spawn(scooper.configs(500)[0], { role: scooper.name, target: this.targetRoomName, targetPos: this.targetFlag.pos, home: this.room.name, operation: this.operation, power: power });
         }
     }
 }
