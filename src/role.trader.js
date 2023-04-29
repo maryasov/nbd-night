@@ -1,4 +1,5 @@
 const spawnHelper = require("helper.spawning");
+const renew = require('helper.renew');
 
 // exporting anything does not make sense with less than
 // this amount of energy in the terminal
@@ -11,6 +12,7 @@ module.exports = {
     name: "trader",
     parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
     run: function(creep) {
+        if (renew.check(creep)) return;;
         let trading = creep.room.ai().trading;
         let terminal = creep.room.terminal;
         let storage = creep.room.storage;
