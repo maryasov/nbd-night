@@ -2,6 +2,7 @@ const logistic = require('helper.logistic');
 const boosting = require("helper.boosting");
 const movement = require("helper.movement");
 const spawnHelper = require("helper.spawning");
+const renew = require('helper.renew');
 
 module.exports = {
     name: "miner",
@@ -30,9 +31,10 @@ module.exports = {
     },
     depositParts: spawnHelper.makeParts(30, WORK, 5, CARRY, 15, MOVE),
     run: function(creep) {
+        if (renew.check(creep)) return;;
         /*if (Game.cpu.bucket < 50) {
-            return;
-        }*/
+             return;
+         }*/
         if(creep.body[0].type === WORK && creep.memory.resource !== 'energy') {
             if(boosting.accept(creep, "XUHO2", "UHO2", "UO")) return;
         }

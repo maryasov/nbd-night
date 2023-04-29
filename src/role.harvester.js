@@ -1,5 +1,6 @@
 var spawnHelper = require('helper.spawning');
 var logistic = require('helper.logistic');
+var renew = require('helper.renew');
 
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
 
@@ -7,9 +8,13 @@ module.exports = {
     name: "harvester",
    // TODO config for kikstart
     carryConfigs: [
-        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-        [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        //[CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        //[CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        //[CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
+        [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+        [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
         [CARRY, CARRY, MOVE, MOVE],
         [CARRY, MOVE]
     ],
@@ -22,6 +27,12 @@ module.exports = {
         [WORK, CARRY, MOVE]
     ],
     run: function(creep) {
+        if (renew.check(creep)) {
+            if(!creep.memory.delivering && creep.store.energy > 0) {
+                creep.memory.delivering = true;
+            }
+            return;
+        }
         // check if our carry  has something else than energy and drop it (e.g. due to overfilling protection)
         let wrongCarryResource = _.find(Object.keys(creep.store), (r) => r != "energy");
         if(wrongCarryResource) {
@@ -33,7 +44,7 @@ module.exports = {
         if(creep.memory.delivering && creep.store.energy == 0) {
             creep.memory.delivering = false;
         }
-        if(!creep.memory.delivering && creep.store.energy == creep.store.getCapacity()) {
+        if(!creep.memory.delivering && creep.store.energy > 0) {
             creep.memory.delivering = true;
         }
 

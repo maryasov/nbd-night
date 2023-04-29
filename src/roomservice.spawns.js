@@ -4,11 +4,18 @@ module.exports = class Spawns {
         this.spawns = room.find(FIND_MY_SPAWNS);
         this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
         this.availableSpawnsBoosted = _.filter(this.spawns, (s) => !s.spawning && s.effects && s.effects.length > 0);
-        this.busySpawns = _.filter(this.spawns, (s) => s.spawning && !s.effects || s.effects && s.effects.length === 0);
+        this.busySpawns = _.filter(this.spawns, (s) => s.spawning && (!s.effects || s.effects && s.effects.length === 0));
         this.pureSpawns = _.filter(this.spawns, (s) => !s.effects);
         this.primary = this.spawns[0];
     }
 
+    getBestSpawn(parts, memory) {
+        let spawn = this.availableSpawnsBoosted[0];
+        if (!spawn) {
+            spawn = this.availableSpawns[0];
+        }
+        return spawn
+    }
     spawn(parts, memory) {
         let spawn = this.availableSpawnsBoosted[0];
         if (!spawn) {

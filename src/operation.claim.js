@@ -125,8 +125,8 @@ module.exports = class ClaimOperation extends Operation {
             // console.log('hasMiner', hasMiner, miner.name, JSON.stringify(remoteRoom))
             if(!hasMiner) {
                 this.spawnQueue.push({
-                    configs: miner.energyConfigs,
-                    memory: { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true, operation: this.id }
+                    configs: builder.configs(10),//miner.energyConfigs,
+                    memory: { role: miner.name, target: source.id, resource: RESOURCE_ENERGY, selfSustaining: true, operation: this.id, renew: true }
                 });
             }
         }
@@ -137,7 +137,7 @@ module.exports = class ClaimOperation extends Operation {
             if(!hasBuilders) {
                 this.spawnQueue.push({
                     configs: builder.configs(10),
-                    memory: { role: builder.name, room: remoteRoom.name, operation: this.id }
+                    memory: { role: builder.name, room: remoteRoom.name, operation: this.id, renew: true }
                 });
             }
         }

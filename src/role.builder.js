@@ -1,6 +1,7 @@
 const boosting = require("helper.boosting");
 const logistic = require("helper.logistic");
 const movement = require("helper.movement");
+const renew = require('helper.renew');
 
 const fullHealthEquiv = 10000;
 const emergencyHitPercent = 0.3;
@@ -24,6 +25,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if (renew.check(creep)) return;;
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;

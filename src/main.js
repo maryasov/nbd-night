@@ -183,6 +183,9 @@ function runCreeps() {
                     // continue;
                 }
             }
+            if (creep.memory.goRenew) {
+                mustBreake = false;
+            }
             if (movement.isOnExit(creep)) {
                 mustBreake = false;
             }

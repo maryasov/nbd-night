@@ -2,6 +2,7 @@ const spawnHelper = require('helper.spawning');
 const boosting = require("helper.boosting");
 const logistic = require('helper.logistic');
 const movement = require("helper.movement");
+const renew = require('helper.renew');
 
 module.exports = {
     name: "upgrader",
@@ -21,6 +22,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if (renew.check(creep)) return;;
 
         // if(boosting.accept(creep, "XGH2O")) return;
 

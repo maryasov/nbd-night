@@ -15,7 +15,7 @@ module.exports = class ExtensionOperator {
 
         if(this.operateExtentions()) return;
         // console.log('1');
-        // if(this.operateLabs()) return;
+        if(this.operateLabs()) return;
         // console.log('2');
         if(this.operateSpawns()) return;
         if(this.operatePowerSpawns()) return;
@@ -124,9 +124,10 @@ module.exports = class ExtensionOperator {
         if(!storage) return;
 
         if(this.creep.store.ops > 300) return;
+        if(storage.store.ops < 200) return;
 
         const max = Math.min(500, this.creep.carryCapacity);
-        const amount = max - this.creep.store.ops;
+        const amount = Math.min(max - this.creep.store.ops, storage.store.ops);
         let transferResult = this.creep.withdraw(storage, 'ops', amount)
 
         if(transferResult == OK) {
