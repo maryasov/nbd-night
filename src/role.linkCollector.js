@@ -1,7 +1,10 @@
+const renew = require('helper.renew');
+
 module.exports = {
     name: "linkCollector",
     parts: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE],
     run: function(creep) {
+        if (renew.check(creep)) return;;
         let roomai = creep.room.ai();
         if(roomai.links.checkOpenRequests()) {
             this.transfer(creep, roomai.room.storage, roomai.links.storage());
