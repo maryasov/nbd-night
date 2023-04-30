@@ -39,7 +39,7 @@ module.exports = class PathBuilder {
         this.swampCost = 10;
         this.avoidCreeps = true;
         this.avoidHostiles = false;
-        this.debugCosts = true;
+        this.debugCosts = false;
         this.preferRoads = true;
         this.allowedRooms = null;
     }
