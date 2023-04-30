@@ -1,9 +1,18 @@
+const blockOutline = [
+    { x: -0.4, y: -0.4 },
+    { x: 0.4, y: -0.4 },
+    { x: 0.4, y: 0.4 },
+    { x: -0.4, y: 0.4 },
+    { x: -0.4, y: -0.4 },
+];
+
 module.exports = {
     outline: function(room, block) {
         let x = block.x,
             y = block.y;
 
-        room.visual.circle(x, y, { stroke: "#fd2600", radius: 0.25, fill: null });
+        //room.visual.circle(x, y, { stroke: "#fd2600", radius: 0.25, fill: null });
+        room.visual.poly(_.map(blockOutline, (p) => [x + p.x, y + p.y]), { stroke: "#fd2600" });
     },
     build: function(proxy, block, roomai) {
         // proxy.planConstruction(block.x, block.y, STRUCTURE_LAB);

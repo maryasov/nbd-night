@@ -28,6 +28,7 @@ module.exports = class ExtensionOperator {
     findPosition() {
         let room = this.creep.room;
         let positions = room.memory.constructions['powerPosition'];
+        if (!positions) return;
         const byDist = _.sortBy(positions, (t) => this.creep.pos.getRangeTo(this.creep.room.getPositionAt(t.x, t.y)));
         let closest = byDist[0]
         this.creep.moveTo(closest.x, closest.y);
