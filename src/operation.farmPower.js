@@ -12,7 +12,7 @@ module.exports = class FarmPowerOperation {
         this.operation = operation;
         this.targetRoomName = targetFlag.pos.roomName;
         this.targetFlag = targetFlag;
-        this.farmerCount = count;
+        this.farmerCount = count > 5 ? 1 : count;
     }
 
     run() {

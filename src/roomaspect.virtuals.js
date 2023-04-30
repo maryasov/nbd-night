@@ -9,7 +9,7 @@ module.exports = class VirtualsAspect {
         this.roomai.virtuals.removeBuildings();
 
         for(let building of this.roomai.virtuals.buildings) {
-            if (!Memory.noOutline && this.roomai.mode !== "store") {building.outline();}
+            if (!Memory.noVirtuals) {building.outline();}
         }
 
         this.roomai.virtuals.drawDebugMarkers();

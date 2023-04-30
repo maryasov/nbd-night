@@ -1,18 +1,10 @@
 const ppOutline = [
-    { x: -0.2, y: -0.2 },
-    { x: 0.2, y: -0.2 },
-    { x: 0.2, y: 0.2 },
-    { x: -0.2, y: 0.2 },
-    { x: -0.2, y: -0.2 },
-];
-
-const linkOutline = [
     { x: -0.2, y: 0 },
-    { x: 0, y: -0.3 },
+    { x: 0, y: -0.2 },
     { x: 0.2, y: 0 },
-    { x: 0, y: 0.3 },
+    { x: 0, y: 0.2 },
     { x: -0.2, y: 0 },
-    { x: 0, y: -0.3 },
+    { x: 0, y: -0.2 },
 ];
 
 
@@ -22,7 +14,7 @@ module.exports = {
             y = booster.y;
 
         // room.visual.circle(x, y, { stroke: "#0023fd", radius: 0.25, fill: null });
-        room.visual.poly(_.map(linkOutline, (p) => [x + p.x, y + p.y]), { stroke: "rgba(69,255,11,0.33)" });
+        room.visual.poly(_.map(ppOutline, (p) => [x + p.x, y + p.y]), { stroke: "rgba(0,0,0,0.33)" });
     },
     build: function(proxy, booster, roomai) {
         // proxy.planConstruction(booster.x, booster.y, STRUCTURE_LAB);
