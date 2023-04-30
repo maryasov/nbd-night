@@ -58,7 +58,7 @@ module.exports = class MoveOperation extends Operation {
         let movers = _.filter(spawnHelper.globalCreepsWithRole(mover.name), (c) => c.memory.operation === this.id);
 
         if(movers.length < this.memory.moverCount) {
-            roomai.spawn(spawnHelper.bestAvailableParts(room, mover.configsForCapacity(2000)), { role: mover.name, home: this.memory.home, target: this.memory.target, resource: this.memory.resource, operation: this.id });
+            roomai.spawn(spawnHelper.bestAvailableParts(room, mover.configsForCapacity(2000)), { role: mover.name, home: this.memory.home, target: this.memory.target, support: this.memory.supportRoom, resource: this.memory.resource, operation: this.id, renew: true });
         }
     }
 

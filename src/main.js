@@ -259,8 +259,8 @@ module.exports.loop = function() {
         // const startLinks = Game.cpu.getUsed();
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
-            if(room.ai()) {
-                suppressErrors(() => room.ai().runLite());
+            if(room.aiLite()) {
+                suppressErrors(() => room.aiLite().runLite());
             }
         }
         // const endLinks = Game.cpu.getUsed();
@@ -309,35 +309,8 @@ module.exports.loop = function() {
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
             const _flags = room.find(FIND_FLAGS);
-            let results = _.filter(_.map(_flags, (f) => ({ match: blockFlagRegex.exec(f.name), flag: f })), (m) => m.match);
             let resultsExits = _.filter(_.map(_flags, (f) => ({ match: exitFlagRegex.exec(f.name), flag: f })), (m) => m.match);
 
-            for(let result of results) {
-                if (result.flag.color == 1) {
-                    const roomName = result.flag.room.name;
-                    const flagPos = result.flag.pos
-                    if (Memory.rooms[roomName] === undefined) {
-                        Memory.rooms[roomName] = {};
-                    }
-                    if (Memory.rooms[roomName].blocks === undefined) {
-                        Memory.rooms[roomName].blocks = [];
-                    }
-                    Memory.rooms[roomName].blocks = _.filter(Memory.rooms[roomName].blocks, (b)=> b.x !== flagPos.x || b.y !== flagPos.y);
-                    Memory.rooms[roomName].blocks.push({x: flagPos.x, y: flagPos.y});
-                }
-                if (result.flag.color == 10) {
-                    const roomName = result.flag.room.name;
-                    const flagPos = result.flag.pos
-                    if (Memory.rooms[roomName] === undefined) {
-                        Memory.rooms[roomName] = {};
-                    }
-                    if (Memory.rooms[roomName].blocks === undefined) {
-                        Memory.rooms[roomName].blocks = [];
-                    }
-                    Memory.rooms[roomName].blocks = _.filter(Memory.rooms[roomName].blocks, (b)=> b.x !== flagPos.x || b.y !== flagPos.y);
-                }
-                result.flag.remove();
-            }
             for(let result of resultsExits) {
                 if (result.flag.color === 1) {
                     const roomName = result.flag.room.name;
@@ -376,6 +349,7 @@ module.exports.loop = function() {
             suppressErrors(() => operation.run());
         }
 
+    // console.log('rooms', JSON.stringify(Game.rooms))
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
             if(room.ai()) {

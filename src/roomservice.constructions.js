@@ -3,7 +3,6 @@ const ConstructionSpaceFinder = require("constructionSpaceFinder");
 
 const constructions = new Map([
     ["booster", require("construction.booster")],
-    ["powerPosition", require("construction.powerPosition")],
     ["reactor", require("construction.reactor")],
     ["spawn", require("construction.spawn")],
     ["storage", require("construction.storage")],
@@ -159,44 +158,6 @@ module.exports = class Constructions {
         }
 
         return result;
-    }
-
-    addBlocks() {
-        let results = _.filter(_.map(this.flags, (f) => ({ match: blockFlagRegex.exec(f.name), flag: f })), (m) => m.match);
-        for(let result of results) {
-            // console.log('flag agg res', JSON.stringify(result));
-            if (result.flag.color == 1) {
-                const roomName = result.flag.room.name;
-                const flagPos = result.flag.pos
-                if (Memory.rooms[roomName] === undefined) {
-                    Memory.rooms[roomName] = {};
-                }
-                if (Memory.rooms[roomName].blocks === undefined) {
-                    Memory.rooms[roomName].blocks = [];
-                }
-                // console.log('add', roomName, JSON.stringify(flagPos), Memory.rooms[roomName].blocks)
-                Memory.rooms[roomName].blocks = _.filter(Memory.rooms[roomName].blocks, (b)=> b.x !== flagPos.x && b.y !== flagPos.y);
-                Memory.rooms[roomName].blocks.push({x: flagPos.x, y: flagPos.y});
-                console.log('add block', JSON.stringify(Memory.rooms[roomName].blocks))
-            }
-            if (result.flag.color == 10) {
-                const roomName = result.flag.room.name;
-                const flagPos = result.flag.pos
-                if (Memory.rooms[roomName] === undefined) {
-                    Memory.rooms[roomName] = {};
-                }
-                if (Memory.rooms[roomName].blocks === undefined) {
-                    Memory.rooms[roomName].blocks = [];
-                }
-                Memory.rooms[roomName].blocks = _.filter(Memory.rooms[roomName].blocks, (b)=> b.x !== flagPos.x && b.y !== flagPos.y);
-                console.log('remove block', JSON.stringify(Memory.rooms[roomName].blocks))
-            }
-            // let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
-            // let builder = constructions.get(type);
-            // if(!this.memory[type]) this.memory[type] = [];
-            // builder.addBuilding(this.memory[type], result.flag);
-            result.flag.remove();
-        }
     }
 
     addBuildings() {

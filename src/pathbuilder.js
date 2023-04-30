@@ -5,6 +5,11 @@ const AVOID_HOSTILE_COST = 200;
 const AVOID_BLOCK_COST = 255;
 const ROAD_COST = 1;
 
+const virtualsCosts = {
+    'block': 255,
+    'powerPosition': 200,
+}
+
 const PORTAL_COST = 10;
 
 const TERRAIN_PLAIN = 0; // for whatever reason this has not been defined...
@@ -52,6 +57,7 @@ module.exports = class PathBuilder {
         let builder = this;
         return function additiveCallback(roomName, matrix) {
             builder.doAvoidStructures(roomName, matrix);
+            builder.doAvoidVirtuals(roomName, matrix);
             if(builder.avoidHostiles) {
                 builder.doAvoidHostiles(roomName, matrix);
             }
@@ -106,6 +112,26 @@ module.exports = class PathBuilder {
             } else if(structure.structureType === STRUCTURE_PORTAL) {
                 matrix.set(structure.pos.x, structure.pos.y, Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST));
             }
+        }
+    }
+
+    doAvoidVirtuals(roomName, matrix) {
+        let room = Memory.rooms[roomName];
+        if(!room) return;
+
+        if (room.virtuals) {
+            let virtuals = room.virtuals;
+            for(let structure of virtuals) {
+                console.log('structure', JSON.stringify(structure))
+                // let blocked = OBSTACLE_OBJECT_TYPES.includes(structure.structureType);
+                // blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
+                // if(blocked) {
+                //     matrix.set(structure.pos.x, structure.pos.y, 255);
+                // } else if(structure.structureType === STRUCTURE_PORTAL) {
+                //     matrix.set(structure.pos.x, structure.pos.y, Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST));
+                // }
+            }
+
         }
     }
 

@@ -1,5 +1,6 @@
 const logistic = require('helper.logistic');
 const profitVisual = require("visual.roomProfit");
+const renew = require('helper.renew');
 
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
 const wayStructures = [STRUCTURE_POWER_BANK];
@@ -23,6 +24,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if (renew.check(creep)) return;;
         if(creep.memory.resource == RESOURCE_ENERGY) {
             logistic.pickupSpareEnergy(creep);
         }
@@ -31,14 +33,14 @@ module.exports = {
             if(this.deliver(creep)) this.pickup(creep);
         }
         else {
-            if(creep.room.name == creep.memory.target) {
+            // if(creep.room.name == creep.memory.target) {
                 if(this.pickup(creep)) this.deliver(creep);
-            } else {
-                // if(this.pickupWay(creep)) {/*this.deliver(creep)*/} else {
-                if(this.deliver(creep)) this.pickup(creep);
-                    // if(this.pickup(creep)) this.deliver(creep);
-                // };
-            }
+            // } else {
+            //     // if(this.pickupWay(creep)) {/*this.deliver(creep)*/} else {
+            //     if(this.deliver(creep)) this.pickup(creep);
+            //         // if(this.pickup(creep)) this.deliver(creep);
+            //     // };
+            // }
         }
     },
     approachRoom: function(creep, position) {

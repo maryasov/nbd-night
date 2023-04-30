@@ -2,6 +2,7 @@ const aspectsLite = [
     require("roomaspect.controller"),
     require("roomaspect.manualOperations"),
     require("roomaspect.power"),
+    require("roomaspect.virtuals"),
 ];
 
 const aspects = [
@@ -25,6 +26,7 @@ const aspects = [
 // const structureTower = require("structure.tower");
 
 const Constructions = require("roomservice.constructions");
+const Virtuals = require("roomservice.virtuals");
 const Defense = require("roomservice.defense");
 const Factory = require("roomservice.factory");
 const Intervals = require("roomservice.intervals");
@@ -38,6 +40,7 @@ module.exports = class RoomAI {
     constructor(room) {
         this.room = room;
         this.constructions = new Constructions(room);
+        this.virtuals = new Virtuals(room);
         this.defense = new Defense(room);
         this.factory = new Factory(room);
         this.intervals = new Intervals();

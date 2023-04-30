@@ -7,6 +7,7 @@ module.exports = class ConstructionsAspect {
     }
 
     run() {
+        // console.log('const asp', this.room)
         // this.roomai.constructions.addBlocks();
         this.roomai.constructions.addBuildings();
         this.roomai.constructions.removeBuildings();

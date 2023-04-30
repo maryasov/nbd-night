@@ -6,7 +6,7 @@ const renew = require('helper.renew');
 const fullHealthEquiv = 10000;
 const emergencyHitPercent = 0.3;
 
-const highPriorityStructures = [STRUCTURE_LINK, STRUCTURE_STORAGE, STRUCTURE_EXTENSION, /*STRUCTURE_ROAD,*/ STRUCTURE_CONTAINER, STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_WALL];
+const highPriorityStructures = [STRUCTURE_LINK, /*STRUCTURE_STORAGE,*/ STRUCTURE_EXTENSION, STRUCTURE_ROAD, /*STRUCTURE_CONTAINER,*/ STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_WALL];
 
 module.exports = {
     name: "builder",
@@ -25,7 +25,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        if (renew.check(creep)) return;;
+        if (renew.check(creep)) return;
         if(creep.memory.room && creep.room.name !== creep.memory.room) {
             movement.moveToRoom(creep, creep.memory.room);
             return;
@@ -80,7 +80,7 @@ module.exports = {
             }
         }
 
-        if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 20) {
+        if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 20 && !creep.memory.renew) {
             creep.memory.goRecycle = true;
         }
 
@@ -94,8 +94,8 @@ module.exports = {
         }
 
         let constructions = _.sortBy(creep.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.pos.getRangeTo(creep.pos));
-        // let target = this.getAllTargets(creep, constructions);
-        let target = this.getConstructionTargets(creep, constructions);
+        let target = this.getAllTargets(creep, constructions);
+        // let target = this.getConstructionTargets(creep, constructions);
 
         return target;
     },

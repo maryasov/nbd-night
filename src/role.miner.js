@@ -18,6 +18,20 @@ module.exports = {
         [WORK, WORK, WORK, CARRY, MOVE],
         [WORK, WORK, CARRY, MOVE]
     ],
+    claimConfigs: function(workParts) {
+        var configs = [];
+        for(let work = workParts; work >= 2; work -= 1) {
+            let carry = 2;
+            let move = work + carry;
+            let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
+            if(config.length <= 50) configs.push(config);
+        }
+
+        // TODO: probably more handcrafted configs for low tiers?
+        configs.push([WORK, WORK, CARRY, MOVE]); // spawn-only config
+
+        return configs;
+    },
     mineralConfigs: function(mineral) {
         let configs = [];
 
