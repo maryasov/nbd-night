@@ -263,10 +263,10 @@ module.exports.loop = function() {
             //     console.log('loop')
             // }
             if(room.aiLite()) {
-                // if (roomName === 'W8N7') {
-                //     console.log('has ai')
-                // }
                 suppressErrors(() => room.aiLite().run());
+            }
+            if(room.ai()) {
+                suppressErrors(() => room.ai().runLite());
             }
         }
         // const endLinks = Game.cpu.getUsed();
