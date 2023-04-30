@@ -77,7 +77,7 @@ module.exports = class Virtuals {
         }
 
         let endTime = Game.cpu.getUsed();
-        console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
+        // console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
     }
 
     drawDebugMarkers() {

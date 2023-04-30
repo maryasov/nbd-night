@@ -117,7 +117,7 @@ module.exports = class Constructions {
         }
 
         let endTime = Game.cpu.getUsed();
-        console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
+        // console.log(`Planning took ${Math.round((endTime - startTime) * 10) / 10} ms.`);
     }
 
     // This method is mostly intended for debugging room layouting code

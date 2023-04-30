@@ -1,19 +1,20 @@
 const RoomAI = require('roomai.base');
+const RoomAILite = require('roomai.lite');
 
 Room.prototype.aiLite = function() {
-    if(this._ai === undefined) {
-        if(this.controller/* && this.controller.my*/) {
-            this._ai = new RoomAI(this);
-        } else {
-            this._ai = null;
-        }
+    if(!this._ail) {
+        // if(this.controller/* && this.controller.my*/) {
+            this._ail = new RoomAILite(this);
+        // } else {
+        //     this._ail = null;
+        // }
     }
 
-    return this._ai;
+    return this._ail;
 }
 
 Room.prototype.ai = function() {
-    if(this._ai === undefined) {
+    if(!this._ai) {
         if(this.controller && this.controller.my) {
             this._ai = new RoomAI(this);
         } else {

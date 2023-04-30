@@ -39,7 +39,7 @@ module.exports = class PathBuilder {
         this.swampCost = 10;
         this.avoidCreeps = true;
         this.avoidHostiles = false;
-        this.debugCosts = false;
+        this.debugCosts = true;
         this.preferRoads = true;
         this.allowedRooms = null;
     }
@@ -76,6 +76,7 @@ module.exports = class PathBuilder {
 
             let matrix = new PathFinder.CostMatrix;
             builder.doAvoidStructures(roomName, matrix);
+            builder.doAvoidVirtuals(roomName, matrix);
             builder.doAvoidConstructionSites(roomName, matrix);
             if(builder.avoidCreeps) {
                 builder.doAvoidAllCreeps(roomName, matrix);
@@ -120,16 +121,22 @@ module.exports = class PathBuilder {
         if(!room) return;
 
         if (room.virtuals) {
-            let virtuals = room.virtuals;
-            for(let structure of virtuals) {
-                console.log('structure', JSON.stringify(structure))
-                // let blocked = OBSTACLE_OBJECT_TYPES.includes(structure.structureType);
-                // blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
-                // if(blocked) {
-                //     matrix.set(structure.pos.x, structure.pos.y, 255);
-                // } else if(structure.structureType === STRUCTURE_PORTAL) {
-                //     matrix.set(structure.pos.x, structure.pos.y, Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST));
-                // }
+            let virtuals = _.keys(room.virtuals);
+            if (virtuals.length === 0) return;
+            for(let virtual of virtuals) {
+                let structures = room.virtuals[virtual]
+                for (let structure of structures) {
+                    // console.log('structure', virtual, JSON.stringify(structure))
+                    const cost = virtualsCosts[virtual] || 255;
+                    matrix.set(structure.x, structure.y, cost);
+                    // let blocked = OBSTACLE_OBJECT_TYPES.includes(structure.structureType);
+                    // blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
+                    // if(blocked) {
+                    //     matrix.set(structure.pos.x, structure.pos.y, 255);
+                    // } else if(structure.structureType === STRUCTURE_PORTAL) {
+                    //     matrix.set(structure.pos.x, structure.pos.y, Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST));
+                    // }
+                }
             }
 
         }

@@ -259,8 +259,14 @@ module.exports.loop = function() {
         // const startLinks = Game.cpu.getUsed();
         for(let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
+            // if (roomName === 'W8N7') {
+            //     console.log('loop')
+            // }
             if(room.aiLite()) {
-                suppressErrors(() => room.aiLite().runLite());
+                // if (roomName === 'W8N7') {
+                //     console.log('has ai')
+                // }
+                suppressErrors(() => room.aiLite().run());
             }
         }
         // const endLinks = Game.cpu.getUsed();
