@@ -12,7 +12,7 @@ const planningOrder = [
 ];
 
 const buildFlagRegex = /^add([A-Za-z]+)$/;
-const removeFlagRegex = /^clean([A-Za-z]+)$/;
+const removeFlagRegex = /^clear([A-Za-z]+)$/;
 
 class Building {
     constructor(builder, memory, room) {
