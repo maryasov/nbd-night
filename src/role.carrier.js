@@ -1,5 +1,6 @@
 const logistic = require('helper.logistic');
 const profitVisual = require("visual.roomProfit");
+const renew = require('helper.renew');
 
 module.exports = {
     name: "carrier",
@@ -27,6 +28,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
+        if (renew.check(creep)) return;
         if(creep.memory.resource == RESOURCE_ENERGY) {
             logistic.pickupSpareEnergy(creep);
         }
