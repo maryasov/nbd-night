@@ -27,7 +27,7 @@ module.exports = class Spawns {
         const mySpawn = _.find(spawns, (r) =>r.memory.lastRenewCreep === creep.name);
         // console.log('mySpawn', mySpawn)
         if (mySpawn) {return mySpawn}
-        let freeSpawns = _.sortBy(spawns, (s) => Game.time - (s.lastRenew?s.lastRenew:Game.time))
+        let freeSpawns = _.sortBy(spawns, (s) => -(Game.time - (s.lastRenew?s.lastRenew:Game.time-50)))
         let spawn = freeSpawns[0];
         return spawn
     }

@@ -21,11 +21,9 @@ module.exports = {
                     break;
             }
             if (creep.ticksToLive < renewTimeout) {
-                creep.say('too old!!');
                 if (this.conditions(creep)) {
-                    creep.say('cond');
+                    creep.say('too old!!');
                     if (this.enoughtEnergy(creep)) {
-                        creep.say('energy');
                         creep.memory.goRenew = true;
                     }
                 }
@@ -44,6 +42,8 @@ module.exports = {
             console.log('finish renew', creep.name)
             if (this.canInterrupt(creep)) {
                 creep.memory.goRenew = false;
+                delete spawn.memory.lastRenewCreep;
+                delete spawn.memory.lastRenew;
             }
             return;
         }
@@ -56,11 +56,16 @@ module.exports = {
         if (res === ERR_NOT_ENOUGH_ENERGY) {
             if (this.canInterrupt(creep)) {
                 creep.memory.goRenew = false;
+                delete spawn.memory.lastRenewCreep;
+                delete spawn.memory.lastRenew;
+
             }
             return false;
         }
         if (creep.ticksToLive > 1300) {
             creep.memory.goRenew = false;
+            delete spawn.memory.lastRenewCreep;
+            delete spawn.memory.lastRenew;
         }
         if (res === OK) {
             spawn.memory.lastRenewCreep = creep.name;

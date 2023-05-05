@@ -56,7 +56,8 @@ module.exports = class SourcesAspect {
                 let memory = {
                     role: miner.name,
                     target: source.id,
-                    resource: RESOURCE_ENERGY
+                    resource: RESOURCE_ENERGY,
+                    renew: true
                 };
 
                 this.roomai.spawn(parts, memory);
