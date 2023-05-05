@@ -76,12 +76,21 @@ module.exports = {
         //     }
         // }
 
-        var target;
-        if (creep.memory.lite) {
-            target = this.destination(creep);
+        let targets = [];
+        let target;
+        let room = creep.room
+        if (room && room.storage) {
+            targets = targets.concat(room && room.storage || []);
         } else {
-            target= logistic.storeFor(this.destination(creep)) || this.destination(creep);
+            targets = targets.concat(creep.room.find(FIND_STRUCTURES, {filter: (s) => storeStructures.includes(s.structureType) && _.sum(s.store) < s.storeCapacity && (s.storeCapacity - _.sum(s.store)) > _.sum(creep.store)}));
+            // console.log('targ scoo', JSON.stringify(target))
         }
+        if(targets.length > 0) {
+            var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
+            // console.log('dist', JSON.stringify(targetsByDistance))
+            target = targetsByDistance[0];
+        }
+
         // console.log('target', creep.name, JSON.stringify(target))
         let transferResult;
         transferResult = creep.transfer(target, creep.memory.resource);

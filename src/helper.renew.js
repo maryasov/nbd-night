@@ -5,7 +5,7 @@ module.exports = {
 
             switch (creep.memory.role) {
                 case 'mover':
-                    renewTimeout = 400;
+                    renewTimeout = 500;
                     break;
                 case 'miner':
                     renewTimeout = 300;
@@ -20,7 +20,7 @@ module.exports = {
                     renewTimeout = 200;
                     break;
             }
-            if (this.enoughtEnergy(creep) && creep.ticksToLive < renewTimeout && this.conditions(creep)) {
+            if (creep.ticksToLive < renewTimeout && this.conditions(creep) && this.enoughtEnergy(creep)) {
                 creep.memory.goRenew = true;
             }
         }
@@ -64,7 +64,7 @@ module.exports = {
     enoughtEnergy: function (creep) {
         let roomai = creep.room.ai();
         if (!roomai) return false;
-        let spawn = roomai.spawns.getBestRenewSpawn(creep);
+        let spawn = roomai.spawns.getBestSpawn(creep);
         if (!spawn) return
         if (creep.memory.role === 'harvester' && spawn.energyAvailable < spawn.energyCapacity * 0.8) return false;
         if (spawn.energyAvailable < spawn.energyCapacity * 0.4) {
