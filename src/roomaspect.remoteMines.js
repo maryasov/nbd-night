@@ -133,6 +133,8 @@ module.exports = class RemoteMinesAspect {
                 destination: this.room.storage.id,
                 resource: RESOURCE_ENERGY,
                 selfSustaining: true,
+                renew: true,
+                home: this.room.name,
                 registerRevenueFor: source.room.name
             };
             this.spawn(spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(missingCapacity, { workParts: 1 })), memory, source.room.name);

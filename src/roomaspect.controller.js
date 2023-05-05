@@ -42,7 +42,7 @@ module.exports = class ControllerAspect {
 
     buildUpgraders() {
         //TODO не спавнить если нет линкКоллектора
-        const mult = this.room.name == '' ? 6 : 1;
+        const mult = this.room.name == '' ? 3 : 1;
         let parts = spawnHelper.bestAvailableParts(this.room, upgrader.configsForEnergyPerTick(Math.floor(this.energyPerTick() / this.upgraderCount() * mult)));
         let spawnDuration = spawnHelper.spawnDuration(parts);
         let existingUpgraders = _.filter(spawnHelper.localCreepsWithRole(this.roomai, upgrader.name), (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
@@ -65,6 +65,7 @@ module.exports = class ControllerAspect {
 
     buildCarriers() {
         if(!this.roomai.canSpawn()) return;
+        const mult = this.room.name == '' ? 3 : 1;
 
         let controllerStore = logistic.storeFor(this.controller);
         let existingCarriers = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
@@ -78,7 +79,7 @@ module.exports = class ControllerAspect {
                 if(controllerStore === sourceStore) continue;
 
                 if(!_.any(existingCarriers, (m) => m.memory.source == source.id) && sourceStore) {
-                    this.spawnCarrier(source, 1000);
+                    this.spawnCarrier(source, 1000 * mult);
                 }
             }
         }
@@ -104,7 +105,7 @@ module.exports = class ControllerAspect {
         if(this.roomai.defense.defcon >= 4) return 1;
 
         let energy = 10;
-        const mult = this.room.name == '' ? 6 : 1;
+        const mult = this.room.name == '' ? 4 : 1;
 
         if(this.room.storage) {
             if(this.room.storage.store.energy > this.highLimit) {

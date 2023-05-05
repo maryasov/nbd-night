@@ -20,10 +20,13 @@ module.exports = {
         // if(lab) roomai.labs.setBooster(lab);
     },
     updateCostMatrix: function(matrix, block) {
+        console.log('updateCostMatrix block')
         matrix.set(block.x, block.y, 255);
     },
     addBuilding: function(memory, flag) {
         // console.log('addBuilding', JSON.stringify(flag))
+        let index = _.findIndex(memory, (p) => p.x == flag.pos.x && p.y == flag.pos.y);
+        if(index >= 0) memory.splice(index, 1);
         memory.push({ x: flag.pos.x, y: flag.pos.y });
     },
     removeBuilding: function(memory, flag) {

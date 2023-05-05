@@ -33,7 +33,7 @@ module.exports = {
             movement.leaveExit(creep);
         }
 
-        if (creep.memory.goRecycle) {
+        if (creep.memory.goRecycle && Game.rooms[creep.room.name].ai().mode !== 'way') {
             this.recycle(creep);
         }
 
@@ -47,17 +47,36 @@ module.exports = {
         // console.log('bld', JSON.stringify(Game.getObjectById(creep.memory.lastTarget)))
 
         const trg = Game.getObjectById(creep.memory.lastTarget)
-        // console.log('trg', JSON.stringify(trg))
-        if (trg && (trg.structureType == 'constructedWall')) {
-            creep.memory.lastTarget = null;
+        if (trg) {
+            if (Game.rooms[creep.room.name].ai().mode === 'way') {
+                if (trg.structureType == 'constructedWall' && trg.hits > 100000) {
+                    creep.memory.lastTarget = null;
+                    console.log(1)
+                }
+            } else {
+                if (trg.structureType == 'constructedWall') {
+                    creep.memory.lastTarget = null;
+                    console.log(2)
+                }
+            }
         }
 
         if(creep.memory.building && creep.store.energy == 0) {
             creep.memory.building = false;
             const trg = Game.getObjectById(creep.memory.lastTarget)
             // console.log('trg', JSON.stringify(trg))
-            if (trg && (trg.structureType == 'constructedWall' || trg.structureType == 'rampart')) {
-                creep.memory.lastTarget = null;
+            if (trg) {
+                if (Game.rooms[creep.room.name].ai().mode === 'way') {
+                    if (trg.structureType == 'constructedWall' && trg.hits > 100000) {
+                        creep.memory.lastTarget = null;
+                        console.log(3)
+                    }
+                } else {
+                    if (trg.structureType == 'constructedWall' || trg.structureType == 'rampart') {
+                        creep.memory.lastTarget = null;
+                        console.log(4)
+                    }
+                }
             }
         }
         if(!creep.memory.building && creep.store.energy == creep.store.getCapacity()) {
@@ -72,7 +91,7 @@ module.exports = {
         else {
             //console.log(`store: ${creep.room.storage} ${creep.room.storage.store.energy}`);
             if (creep.room.storage) {
-                if (creep.room.storage.store.energy > 500) {
+                if (creep.room.storage.store.energy > 3000) {
                     this.harvestEnergy(creep);
                 }
             } else {
@@ -123,6 +142,9 @@ module.exports = {
     },
     findNormalRepairTarget: function(creep) {
         let supplyNominal = creep.room.storage && creep.room.storage.store.energy >= 10000;
+        if (Game.rooms[creep.room.name].ai().mode === 'way') {
+            supplyNominal = true;
+        }
         var targets = creep.room.find(FIND_STRUCTURES, { filter: function(structure) {
             return structure.hits < structure.hitsMax &&
                     (supplyNominal || structure.hits < fullHealthEquiv) &&

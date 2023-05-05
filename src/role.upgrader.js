@@ -22,7 +22,7 @@ module.exports = {
         return configs;
     },
     run: function(creep) {
-        if (renew.check(creep)) return;;
+        if (renew.check(creep)) return;
 
         // if(boosting.accept(creep, "XGH2O")) return;
 

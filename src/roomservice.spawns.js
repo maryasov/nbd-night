@@ -9,11 +9,22 @@ module.exports = class Spawns {
         this.primary = this.spawns[0];
     }
 
-    getBestSpawn(parts, memory) {
+    getBestSpawn(creep) {
         let spawn = this.availableSpawnsBoosted[0];
         if (!spawn) {
             spawn = this.availableSpawns[0];
         }
+        return spawn
+    }
+    getBestRenewSpawn(creep) {
+        let spawns = _.filter(this.spawns, (s) => !s.spawning && s.effects && s.effects.length > 0);
+        if (!spawns) {
+            spawns = _.filter(this.spawns, (s) => !s.spawning)
+        }
+        const mySpawn = _.find(spawns, (r) =>r.memory.lastRenewCreep === creep.name);
+        if (mySpawn) {return mySpawn}
+        let freeSpawns = _.sortBy(spawns, (s) => - (Game.time - s.lastRenew))
+        let spawn = freeSpawns[0];
         return spawn
     }
     spawn(parts, memory) {

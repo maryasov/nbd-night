@@ -119,15 +119,6 @@ module.exports = {
         // })
         targets = targetsAll;
 
-        if(targets.length == 0) {
-            targets = creep.room.find(FIND_MY_STRUCTURES, {
-                filter: (structure) => {
-                    return structure.structureType == STRUCTURE_TOWER &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
-        }
-
         if(creep.room.storage && creep.room.storage.store.energy > 10000) {
             if(targets.length == 0 && creep.room.terminal) {
                 var terminal = creep.room.terminal;
@@ -146,7 +137,14 @@ module.exports = {
             }
         }
 
-
+        if(targets.length == 0) {
+            targets = creep.room.find(FIND_MY_STRUCTURES, {
+                filter: (structure) => {
+                    return structure.structureType == STRUCTURE_TOWER &&
+                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                }
+            });
+        }
 
         const tgsList = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
 

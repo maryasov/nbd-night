@@ -67,6 +67,8 @@ module.exports = {
     build: function(proxy, store) {
         if(store.rcl && proxy.room.controller.level < store.rcl) return;
 
+        if (Game.rooms[proxy.room.name].ai().mode === 'way') return;
+
         proxy.planConstruction(store.x, store.y, determineStoreType(proxy.room, store.link));
     },
     updateCostMatrix: function(matrix, store) {
@@ -84,6 +86,8 @@ module.exports = {
     plan: function(spaceFinder, buildings, room) {
         let result = [];
         let stores = _.filter(buildings, (b) => b.type === this.type);
+
+        if (Game.rooms[room].ai().mode = 'way') return;
 
         if(!hasStore(room.controller, stores)) {
             eachSpaceAround(room.controller, spaceFinder, (pos) => result.push({ x: pos.x, y: pos.y, link: true}));

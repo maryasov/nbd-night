@@ -254,7 +254,7 @@ module.exports = class Trading {
             if(this.room.ai().mode === "unclaim") return 30000;
             if(this.room.ai().mode === "support") return 400000;
 
-            return 600000;
+            return 400000;
         }
 
         if(this.room.ai().mode === "unclaim") return 0;

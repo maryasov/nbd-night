@@ -106,7 +106,7 @@ module.exports = class SuppliesAspect {
             if(_.any(existingMiners, (m) => m.memory.target == source.id)) {
                 // let parts = spawnHelper.bestAffordableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source)), true);
                 let parts = spawnHelper.bestAvailableParts(this.room, carrier.configsForCapacity(this.neededCollectorCapacity(source)));
-                this.roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY });
+                this.roomai.spawn(parts, { role: carrier.name, source: source.id, destination: storage.id, resource: RESOURCE_ENERGY, home: this.room.name, renew: true });
             }
         }
     }
