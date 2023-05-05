@@ -17,13 +17,17 @@ module.exports = class Spawns {
         return spawn
     }
     getBestRenewSpawn(creep) {
+        if (!this.spawns) {
+            return
+        }
         let spawns = _.filter(this.spawns, (s) => !s.spawning && s.effects && s.effects.length > 0);
-        if (!spawns) {
+        if (spawns.length == 0) {
             spawns = _.filter(this.spawns, (s) => !s.spawning)
         }
         const mySpawn = _.find(spawns, (r) =>r.memory.lastRenewCreep === creep.name);
+        // console.log('mySpawn', mySpawn)
         if (mySpawn) {return mySpawn}
-        let freeSpawns = _.sortBy(spawns, (s) => - (Game.time - s.lastRenew))
+        let freeSpawns = _.sortBy(spawns, (s) => Game.time - (s.lastRenew?s.lastRenew:Game.time))
         let spawn = freeSpawns[0];
         return spawn
     }

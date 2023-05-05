@@ -20,8 +20,15 @@ module.exports = {
                     renewTimeout = 200;
                     break;
             }
-            if (creep.ticksToLive < renewTimeout && this.conditions(creep) && this.enoughtEnergy(creep)) {
-                creep.memory.goRenew = true;
+            if (creep.ticksToLive < renewTimeout) {
+                creep.say('too old!!');
+                if (this.conditions(creep)) {
+                    creep.say('cond');
+                    if (this.enoughtEnergy(creep)) {
+                        creep.say('energy');
+                        creep.memory.goRenew = true;
+                    }
+                }
             }
         }
         if (creep.memory.goRenew) {
