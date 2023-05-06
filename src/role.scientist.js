@@ -1,9 +1,11 @@
 const spawnHelper = require('helper.spawning');
+const renew = require('helper.renew');
 
 module.exports = {
   name: 'scientist',
   parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
   run: function (creep) {
+    if (renew.check(creep)) return;
     if (!creep.room.ai()) {
       console.log('Scientist is in AI-less room ' + creep.room.name);
       return;

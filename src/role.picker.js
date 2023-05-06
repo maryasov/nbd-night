@@ -1,4 +1,5 @@
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER, STRUCTURE_LINK];
+const renew = require('helper.renew');
 
 module.exports = {
   name: 'picker',
@@ -12,6 +13,7 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (renew.check(creep)) return;
     if (creep.memory.returningHome) {
       // console.log('ret')
       this.returnHome(creep);

@@ -71,7 +71,7 @@ module.exports = class SuppliesAspect {
       // console.log('spawn harv', numHarv, parts);
     }
 
-    var memory = { role: harvester.name, source: source.id };
+    var memory = { role: harvester.name, source: source.id, renew: true, level: this.room.controller.level};
     if (ignoreReserved) {
       memory.ignoreReserved = ignoreReserved;
     }
