@@ -1,75 +1,74 @@
 const roles = [
-    require("role.harvester"),
-    require("role.miner"),
-    require("role.linkCollector"),
-    require("role.upgrader"),
-    require("role.builder"),
-    require("role.claimer"),
-    require("role.conqueror"),
-    require("role.reserver"),
-    require("role.carrier"),
-    require("role.guard"),
-    require("role.defender"),
-    require("role.ranger"),
-    require("role.reloader"),
+    require('role.harvester'),
+    require('role.miner'),
+    require('role.linkCollector'),
+    require('role.upgrader'),
+    require('role.builder'),
+    require('role.claimer'),
+    require('role.conqueror'),
+    require('role.reserver'),
+    require('role.carrier'),
+    require('role.guard'),
+    require('role.defender'),
+    require('role.ranger'),
+    require('role.reloader'),
     // require("role.flagHunter"),
-    require("role.attacker"),
-    require("role.opener"),
+    require('role.attacker'),
+    require('role.opener'),
     // require("role.dismantler"),
-    require("role.healer"),
-    require("role.hopper"),
-    require("role.observer"),
+    require('role.healer'),
+    require('role.hopper'),
+    require('role.observer'),
     // require("role.discoverer"),
-    require("role.trader"),
-    require("role.factoryWorker"),
-    require("role.picker"),
-    require("role.scooper"),
-    require("role.powerFarmer"),
-    require("role.powerRefiner"),
-    require("role.mason"),
-    require("role.mover"),
-    require("role.scientist"),
-    require("role.nukeOperator"),
+    require('role.trader'),
+    require('role.factoryWorker'),
+    require('role.picker'),
+    require('role.scooper'),
+    require('role.powerFarmer'),
+    require('role.powerRefiner'),
+    require('role.mason'),
+    require('role.mover'),
+    require('role.scientist'),
+    require('role.nukeOperator'),
     // require("role.downgrader"),
 ];
 
 const powerRoles = [
-    require("powerRole.factoryOperator"),
-    require("powerRole.terminalOperator"),
-    require("powerRole.extensionOperator"),
-    require("powerRole.labOperator"),
-    require("powerRole.spawnOperator")
+    require('powerRole.factoryOperator'),
+    require('powerRole.terminalOperator'),
+    require('powerRole.extensionOperator'),
+    require('powerRole.labOperator'),
+    require('powerRole.spawnOperator'),
 ];
 
-const ConstructionSitesCleaner = require("cleaner.constructionSites");
-const logistic = require("helper.logistic");
+const ConstructionSitesCleaner = require('cleaner.constructionSites');
+const logistic = require('helper.logistic');
 
-const globalStatistics = require("global.statistics");
-const profitVisual = require("visual.roomProfit");
+const globalStatistics = require('global.statistics');
+const profitVisual = require('visual.roomProfit');
 
-const PixelTrader = require("global.pixelTrader");
-const SegmentExport = require("global.segmentExport");
-const ShardTravel = require("global.shardTravel");
-const TradeLogger = require("global.tradeLogger");
+const PixelTrader = require('global.pixelTrader');
+const SegmentExport = require('global.segmentExport');
+const ShardTravel = require('global.shardTravel');
+const TradeLogger = require('global.tradeLogger');
 
-global.AbsolutePosition = require("global.absolutePosition");
-global.ExpansionPlanner = require("global.expansionPlanner");
-global.FriendList = require("global.friendList");
-global.MapKnowledge = require("global.mapKnowledge");
-global.RoomUI = require("global.roomui");
-global.SegmentScanner = require("global.segmentScanner");
+global.AbsolutePosition = require('global.absolutePosition');
+global.ExpansionPlanner = require('global.expansionPlanner');
+global.FriendList = require('global.friendList');
+global.MapKnowledge = require('global.mapKnowledge');
+global.RoomUI = require('global.roomui');
+global.SegmentScanner = require('global.segmentScanner');
 
-require("global.operation");
+require('global.operation');
 
-
-require("patch.controller");
-require("patch.creep");
-require("patch.powerCreep");
-require("patch.room");
+require('patch.controller');
+require('patch.creep');
+require('patch.powerCreep');
+require('patch.room');
 
 const profiler = require('screeps-profiler');
-const structureTower = require("./structure.tower");
-const movement = require("./helper.movement");
+const structureTower = require('./structure.tower');
+const movement = require('./helper.movement');
 // profiler.enable();
 
 const blockFlagRegex = /^b$/;
@@ -97,60 +96,62 @@ const roleLimit = {
     linkCollector: -35,
     miner: -50,
     trader: -5,
-}
+};
 
 const powerStop = [
-    "builder",
-    "attacker",
-    "carrier",
-    "mover",
+    'builder',
+    'attacker',
+    'carrier',
+    'mover',
     // "observer",
     // "scientist",
     // "factoryWorker",
-    "powerRefiner",
-    "harvester",
+    'powerRefiner',
+    'harvester',
     // "healer",
     // "powerFarmer",
-    "upgrader",
-    "picker",
-    "reserver",
-    "discoverer",
+    'upgrader',
+    'picker',
+    'reserver',
+    'discoverer',
     // "scooper",
-    "linkCollector",
-    "miner",
+    'linkCollector',
+    'miner',
     // "trader",
 ];
 
 function suppressErrors(callback) {
     try {
         callback();
-    } catch(error) {
+    } catch (error) {
         console.log('<span style="color: #faa">' + error.stack + '</span>');
     }
 }
 
 function runCreeps() {
     const bt = Game.cpu.bucket;
-    let free = Math.max(Math.floor((safeLimit - bt)/safeLimit * 10), 0) / 2 + 1;
-    const rls = {}
+    let free = Math.max(Math.floor(((safeLimit - bt) / safeLimit) * 10), 0) / 2 + 1;
+    const rls = {};
 
     // console.log('free', bt, free)
-    for(let role of roles) {
-
+    for (let role of roles) {
         // const workFine = [];
         // const workIdle = [];
 
         let limit = (roleLimit[role.name] || 0) + commonLimit;
 
         if (bt < limit && role.name !== 'miner') {
-            return
+            return;
         }
 
         // console.log('-', role.name, limit)
-        let creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined);
+        let creeps = _.filter(
+            Game.creeps,
+            (creep) => creep.memory.role == role.name && creep.ticksToLive !== undefined
+        );
 
         // _.sortBy(creeps, (t) => t.memory.lastTick)
-        creeps.sort((a, b)=>((a.memory.lastTick || 0)) - (b.memory.lastTick || 0))
+        creeps.sort((a, b) => (a.memory.lastTick || 0) - (b.memory.lastTick || 0));
 
         let cnt = creeps.length;
         let runLimit = cnt / free;
@@ -169,14 +170,14 @@ function runCreeps() {
         }
         let startCreeps;
         let endCreeps;
-        for(const [idx, creep] of creeps.entries()) {
-            let mustBreake = false
+        for (const [idx, creep] of creeps.entries()) {
+            let mustBreake = false;
             if (idx >= runLimit /*&& role.name !== 'miner'*/) {
                 // rls[role.name] = {}
                 // console.log('off', `role: ${role.name} cnt: ${cnt} limit: ${runLimit} free: ${free} idx: ${idx} bt: ${bt}`);
                 // console.log('off', cnt, runLimit, free, idx, bt);
                 if (!movement.isOnExit(creep)) {
-                    mustBreake = true
+                    mustBreake = true;
                 } else {
                     // movement.leaveExitRev(creep);
                     // console.log('creep', creep.memory.role, creep.pos.x, creep.pos.y);
@@ -192,9 +193,13 @@ function runCreeps() {
             if (mustBreake) {
                 continue;
             }
-            if (creepsStat) {startCreeps = Game.cpu.getUsed();}
+            if (creepsStat) {
+                startCreeps = Game.cpu.getUsed();
+            }
             suppressErrors(() => role.run(creep));
-            if (creepsStat) {endCreeps = Game.cpu.getUsed();}
+            if (creepsStat) {
+                endCreeps = Game.cpu.getUsed();
+            }
             creep.memory.lastTick = Game.time;
             if (creepsStat) {
                 creep.memory.lastUsed = endCreeps - startCreeps;
@@ -213,11 +218,11 @@ function runCreeps() {
 
     // console.log('rls', JSON.stringify(rls));
 
-    for(let roleClass of powerRoles) {
+    for (let roleClass of powerRoles) {
         let creeps = _.filter(Game.powerCreeps, (creep) => creep.memory.role == roleClass.name);
-        for(let creep of creeps) {
-            let role = new roleClass(creep)
-            if(creep.ticksToLive) {
+        for (let creep of creeps) {
+            let role = new roleClass(creep);
+            if (creep.ticksToLive) {
                 suppressErrors(() => role.run());
             } else {
                 suppressErrors(() => role.runUnspawned());
@@ -228,174 +233,184 @@ function runCreeps() {
 
 runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
-module.exports.loop = function() {
+module.exports.loop = function () {
     // profiler.wrap(function() {
-        // globalStatistics.initialize();
-        if(Memory.lastCompletedTick < Game.time - 1) {
-            Memory.stats.skippedTicks += 1;
-        }
+    // globalStatistics.initialize();
+    if (Memory.lastCompletedTick < Game.time - 1) {
+        Memory.stats.skippedTicks += 1;
+    }
 
-        bucket.push(Game.cpu.bucket);
-        if(Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
-            console.log("Bucket at " + JSON.stringify(bucket));
-            bucket = [];
-        }
+    bucket.push(Game.cpu.bucket);
+    if (Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
+        console.log('Bucket at ' + JSON.stringify(bucket));
+        bucket = [];
+    }
 
-        // if (Game.cpu.bucket < 150) {return;}
+    // if (Game.cpu.bucket < 150) {return;}
 
-        // suppressErrors(() => ShardTravel.loadArrivals());
-        // const startCreeps = Game.cpu.getUsed();
-        runCreeps();
-        // if (Game.cpu.getUsed() < 5) {
-        //     runCreeps();
+    // suppressErrors(() => ShardTravel.loadArrivals());
+    // const startCreeps = Game.cpu.getUsed();
+    runCreeps();
+    // if (Game.cpu.getUsed() < 5) {
+    //     runCreeps();
+    // }
+    // const endCreeps = Game.cpu.getUsed();
+    // console.log(`Creeps time: ${endCreeps - startCreeps} ms`);
+    // suppressErrors(() => ShardTravel.announceDepartures());
+
+    // const gbt = Game.cpu.bucket;
+    // let gfree = Math.max(Math.floor((1000 - bt)/10), 0) + 1;
+
+    // const startLinks = Game.cpu.getUsed();
+    for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
+        // if (roomName === 'W8N7') {
+        //     console.log('loop')
         // }
-        // const endCreeps = Game.cpu.getUsed();
-        // console.log(`Creeps time: ${endCreeps - startCreeps} ms`);
-        // suppressErrors(() => ShardTravel.announceDepartures());
+        if (room.aiLite()) {
+            suppressErrors(() => room.aiLite().run());
+        }
+        if (room.ai()) {
+            suppressErrors(() => room.ai().runLite());
+        }
+    }
+    // const endLinks = Game.cpu.getUsed();
+    // console.log(`Links time: ${endLinks - startLinks} ms`);
 
-        // const gbt = Game.cpu.bucket;
-        // let gfree = Math.max(Math.floor((1000 - bt)/10), 0) + 1;
-
-        // const startLinks = Game.cpu.getUsed();
-        for(let roomName in Game.rooms) {
+    if (Game.cpu.bucket > 100) {
+        // const startTowers = Game.cpu.getUsed();
+        for (let roomName in Game.rooms) {
             let room = Game.rooms[roomName];
-            // if (roomName === 'W8N7') {
-            //     console.log('loop')
-            // }
-            if(room.aiLite()) {
-                suppressErrors(() => room.aiLite().run());
-            }
-            if(room.ai()) {
-                suppressErrors(() => room.ai().runLite());
+
+            for (let tower of room.find(FIND_MY_STRUCTURES, {
+                filter: (structure) => structure.structureType == STRUCTURE_TOWER,
+            })) {
+                structureTower.run(tower);
             }
         }
-        // const endLinks = Game.cpu.getUsed();
-        // console.log(`Links time: ${endLinks - startLinks} ms`);
+        // const endTowers = Game.cpu.getUsed();
+        // console.log(`Towers time: ${endTowers - startTowers} ms`);
+    }
 
-        if (Game.cpu.bucket > 100) {
-            // const startTowers = Game.cpu.getUsed();
-            for (let roomName in Game.rooms) {
-                let room = Game.rooms[roomName];
+    if (Game.time % 100 == 51) {
+        for (let name in Memory.creeps) {
+            if (!Game.creeps[name]) {
+                delete Memory.creeps[name];
+            }
+        }
+    }
 
-                for (let tower of room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER})) {
-                    structureTower.run(tower);
+    if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
+
+    if (Game.cpu.bucket < (Memory.powerOperation ? 500 : 230)) {
+        return;
+    }
+
+    // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
+
+    if (Game.cpu.bucket < 1000 && Game.time % 10 !== 1) return;
+
+    // console.log('Game.time % 2', Game.time % 2)
+
+    if (Game.time % 10000 === 0) {
+        logistic.cleanupCaches();
+    }
+
+    // console.log('Game.time % 10', Game.time % 10, Game.time % 100)
+
+    for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
+        const _flags = room.find(FIND_FLAGS);
+        let resultsExits = _.filter(
+            _.map(_flags, (f) => ({ match: exitFlagRegex.exec(f.name), flag: f })),
+            (m) => m.match
+        );
+
+        for (let result of resultsExits) {
+            if (result.flag.color === 1) {
+                const roomName = result.flag.room.name;
+                const flagPos = result.flag.pos;
+                if (Memory.rooms[roomName] === undefined) {
+                    Memory.rooms[roomName] = {};
                 }
-            }
-            // const endTowers = Game.cpu.getUsed();
-            // console.log(`Towers time: ${endTowers - startTowers} ms`);
-        }
-
-        if(Game.time % 100 == 51) {
-            for(let name in Memory.creeps) {
-                if(!Game.creeps[name]) {
-                    delete Memory.creeps[name];
+                if (Memory.rooms[roomName].exits === undefined) {
+                    Memory.rooms[roomName].exits = [];
                 }
+                Memory.rooms[roomName].exits = _.filter(
+                    Memory.rooms[roomName].exits,
+                    (b) => b.x !== flagPos.x || b.y !== flagPos.y
+                );
+                Memory.rooms[roomName].exits.push({ x: flagPos.x, y: flagPos.y });
             }
-        }
-
-        if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
-
-        if (Game.cpu.bucket < (Memory.powerOperation ? 500:230)) {return;}
-
-
-
-        // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
-
-        if(Game.cpu.bucket < 1000 && Game.time % 10 !== 1) return;
-
-        // console.log('Game.time % 2', Game.time % 2)
-
-        if(Game.time % 10000 === 0) {
-            logistic.cleanupCaches();
-        }
-
-        // console.log('Game.time % 10', Game.time % 10, Game.time % 100)
-
-
-        for(let roomName in Game.rooms) {
-            let room = Game.rooms[roomName];
-            const _flags = room.find(FIND_FLAGS);
-            let resultsExits = _.filter(_.map(_flags, (f) => ({ match: exitFlagRegex.exec(f.name), flag: f })), (m) => m.match);
-
-            for(let result of resultsExits) {
-                if (result.flag.color === 1) {
-                    const roomName = result.flag.room.name;
-                    const flagPos = result.flag.pos
-                    if (Memory.rooms[roomName] === undefined) {
-                        Memory.rooms[roomName] = {};
-                    }
-                    if (Memory.rooms[roomName].exits === undefined) {
-                        Memory.rooms[roomName].exits = [];
-                    }
-                    Memory.rooms[roomName].exits = _.filter(Memory.rooms[roomName].exits, (b)=> b.x !== flagPos.x || b.y !== flagPos.y);
-                    Memory.rooms[roomName].exits.push({x: flagPos.x, y: flagPos.y});
+            if (result.flag.color === 10) {
+                const roomName = result.flag.room.name;
+                const flagPos = result.flag.pos;
+                if (Memory.rooms[roomName] === undefined) {
+                    Memory.rooms[roomName] = {};
                 }
-                if (result.flag.color === 10) {
-                    const roomName = result.flag.room.name;
-                    const flagPos = result.flag.pos
-                    if (Memory.rooms[roomName] === undefined) {
-                        Memory.rooms[roomName] = {};
-                    }
-                    if (Memory.rooms[roomName].exits === undefined) {
-                        Memory.rooms[roomName].exits = [];
-                    }
-                    Memory.rooms[roomName].exits = _.filter(Memory.rooms[roomName].exits, (b)=> b.x !== flagPos.x || b.y !== flagPos.y);
+                if (Memory.rooms[roomName].exits === undefined) {
+                    Memory.rooms[roomName].exits = [];
                 }
-                result.flag.remove();
+                Memory.rooms[roomName].exits = _.filter(
+                    Memory.rooms[roomName].exits,
+                    (b) => b.x !== flagPos.x || b.y !== flagPos.y
+                );
             }
+            result.flag.remove();
         }
+    }
 
-        if (Memory.enableAutoExpansion) {
-            suppressErrors(() => MapKnowledge.updateKnowledge());
-        }
+    if (Memory.enableAutoExpansion) {
+        suppressErrors(() => MapKnowledge.updateKnowledge());
+    }
 
-        suppressErrors(() => new SegmentScanner().run());
+    suppressErrors(() => new SegmentScanner().run());
 
-        for(let operation of Operation.operations) {
-            suppressErrors(() => operation.run());
-        }
+    for (let operation of Operation.operations) {
+        suppressErrors(() => operation.run());
+    }
 
     // console.log('rooms', JSON.stringify(Game.rooms))
-        for(let roomName in Game.rooms) {
-            let room = Game.rooms[roomName];
-            if(room.ai()) {
-                suppressErrors(() => room.ai().run());
-            }
+    for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
+        if (room.ai()) {
+            suppressErrors(() => room.ai().run());
         }
+    }
 
-        new ConstructionSitesCleaner().run();
+    new ConstructionSitesCleaner().run();
 
-        suppressErrors(() => new ExpansionPlanner().run());
+    suppressErrors(() => new ExpansionPlanner().run());
 
-        suppressErrors(() => new TradeLogger().logTrades());
-        suppressErrors(() => new PixelTrader().run());
+    suppressErrors(() => new TradeLogger().logTrades());
+    suppressErrors(() => new PixelTrader().run());
 
-        for(let operation of Operation.operations) {
-            suppressErrors(() => operation.drawVisuals());
-        }
+    for (let operation of Operation.operations) {
+        suppressErrors(() => operation.drawVisuals());
+    }
 
-        suppressErrors(() => new SegmentExport().run());
+    suppressErrors(() => new SegmentExport().run());
 
-        for(let ui of RoomUI.all) {
-            suppressErrors(() => ui.render());
-        }
+    for (let ui of RoomUI.all) {
+        suppressErrors(() => ui.render());
+    }
 
-        // suppressErrors(() => MapKnowledge.drawMapVisuals());
-        suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
+    // suppressErrors(() => MapKnowledge.drawMapVisuals());
+    suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
 
-        if(Memory.generatePixels && Game.cpu.bucket >= 9999) {
-            Game.cpu.generatePixel();
-        }
+    if (Memory.generatePixels && Game.cpu.bucket >= 9999) {
+        Game.cpu.generatePixel();
+    }
 
-        ExpansionPlanner.sampleCpuUsage();
+    ExpansionPlanner.sampleCpuUsage();
 
-        globalStatistics.run();
-        profitVisual.run();
+    globalStatistics.run();
+    profitVisual.run();
 
-        RawMemory.setActiveSegments([98, 99]);
-        RawMemory.setPublicSegments([98]);
-        RawMemory.setDefaultPublicSegment(98);
+    RawMemory.setActiveSegments([98, 99]);
+    RawMemory.setPublicSegments([98]);
+    RawMemory.setDefaultPublicSegment(98);
 
-        Memory.lastCompletedTick = Game.time;
+    Memory.lastCompletedTick = Game.time;
     // });
-}
+};

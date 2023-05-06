@@ -72,7 +72,7 @@ function getFilter() {
 const functionBlackList = [
   'getUsed', // Let's avoid wrapping this... may lead to recursion issues and should be inexpensive.
   'constructor', // es6 class constructors need to be called with `new`
-  'emergencyHitpoints' // own method. It is cheap, but called very often...
+  'emergencyHitpoints', // own method. It is cheap, but called very often...
 ];
 
 function wrapFunction(name, originalFunction) {
@@ -99,7 +99,7 @@ function wrapFunction(name, originalFunction) {
 }
 
 function hookUpPrototypes() {
-  Profiler.prototypes.forEach(proto => {
+  Profiler.prototypes.forEach((proto) => {
     profileObjectFunctions(proto.val, proto.name);
   });
 }
@@ -107,7 +107,7 @@ function hookUpPrototypes() {
 function profileObjectFunctions(object, label) {
   const objectToWrap = object.prototype ? object.prototype : object;
 
-  Object.getOwnPropertyNames(objectToWrap).forEach(functionName => {
+  Object.getOwnPropertyNames(objectToWrap).forEach((functionName) => {
     const extendedLabel = `${label}.${functionName}`;
     try {
       const isFunction = typeof objectToWrap[functionName] === 'function';
@@ -116,7 +116,7 @@ function profileObjectFunctions(object, label) {
         const originalFunction = objectToWrap[functionName];
         objectToWrap[functionName] = profileFunction(originalFunction, extendedLabel);
       }
-    } catch (e) { } /* eslint no-empty:0 */
+    } catch (e) {} /* eslint no-empty:0 */
   });
 
   return objectToWrap;
@@ -125,7 +125,7 @@ function profileObjectFunctions(object, label) {
 function profileFunction(fn, functionName) {
   const fnName = functionName || fn.name;
   if (!fnName) {
-    console.log('Couldn\'t find a function name for - ', fn);
+    console.log("Couldn't find a function name for - ", fn);
     console.log('Will not profile this function.');
     return fn;
   }
@@ -159,25 +159,22 @@ const Profiler = {
   },
 
   lines() {
-    const stats = Object.keys(Memory.profiler.map).map(functionName => {
-      const functionCalls = Memory.profiler.map[functionName];
-      return {
-        name: functionName,
-        calls: functionCalls.calls,
-        totalTime: functionCalls.time,
-        averageTime: functionCalls.time / functionCalls.calls,
-      };
-    }).sort((val1, val2) => {
-      return val2.totalTime - val1.totalTime;
-    });
+    const stats = Object.keys(Memory.profiler.map)
+      .map((functionName) => {
+        const functionCalls = Memory.profiler.map[functionName];
+        return {
+          name: functionName,
+          calls: functionCalls.calls,
+          totalTime: functionCalls.time,
+          averageTime: functionCalls.time / functionCalls.calls,
+        };
+      })
+      .sort((val1, val2) => {
+        return val2.totalTime - val1.totalTime;
+      });
 
-    const lines = stats.map(data => {
-      return [
-        data.calls,
-        data.totalTime.toFixed(1),
-        data.averageTime.toFixed(3),
-        data.name,
-      ].join('\t\t');
+    const lines = stats.map((data) => {
+      return [data.calls, data.totalTime.toFixed(1), data.averageTime.toFixed(3), data.name].join('\t\t');
     });
 
     return lines;
