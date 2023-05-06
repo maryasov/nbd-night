@@ -20,17 +20,19 @@ module.exports = class Spawns {
         if (!this.spawns) {
             return
         }
-        let spawns = _.filter(this.spawns, (s) => !s.spawning && s.effects && s.effects.length > 0);
-        if (spawns.length == 0) {
-            spawns = _.filter(this.spawns, (s) => !s.spawning)
-        }
+            let spawns = _.filter(this.spawns, (s) => !s.spawning)
         const mySpawn = _.find(spawns, (r) =>r.memory.lastRenewCreep === creep.name);
         // console.log('mySpawn', mySpawn)
         if (mySpawn) {
             // if (creep.room.name === 'W9N9') console.log('my', creep.room.name, creep.name, mySpawn.name);
             return mySpawn
         }
-        let freeSpawns = _.sortBy(spawns, (s) => -(Game.time - (s.memory.lastRenew?s.memory.lastRenew:Game.time-100)))
+        let freeSpawns = _.sortBy(spawns, (s) => {
+            const effect = s.effects && s.effects.length > 0 ? 2:1
+            const shift = s.memory.lastRenew?s.memory.lastRenew:Game.time-10
+            const shiftNorm = (Game.time - shift) > 10?10:Game.time - shift
+            return - shiftNorm * effect;
+        })
         // let fs = _.map(freeSpawns, (p,i) => p.name+' '+i+ ' '+(Game.time - (p.memory.lastRenew?p.memory.lastRenew:Game.time-100)))
         // if (creep.room.name === 'W9N9') console.log('fs', creep.room.name, creep.name, fs.join(','))
         let spawn = freeSpawns[0];
