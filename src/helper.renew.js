@@ -89,6 +89,11 @@ module.exports = {
   },
   conditions: function (creep) {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;
+    if (
+      creep.memory.role === 'harvester' &&
+      (creep.memory.level !== creep.room.controller.level || creep.memory.affordable)
+    )
+      return false;
     if (creep.memory.role === 'carrier' && creep.memory.home !== creep.room.name) return false;
     return true;
   },

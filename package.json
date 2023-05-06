@@ -15,7 +15,8 @@
     "uploadMax": "grunt screeps --user=max",
     "uploadDis": "grunt screeps --user=dis",
     "uploadDan": "grunt screeps --user=dan",
-    "local": "grunt private"
+    "local": "grunt private",
+    "prettier": "prettier --write ./src"
   },
   "devDependencies": {
     "prettier": "^2.8.8",

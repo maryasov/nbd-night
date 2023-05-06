@@ -58,12 +58,15 @@ module.exports = class SuppliesAspect {
     var parts = null;
     var numHarv = spawnHelper.numberOfLocalCreeps(this.roomai, harvester.name);
     var ignoreReserved = false;
+    var affordable = false;
     if (numHarv == 0) {
       if (Memory.rooms[this.room.name].failBuildHarvester > 20) {
         parts = spawnHelper.bestAffordableParts(this.room, partConfigsMine);
+        affordable = true;
         ignoreReserved = true;
       } else {
         parts = spawnHelper.bestAffordableParts(this.room, partConfigs);
+        affordable = true;
       }
       // console.log('spawn harv', numHarv, JSON.stringify(parts));
     } else {
@@ -71,7 +74,13 @@ module.exports = class SuppliesAspect {
       // console.log('spawn harv', numHarv, parts);
     }
 
-    var memory = { role: harvester.name, source: source.id, renew: true, level: this.room.controller.level};
+    var memory = {
+      role: harvester.name,
+      source: source.id,
+      renew: true,
+      level: this.room.controller.level,
+      affordable: affordable,
+    };
     if (ignoreReserved) {
       memory.ignoreReserved = ignoreReserved;
     }
@@ -137,7 +146,7 @@ module.exports = class SuppliesAspect {
       return;
     }
 
-    this.roomai.spawn(linkCollector.parts, { role: linkCollector.name });
+    this.roomai.spawn(linkCollector.parts, { role: linkCollector.name, renew: true });
   }
 };
 
