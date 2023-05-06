@@ -26,8 +26,13 @@ module.exports = class Spawns {
         }
         const mySpawn = _.find(spawns, (r) =>r.memory.lastRenewCreep === creep.name);
         // console.log('mySpawn', mySpawn)
-        if (mySpawn) {return mySpawn}
-        let freeSpawns = _.sortBy(spawns, (s) => -(Game.time - (s.lastRenew?s.lastRenew:Game.time-50)))
+        if (mySpawn) {
+            // if (creep.room.name === 'W9N9') console.log('my', creep.room.name, creep.name, mySpawn.name);
+            return mySpawn
+        }
+        let freeSpawns = _.sortBy(spawns, (s) => -(Game.time - (s.memory.lastRenew?s.memory.lastRenew:Game.time-100)))
+        // let fs = _.map(freeSpawns, (p,i) => p.name+' '+i+ ' '+(Game.time - (p.memory.lastRenew?p.memory.lastRenew:Game.time-100)))
+        // if (creep.room.name === 'W9N9') console.log('fs', creep.room.name, creep.name, fs.join(','))
         let spawn = freeSpawns[0];
         return spawn
     }
