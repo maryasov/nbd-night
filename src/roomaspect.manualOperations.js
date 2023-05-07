@@ -18,6 +18,7 @@ module.exports = class ManualOperationsAspect {
     );
     // console.log('chk mo', this.room.name, JSON.stringify(results));
     for (let result of results) {
+      // console.log('flag', JSON.stringify(result));
       let opName = result.match[1].toLowerCase();
       let opId = result.match[2];
       let targetFlag = Game.flags[opName + opId];

@@ -5,6 +5,7 @@ module.exports = class Observer {
         queue: [],
       };
     }
+    this.room = room;
 
     this.memory = room.memory.observer;
     this.observer = room.find(FIND_MY_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_OBSERVER })[0];
@@ -24,6 +25,7 @@ module.exports = class Observer {
     if (_.any(this.memory.queue, (r) => r === roomName)) return;
 
     this.memory.queue.push(roomName);
+
   }
 
   performObservation() {
@@ -37,7 +39,7 @@ module.exports = class Observer {
       this.memory.queue.push(target);
       console.log('Observer ' + this.observer.room.name + ': Got unexpected result ' + result);
     } else {
-      //console.log('Observed', target)
+      // console.log('Observed', target)
     }
   }
 };

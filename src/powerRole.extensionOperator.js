@@ -94,6 +94,8 @@ module.exports = class ExtensionOperator {
     const room = roomai.room;
     let storage = room.storage;
     if (!storage) return;
+    let extFull = this.extentionsFull();
+    if (extFull < 30) return;
 
     let powerMetadata = POWER_INFO[PWR_OPERATE_EXTENSION];
 
@@ -113,6 +115,20 @@ module.exports = class ExtensionOperator {
       this.creep.goTo(storage, { range: powerMetadata.range });
       return true;
     }
+  }
+
+  extentionsFull() {
+    let roomai = this.creep.room.ai();
+    if (!roomai) return false;
+    let extentions = roomai.spawns.getAllExtentions();
+    if (!extentions) return;
+    let allCapacity = 0;
+    let freeCapacity = 0;
+    _.forEach(extentions, (ext) => {
+      allCapacity += ext.energyCapacity;
+      freeCapacity += ext.energyCapacity - ext.energy;
+    });
+    return Math.floor((freeCapacity * 100) / allCapacity);
   }
 
   getOps() {

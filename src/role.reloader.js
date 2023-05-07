@@ -1,10 +1,12 @@
 const spawnHelper = require('helper.spawning');
+const renew = require('helper.renew');
 
 module.exports = {
   //TODO if has towers
   name: 'reloader',
   parts: spawnHelper.makeParts(12, CARRY, 6, MOVE),
   run: function (creep) {
+    if (renew.check(creep)) return;
     if (!creep.room.storage) {
       return;
     }

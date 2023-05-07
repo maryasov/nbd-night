@@ -282,6 +282,9 @@ module.exports = class Labs {
     );
     return this.pureLabs;
   }
+  getBoosters() {
+    return this.boosters;
+  }
 
   requestBoost(compound, priority) {
     this.boostPriorities[compound] = Math.max(priority, this.boostPriorities[compound] || 0);

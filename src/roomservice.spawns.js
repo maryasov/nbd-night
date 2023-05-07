@@ -138,6 +138,13 @@ module.exports = class Spawns {
 
     return this._energyStructures;
   }
+
+  getAllExtentions() {
+    let targets = this.room.find(FIND_MY_STRUCTURES, {
+      filter: (structure) => structure.structureType == STRUCTURE_EXTENSION,
+    });
+    return targets
+  }
 };
 
 const profiler = require('screeps-profiler');
