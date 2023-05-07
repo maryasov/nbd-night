@@ -43,12 +43,10 @@ module.exports = class PowerMinesAspect {
           powerFlag = this.addFlag(this.room.name, mineRoom, powerBank.pos);
         }
         if (powerFlag) {
-          if (powerBank.hits > 800) {
-            powerFlag.memory.status = 'bank';
-            powerFlag.setColor(colors['bank'],colors['bank']);
+          if (powerBank.hits > 800000) {
+            this.setFlagStatus(powerFlag, 'bank');
           } else {
-            powerFlag.memory.status = 'scoop';
-            powerFlag.setColor(colors['scoop'],colors['scoop']);
+            this.setFlagStatus(powerFlag, 'scoop');
           }
         }
       }
@@ -58,8 +56,7 @@ module.exports = class PowerMinesAspect {
           powerFlag = this.addFlag(this.room.name, mineRoom, powerRuin.pos);
         }
         if (powerFlag) {
-          powerFlag.memory.status = 'ruin';
-          powerFlag.setColor(colors['ruin'],colors['ruin']);
+          this.setFlagStatus(powerFlag, 'ruin');
         }
       }
 
@@ -68,8 +65,7 @@ module.exports = class PowerMinesAspect {
           powerFlag = this.addFlag(this.room.name, mineRoom, powerDroped.pos);
         }
         if (powerFlag) {
-          powerFlag.memory.status = 'droped';
-          powerFlag.setColor(colors['droped'],colors['droped']);
+          this.setFlagStatus(powerFlag, 'droped');
         }
       }
 
@@ -99,7 +95,7 @@ module.exports = class PowerMinesAspect {
     // console.log(JSON.stringify(cond))
     if (cond) {
       let tryName = 'autoPower' + room.name;
-      let flagName = room.createFlag(pos, tryName, 1, 1);
+      let flagName = room.createFlag(pos, tryName, 10, 10);
       // console.log('af', flagName)
       if (flagName === ERR_NAME_EXISTS) flagName = tryName;
       let powerFlag = Game.flags[flagName];
@@ -116,6 +112,14 @@ module.exports = class PowerMinesAspect {
   removeFlag(powerFlag) {
     // this.room.memory.activeMines = _.reject(this.room.memory.activeMines, (r) => r.id === powerFlag.memory.id)
     powerFlag.remove();
+  }
+  setFlagStatus(powerFlag, status) {
+    if (powerFlag.memory.status !== status ) {
+      powerFlag.memory.status = status;
+    }
+    if (powerFlag.color !== colors[status] ) {
+      powerFlag.setColor(colors[status],colors[status])
+    }
   }
   condition(room) {
     let boosters = this.roomai.labs.getBoosters();
