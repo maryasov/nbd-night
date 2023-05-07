@@ -20,7 +20,7 @@ module.exports = class PowerMinesAspect {
       let powerDroped =
         mineRoom && mineRoom.find(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType === 'power' }).shift();
 
-      console.log('', mineRoom.name, powerBank, powerRuin, powerDroped);
+      // console.log('', this.room.name, mineRoom.name, powerBank, powerRuin, powerDroped);
       let powerFlag =
         mineRoom &&
         mineRoom
@@ -71,7 +71,10 @@ module.exports = class PowerMinesAspect {
 
     if (this.roomai.observer.isAvailable() /* && Memory.activeMines.length < Memory.powerMinesLimit*/) {
       _.forEach(this.powerMines, (powerMine) => {
-        this.roomai.observer.observeLater(powerMine);
+        let visible = Game.rooms[powerMine];
+        if (!visible) {
+          this.roomai.observer.observeLater(powerMine);
+        }
       });
     }
   }
@@ -114,15 +117,15 @@ module.exports = class PowerMinesAspect {
     let powerBank =
       room && room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
-    console.log(
-      'cond',
-      Memory.activeMines.length < Memory.powerMinesLimit,
-      minerBoostCount >= 3000,
-      healerBoostCount >= 3000,
-      scooperBoostCount >= 3000,
-      powerBank.ticksToDecay > 1000 + distance,
-      powerBank.power > 3000
-    );
+    // console.log(
+    //   'cond',
+    //   Memory.activeMines.length < Memory.powerMinesLimit,
+    //   minerBoostCount >= 3000,
+    //   healerBoostCount >= 3000,
+    //   scooperBoostCount >= 3000,
+    //   powerBank.ticksToDecay > 1000 + distance,
+    //   powerBank.power > 3000
+    // );
     if (
       Memory.activeMines.length < Memory.powerMinesLimit &&
       minerBoostCount >= 3000 &&
