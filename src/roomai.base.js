@@ -1,6 +1,5 @@
 const aspectsLite = [
   require('roomaspect.controller'),
-  require('roomaspect.powerMines'),
   require('roomaspect.powerOperation'),
   require('roomaspect.manualOperations'),
   require('roomaspect.power'),
@@ -13,6 +12,7 @@ const aspects = [
   require('roomaspect.defense'),
   require('roomaspect.builders'),
   require('roomaspect.trading'),
+  require('roomaspect.powerMines'),
   require('roomaspect.scooper'),
   require('roomaspect.minerals'),
   require('roomaspect.remoteMines'),
