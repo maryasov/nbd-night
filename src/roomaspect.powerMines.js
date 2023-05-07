@@ -1,4 +1,11 @@
 const autopowerFlagRegex = /^autoPower([0-9]+)$/;
+const colors = {
+  bank: 3,
+  scoop: 5,
+  ruin: 6,
+  drop: 7,
+  enemy: 1,
+};
 module.exports = class PowerMinesAspect {
   constructor(roomai) {
     this.roomai = roomai;
@@ -20,7 +27,6 @@ module.exports = class PowerMinesAspect {
       let powerDroped =
         mineRoom && mineRoom.find(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType === 'power' }).shift();
 
-      // console.log('', this.room.name, mineRoom.name, powerBank, powerRuin, powerDroped);
       let powerFlag =
         mineRoom &&
         mineRoom
@@ -30,12 +36,20 @@ module.exports = class PowerMinesAspect {
           })
           .shift();
 
+      // console.log('', this.room.name, mineRoom.name, powerBank, powerRuin, powerDroped, powerFlag);
+
       if (powerBank) {
         if (!powerFlag) {
           powerFlag = this.addFlag(this.room.name, mineRoom, powerBank.pos);
         }
         if (powerFlag) {
-          powerFlag.memory.status = 'bank';
+          if (powerBank.hits > 800) {
+            powerFlag.memory.status = 'bank';
+            powerFlag.setColor(colors['bank'],colors['bank']);
+          } else {
+            powerFlag.memory.status = 'scoop';
+            powerFlag.setColor(colors['scoop'],colors['scoop']);
+          }
         }
       }
 
@@ -45,6 +59,7 @@ module.exports = class PowerMinesAspect {
         }
         if (powerFlag) {
           powerFlag.memory.status = 'ruin';
+          powerFlag.setColor(colors['ruin'],colors['ruin']);
         }
       }
 
@@ -54,6 +69,7 @@ module.exports = class PowerMinesAspect {
         }
         if (powerFlag) {
           powerFlag.memory.status = 'droped';
+          powerFlag.setColor(colors['droped'],colors['droped']);
         }
       }
 
@@ -117,15 +133,16 @@ module.exports = class PowerMinesAspect {
     let powerBank =
       room && room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
-    // console.log(
-    //   'cond',
-    //   Memory.activeMines.length < Memory.powerMinesLimit,
-    //   minerBoostCount >= 3000,
-    //   healerBoostCount >= 3000,
-    //   scooperBoostCount >= 3000,
-    //   powerBank.ticksToDecay > 1000 + distance,
-    //   powerBank.power > 3000
-    // );
+    console.log(
+      'cond',
+      room,
+      Memory.activeMines.length < Memory.powerMinesLimit,
+      minerBoostCount >= 3000,
+      healerBoostCount >= 3000,
+      scooperBoostCount >= 3000,
+      powerBank.ticksToDecay > 1000 + distance,
+      powerBank.power > 3000
+    );
     if (
       Memory.activeMines.length < Memory.powerMinesLimit &&
       minerBoostCount >= 3000 &&

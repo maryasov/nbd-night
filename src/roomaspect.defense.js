@@ -55,6 +55,26 @@ module.exports = class DefenseAspect {
       this.roomai.labs.requestBoost('XKH2O', 78);
     }
 
+    if (spawnHelper.localCreepsWithRole(this.roomai, reloader.name).length < 1 && this.room.controller.level >= 4) {
+      let towers = this.room.find(FIND_MY_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_TOWER,
+          })
+
+      let allCapacity = 0;
+      let freeCapacity = 0;
+      _.forEach(towers, (tower) => {
+        // console.log('tow', JSON.stringify(tower))
+        allCapacity += tower.energyCapacity;
+        freeCapacity += tower.energyCapacity - tower.energy;
+      });
+      let perc = Math.floor((freeCapacity * 100) / allCapacity)
+      // console.log('rel', allCapacity, freeCapacity, perc)
+      if (perc > 40) {
+        this.roomai.spawn(reloader.parts, { role: reloader.name, renew: true });
+      }
+    }
+
+
     if (this.defense.defcon < 1) return;
 
     if (!this.roomai.canSpawn()) return;

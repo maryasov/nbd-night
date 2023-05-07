@@ -121,8 +121,12 @@ module.exports = {
     }
 
     let constructions = _.sortBy(creep.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.pos.getRangeTo(creep.pos));
-    let target = this.getAllTargets(creep, constructions);
-    // let target = this.getConstructionTargets(creep, constructions);
+    let target;
+    if (Game.rooms[creep.room.name].ai().mode === 'way') {
+      target = this.getAllTargets(creep, constructions);
+    } else {
+      target = this.getConstructionTargets(creep, constructions);
+    }
 
     return target;
   },

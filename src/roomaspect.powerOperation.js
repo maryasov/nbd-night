@@ -25,7 +25,7 @@ module.exports = class ManualOperationsAspect {
           // console.log('man', this.room, room, opName, opId, targetFlag, targetFlag.color, JSON.stringify(spawnFlag));
           // console.log('targetFlag', JSON.stringify(targetFlag))
           if (operation && targetFlag) {
-            new operation(this.roomai, targetFlag, targetFlag && targetFlag.color, opId).run();
+            new operation(this.roomai, targetFlag, 1, opId).run();
           }
         }
 
