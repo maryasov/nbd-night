@@ -22,7 +22,7 @@ module.exports = {
       }
       if (creep.ticksToLive < renewTimeout) {
         if (this.conditions(creep)) {
-          creep.say("I'm too old'! 😨");
+          creep.say("Too old! 😨");
           if (this.enoughtEnergy(creep)) {
             creep.memory.goRenew = true;
           }

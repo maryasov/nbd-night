@@ -20,7 +20,7 @@ module.exports = class PowerMinesAspect {
       let powerDroped =
         mineRoom && mineRoom.find(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType === 'power' }).shift();
 
-      // console.log('', mineRoom.name, powerBank, powerRuin, powerDroped);
+      console.log('', mineRoom.name, powerBank, powerRuin, powerDroped);
       let powerFlag =
         mineRoom &&
         mineRoom
@@ -78,7 +78,7 @@ module.exports = class PowerMinesAspect {
   addFlag(support, room, pos) {
     let cond = this.condition(room);
     // console.log(JSON.stringify(cond))
-    if (Memory.activeMines.length < Memory.powerMinesLimit && cond) {
+    if (cond) {
       let tryName = 'autoPower' + room.name;
       let flagName = room.createFlag(pos, tryName, 1, 1);
       // console.log('af', flagName)
@@ -114,8 +114,17 @@ module.exports = class PowerMinesAspect {
     let powerBank =
       room && room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
-    // console.log('powerBank', powerBank)
+    console.log(
+      'cond',
+      Memory.activeMines.length < Memory.powerMinesLimit,
+      minerBoostCount >= 3000,
+      healerBoostCount >= 3000,
+      scooperBoostCount >= 3000,
+      powerBank.ticksToDecay > 1000 + distance,
+      powerBank.power > 3000
+    );
     if (
+      Memory.activeMines.length < Memory.powerMinesLimit &&
       minerBoostCount >= 3000 &&
       healerBoostCount >= 3000 &&
       scooperBoostCount >= 3000 &&
