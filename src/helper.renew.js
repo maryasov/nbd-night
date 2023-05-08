@@ -22,7 +22,7 @@ module.exports = {
       }
       if (creep.ticksToLive < renewTimeout) {
         if (this.conditions(creep)) {
-          creep.say("Too old! 😨");
+          // creep.say("Too old! 😨");
           if (this.enoughtEnergy(creep)) {
             creep.memory.goRenew = true;
           }
@@ -30,6 +30,7 @@ module.exports = {
       }
     }
     if (creep.memory.goRenew) {
+      creep.say("Too old! 💀");
       if (this.renew(creep)) return true;
     }
   },
@@ -85,6 +86,7 @@ module.exports = {
   },
   canInterrupt: function (creep) {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;
+    if (creep.memory.role === 'carrier' && creep.memory.home !== creep.room.name) return false;
     return true;
   },
   conditions: function (creep) {

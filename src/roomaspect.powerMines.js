@@ -137,16 +137,16 @@ module.exports = class PowerMinesAspect {
     let powerBank =
       room && room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_POWER_BANK }).shift();
 
-    console.log(
-      'cond',
-      room,
-      Memory.activeMines.length < Memory.powerMinesLimit,
-      minerBoostCount >= 3000,
-      healerBoostCount >= 3000,
-      scooperBoostCount >= 3000,
-      powerBank.ticksToDecay > 1000 + distance,
-      powerBank.power > 3000
-    );
+    // console.log(
+    //   'cond',
+    //   room,
+    //   Memory.activeMines.length < Memory.powerMinesLimit,
+    //   minerBoostCount >= 3000,
+    //   healerBoostCount >= 3000,
+    //   scooperBoostCount >= 3000,
+    //   powerBank.ticksToDecay > 1000 + distance,
+    //   powerBank.power > 3000
+    // );
     if (
       Memory.activeMines.length < Memory.powerMinesLimit &&
       minerBoostCount >= 3000 &&

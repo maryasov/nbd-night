@@ -28,6 +28,8 @@ module.exports = class ExtensionOperator {
   findPosition() {
     let room = this.creep.room;
     let positions = room.memory.virtuals['powerPosition'];
+    positions = _.filter(positions, (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos.x === pos.x && pc.pos.y === pos.y));
+
     if (!positions) return;
     const byDist = _.sortBy(positions, (t) => this.creep.pos.getRangeTo(this.creep.room.getPositionAt(t.x, t.y)));
     let closest = byDist[0];
@@ -139,10 +141,19 @@ module.exports = class ExtensionOperator {
     let storage = room.storage;
     if (!storage) return;
 
-    if (this.creep.store.ops > 300) return;
-    if (storage.store.ops < 200) return;
+    let creepMin = 300;
+    let storeMin = 200;
+    let withdrawLimit = 500;
+    if (this.creep.carryCapacity < 1000) {
+      creepMin = 100;
+      storeMin = 50;
+      withdrawLimit = 200;
+    }
 
-    const max = Math.min(500, this.creep.carryCapacity);
+    if (this.creep.store.ops > creepMin) return;
+    if (storage.store.ops < storeMin) return;
+
+    const max = Math.min(withdrawLimit, this.creep.carryCapacity);
     const amount = Math.min(max - this.creep.store.ops, storage.store.ops);
     let transferResult = this.creep.withdraw(storage, 'ops', amount);
 
@@ -163,9 +174,16 @@ module.exports = class ExtensionOperator {
     let storage = room.storage;
     if (!storage) return;
 
-    if (this.creep.store.ops < 1000) return;
+    let creepMax = 1000;
+    let transferLimit = 800;
+    if (this.creep.carryCapacity < 1000) {
+      creepMax = 200;
+      transferLimit = 150;
+    }
 
-    const amount = this.creep.store.ops - 800;
+    if (this.creep.store.ops < creepMax) return;
+
+    const amount = this.creep.store.ops - transferLimit;
     let transferResult = this.creep.transfer(storage, 'ops', amount);
 
     if (transferResult == OK) {
@@ -277,7 +295,7 @@ module.exports = class ExtensionOperator {
       let powerMetadata = POWER_INFO[PWR_REGEN_SOURCE];
 
       if (this.creep.store.ops < powerMetadata.ops) return;
-      if (this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
+      if (this.creep.powers[PWR_REGEN_SOURCE] && this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
       if (this.creep.pos.getRangeTo(source) <= powerMetadata.range) {
         this.creep.usePower(PWR_REGEN_SOURCE, source);
         return true;
