@@ -63,14 +63,7 @@ module.exports = {
   },
   numberOfCreepsWithProps: function (role, props) {
     let globalCreeps = this.globalCreepsWithRole(role);
-    const creepsWithin = _.filter(globalCreeps, (creep) => {
-      let conds = _.map(props, (v, p) => {
-        // console.log('p,v', p, v)
-        return creep.memory[p] === v
-      })
-      // console.log('conds', JSON.stringify(conds), _.every(conds))
-      return _.every(conds)
-    })
+    const creepsWithin = _.filter(globalCreeps, (creep) => _.every(_.map(props, (value, prop) => creep.memory[prop] === value)))
     return creepsWithin.length;
   },
   globalCreepsWithRole: function (role) {
