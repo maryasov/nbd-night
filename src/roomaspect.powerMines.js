@@ -65,7 +65,7 @@ module.exports = class PowerMinesAspect {
           powerFlag = this.addFlag(this.room.name, mineRoom, powerDroped.pos);
         }
         if (powerFlag) {
-          this.setFlagStatus(powerFlag, 'droped');
+          this.setFlagStatus(powerFlag, 'drop');
         }
       }
 
@@ -153,7 +153,7 @@ module.exports = class PowerMinesAspect {
       healerBoostCount >= 3000 &&
       scooperBoostCount >= 3000 &&
       powerBank.ticksToDecay > 1000 + distance &&
-      powerBank.power > 3000
+      powerBank.power > 2500
     ) {
       return true;
     }

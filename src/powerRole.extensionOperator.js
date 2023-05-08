@@ -210,6 +210,7 @@ module.exports = class ExtensionOperator {
     if (this.creep.powers[PWR_OPERATE_POWER].cooldown > 0) return;
 
     let spawn = roomai.room.powerSpawn();
+    if (!spawn) return;
     if (spawn.effects && spawn.effects.length > 0) return;
     if (!spawn.power) return;
     // console.log('spawns', JSON.stringify(spawns))
