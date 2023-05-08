@@ -61,6 +61,18 @@ module.exports = {
   numberOfLocalCreeps: function (roomai, role) {
     return this.localCreepsWithRole(roomai, role).length;
   },
+  numberOfCreepsWithProps: function (role, props) {
+    let globalCreeps = this.globalCreepsWithRole(role);
+    const creepsWithin = _.filter(globalCreeps, (creep) => {
+      let conds = _.map(props, (v, p) => {
+        // console.log('p,v', p, v)
+        return creep.memory[p] === v
+      })
+      // console.log('conds', JSON.stringify(conds), _.every(conds))
+      return _.every(conds)
+    })
+    return creepsWithin.length;
+  },
   globalCreepsWithRole: function (role) {
     // console.log('this._globalCreepCache', JSON.stringify(this._globalCreepCache))
     if (!this._globalCreepCache || this._globalCreepCacheTime !== Game.time) {

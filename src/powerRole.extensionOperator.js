@@ -28,7 +28,10 @@ module.exports = class ExtensionOperator {
   findPosition() {
     let room = this.creep.room;
     let positions = room.memory.virtuals['powerPosition'];
-    positions = _.filter(positions, (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos.x === pos.x && pc.pos.y === pos.y));
+    positions = _.filter(
+      positions,
+      (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos.x === pos.x && pc.pos.y === pos.y)
+    );
 
     if (!positions) return;
     const byDist = _.sortBy(positions, (t) => this.creep.pos.getRangeTo(this.creep.room.getPositionAt(t.x, t.y)));
@@ -47,6 +50,7 @@ module.exports = class ExtensionOperator {
   }
 
   generateOps() {
+    if (!this.creep.powers[PWR_GENERATE_OPS]) return;
     if (this.creep.powers[PWR_GENERATE_OPS].cooldown == 0) {
       this.creep.usePower(PWR_GENERATE_OPS);
     }
@@ -90,6 +94,7 @@ module.exports = class ExtensionOperator {
   }
 
   operateExtentions() {
+    if (!this.creep.powers[PWR_OPERATE_EXTENSION]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
 
@@ -117,6 +122,10 @@ module.exports = class ExtensionOperator {
       this.creep.goTo(storage, { range: powerMetadata.range });
       return true;
     }
+  }
+
+  hasPower(powerId) {
+    this.creep;
   }
 
   extentionsFull() {
@@ -196,6 +205,7 @@ module.exports = class ExtensionOperator {
   }
 
   operateLabs() {
+    if (!this.creep.powers[PWR_OPERATE_LAB]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
 
@@ -221,12 +231,13 @@ module.exports = class ExtensionOperator {
   }
 
   operatePowerSpawns() {
+    if (!this.creep.powers[PWR_OPERATE_POWER]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
-    if (!this.creep.powers[PWR_OPERATE_POWER]) return;
     // console.log('Memory.powerOperation', Memory.powerOperation)
     if (this.creep.powers[PWR_OPERATE_POWER].cooldown > 0) return;
 
+    if (this.creep.room.storage.store.energy < 50000) return;
     let spawn = roomai.room.powerSpawn();
     if (!spawn) return;
     if (spawn.effects && spawn.effects.length > 0) return;
@@ -247,9 +258,9 @@ module.exports = class ExtensionOperator {
   }
 
   operateSpawns() {
+    if (!this.creep.powers[PWR_OPERATE_SPAWN]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
-    if (!this.creep.powers[PWR_OPERATE_SPAWN]) return;
     // console.log('Memory.powerOperation', Memory.powerOperation)
     if (!Memory.powerOperation) return;
     if (this.creep.powers[PWR_OPERATE_SPAWN].cooldown > 0) return;
@@ -276,6 +287,7 @@ module.exports = class ExtensionOperator {
   }
 
   regenSources() {
+    if (!this.creep.powers[PWR_REGEN_SOURCE]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
 
@@ -295,7 +307,7 @@ module.exports = class ExtensionOperator {
       let powerMetadata = POWER_INFO[PWR_REGEN_SOURCE];
 
       if (this.creep.store.ops < powerMetadata.ops) return;
-      if (this.creep.powers[PWR_REGEN_SOURCE] && this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
+      if (this.creep.powers[PWR_REGEN_SOURCE].cooldown > 0) return;
       if (this.creep.pos.getRangeTo(source) <= powerMetadata.range) {
         this.creep.usePower(PWR_REGEN_SOURCE, source);
         return true;

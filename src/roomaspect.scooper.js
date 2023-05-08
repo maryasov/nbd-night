@@ -8,7 +8,7 @@ module.exports = class ScooperAspect {
   }
 
   run() {
-    if (!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, picker.name) >= 1) return;
+    if (!this.roomai.canSpawn() || spawnHelper.numberOfCreepsWithProps(picker.name, {home: this.room.name}) >= 1) return;
     if (this.roomai.defense.defcon >= 2) return;
 
     let spawnPicker = false;
