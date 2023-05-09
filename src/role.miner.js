@@ -6,61 +6,21 @@ const renew = require('helper.renew');
 
 module.exports = {
   name: 'miner',
-  energyConfigs: [
-    [
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      CARRY,
-      CARRY,
-      MOVE,
-      MOVE,
-      MOVE,
-      MOVE,
-      MOVE,
-    ],
-    [
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      WORK,
-      CARRY,
-      CARRY,
-      MOVE,
-      MOVE,
-      MOVE,
-      MOVE,
-      MOVE,
-    ],
-    [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-    [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-    [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
-    [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
-    [WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
-    [WORK, WORK, WORK, CARRY, MOVE, MOVE],
-    [WORK, WORK, WORK, CARRY, MOVE],
-    [WORK, WORK, CARRY, MOVE],
-  ],
+  energyConfigs: function (workParts = 15) {
+    var configs = [];
+    for (let work = workParts; work >= 3; work -= 1) {
+      let carry = 2;
+      let move = Math.max(2, Math.floor(work / 2));
+      let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
+      if (config.length <= 50) configs.push(config);
+    }
+
+    // TODO: probably more handcrafted configs for low tiers?
+    configs.push([WORK, WORK, CARRY, MOVE]); // spawn-only config
+
+    // console.log('', JSON.stringify(configs))
+    return configs;
+  },
   claimConfigs: function (workParts) {
     var configs = [];
     for (let work = workParts; work >= 2; work -= 1) {

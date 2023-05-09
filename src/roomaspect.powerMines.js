@@ -110,8 +110,21 @@ module.exports = class PowerMinesAspect {
     }
   }
   removeFlag(powerFlag) {
-    // this.room.memory.activeMines = _.reject(this.room.memory.activeMines, (r) => r.id === powerFlag.memory.id)
-    powerFlag.remove();
+    let scoopers = _.filter(spawnHelper.globalCreepsWithRole('scooper'), (c) => c.memory.operation == powerFlag.memory.id);
+    for (let scooperCreep of scoopers) {
+      scooperCreep.memory.returningHome = true;
+      scooperCreep.memory.goRecycle = true;
+    }
+    let farmers = _.filter(
+        spawnHelper.globalCreepsWithRole(powerFarmer.name),
+        (c) => c.memory.operation == this.operation
+    );
+    for (let farmerCreep of farmers) {
+      farmerCreep.memory.returningHome = true;
+      farmerCreep.memory.goRecycle = true;
+    }
+
+      powerFlag.remove();
   }
   setFlagStatus(powerFlag, status) {
     if (powerFlag.memory.status !== status ) {
@@ -171,4 +184,6 @@ module.exports = class PowerMinesAspect {
 const profiler = require('screeps-profiler');
 const movement = require('./helper.movement');
 const RouteFinder = require('./routefinder');
+const spawnHelper = require("./helper.spawning");
+const powerFarmer = require("./role.powerFarmer");
 profiler.registerClass(module.exports, 'PowerMinesAspect');

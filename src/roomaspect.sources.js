@@ -45,8 +45,8 @@ module.exports = class SourcesAspect {
       this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY, { showExcess: true }) >= energyExcessThreshold;
     if (hasExcessEnergy) return;
 
-    let idealParts = spawnHelper.bestAvailableParts(this.room, miner.energyConfigs);
-    let minimalParts = spawnHelper.bestAffordableParts(this.room, miner.energyConfigs, true);
+    let idealParts = spawnHelper.bestAvailableParts(this.room, miner.energyConfigs());
+    let minimalParts = spawnHelper.bestAffordableParts(this.room, miner.energyConfigs(), true);
     let spawnDuration = spawnHelper.spawnDuration(idealParts);
 
     let existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);

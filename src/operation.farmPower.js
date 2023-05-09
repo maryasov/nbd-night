@@ -152,6 +152,7 @@ module.exports = class FarmPowerOperation {
           let resPow = this.roomai.spawn(parts, {
             role: powerFarmer.name,
             target: this.targetRoomName,
+            home: this.room.name,
             operation: this.operation,
           });
           // if (resPow !== 0) {console.log('cant spawn', JSON.stringify(parts))}

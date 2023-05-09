@@ -1,3 +1,4 @@
+const recycle = require('helper.recycle');
 // const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_FACTORY, STRUCTURE_SPAWN];
 const sParkStructures = [STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_SPAWN];
 const parkStructures = [
@@ -28,6 +29,7 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (creep.memory.operation && Memory.powerOperation) {
       let scoopers = _.filter(
         spawnHelper.globalCreepsWithRole(creep.memory.role),

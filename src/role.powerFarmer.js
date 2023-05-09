@@ -1,29 +1,35 @@
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
+const recycle = require('helper.recycle');
 
 module.exports = {
   name: 'powerFarmer',
   partsBoost: spawnHelper.makeParts(20, MOVE, 20, ATTACK),
   parts: spawnHelper.makeParts(20, MOVE, 20, ATTACK),
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (_.some(creep.body, (p) => p.type === ATTACK)) {
       // console.log('accept');
       if (boosting.accept(creep, 'XUH2O')) return;
     }
 
-    if (creep.room.name !== creep.memory.target) {
-      movement.moveToRoom(creep, creep.memory.target);
-      return;
-    }
-
-    let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-      filter: (s) => s.structureType == STRUCTURE_POWER_BANK,
-    });
-
-    if (target) {
-      this.attackBank(creep, target);
+    if (creep.memory.returningHome) {
+      this.returnHome(creep);
     } else {
-      this.clearPath(creep);
+      if (creep.room.name !== creep.memory.target) {
+        movement.moveToRoom(creep, creep.memory.target);
+        return;
+      }
+
+      let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (s) => s.structureType == STRUCTURE_POWER_BANK,
+      });
+
+      if (target) {
+        this.attackBank(creep, target);
+      } else {
+        this.clearPath(creep);
+      }
     }
   },
   attackBank: function (creep, target) {
@@ -41,6 +47,12 @@ module.exports = {
     let resources = creep.room.find(FIND_DROPPED_RESOURCES);
     if (resources.length === 0) return;
     creep.fleeFrom(resources, 4);
+  },
+  returnHome: function (creep) {
+    let home = Game.rooms[creep.memory.home];
+    // console.log('scoop storage', home.storage, JSON.stringify(home))
+    let target = home && home.storage;
+    creep.goTo(target, { ignoreRoads: false, avoidHostiles: true });
   },
 };
 
