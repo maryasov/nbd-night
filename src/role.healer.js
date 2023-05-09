@@ -1,6 +1,7 @@
 const boosting = require('helper.boosting');
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
+const recycle = require('helper.recycle');
 
 module.exports = {
   name: 'healer',
@@ -23,6 +24,7 @@ module.exports = {
     return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, HEAL, 10, MOVE);
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     // if(boosting.accept(creep, "XLHO2")) return;
     if (creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
@@ -37,7 +39,12 @@ module.exports = {
     //     if(boosting.accept(creep, "XLHO2")) return;
     // }
 
-    if (creep.memory.targetType === 'powerFarmer') {
+    if (creep.memory.returningHome) {
+      this.returnHome(creep);
+      return;
+    }
+
+      if (creep.memory.targetType === 'powerFarmer') {
       let pb = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: (s) => s.structureType == STRUCTURE_POWER_BANK,
       });
@@ -92,6 +99,12 @@ module.exports = {
     } else {
       this.findNewTarget(creep);
     }
+  },
+  returnHome: function (creep) {
+    let home = Game.rooms[creep.memory.home];
+    // console.log('scoop storage', home.storage, JSON.stringify(home))
+    let target = home && home.storage;
+    creep.goTo(target, { ignoreRoads: false, avoidHostiles: true });
   },
   heal: function (creep, target) {
     let healResult = creep.heal(target);

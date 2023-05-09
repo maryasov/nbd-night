@@ -117,14 +117,27 @@ module.exports = class PowerMinesAspect {
     }
     let farmers = _.filter(
         spawnHelper.globalCreepsWithRole(powerFarmer.name),
-        (c) => c.memory.operation == this.operation
+        (c) => c.memory.operation == powerFlag.memory.id
     );
     for (let farmerCreep of farmers) {
       farmerCreep.memory.returningHome = true;
       farmerCreep.memory.goRecycle = true;
     }
-
-      powerFlag.remove();
+    let healers = _.filter(spawnHelper.globalCreepsWithRole(healer.name),
+        (c) => c.memory.operation == powerFlag.memory.id
+    );
+     for(let healerCreep of healers) {
+       healerCreep.memory.returningHome = true;
+       healerCreep.memory.goRecycle = true;
+     }
+    let observers = _.filter(spawnHelper.globalCreepsWithRole(observer.name),
+        (c) => c.memory.operation == powerFlag.memory.id
+    )
+    for(let observerCreep of observers) {
+      observerCreep.memory.returningHome = true;
+      observerCreep.memory.goRecycle = true;
+    }
+    powerFlag.remove();
   }
   setFlagStatus(powerFlag, status) {
     if (powerFlag.memory.status !== status ) {
@@ -186,4 +199,6 @@ const movement = require('./helper.movement');
 const RouteFinder = require('./routefinder');
 const spawnHelper = require("./helper.spawning");
 const powerFarmer = require("./role.powerFarmer");
+const healer = require("./role.healer");
+const observer = require("./role.observer");
 profiler.registerClass(module.exports, 'PowerMinesAspect');

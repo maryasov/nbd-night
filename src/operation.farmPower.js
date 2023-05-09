@@ -97,6 +97,8 @@ module.exports = class FarmPowerOperation {
         let res = this.roomai.spawn(healerParts, {
           role: healer.name,
           target: farmerCreep.name,
+          home: this.room.name,
+          operation: this.operation,
           targetType: 'powerFarmer',
         });
         // console.log('res', res)
@@ -165,7 +167,12 @@ module.exports = class FarmPowerOperation {
       }
     } else {
       if (!targetObservers) {
-        this.roomai.spawn(observer.parts, { role: observer.name, target: this.targetRoomName });
+        this.roomai.spawn(observer.parts, {
+          role: observer.name,
+          target: this.targetRoomName,
+          operation: this.operation,
+          home: this.room.name,
+        });
       }
     }
   }
