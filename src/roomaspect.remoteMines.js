@@ -129,7 +129,7 @@ module.exports = class RemoteMinesAspect {
     var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
     if (!hasMiner) {
       this.spawn(
-        spawnHelper.bestAvailableParts(this.room, miner.energyConfigs),
+        spawnHelper.bestAvailableParts(this.room, miner.energyConfigs()),
         {
           role: miner.name,
           target: source.id,
