@@ -62,7 +62,7 @@ module.exports = {
       }
       return false;
     }
-    if (creep.ticksToLive > 1300) {
+    if (creep.ticksToLive >= 1450) {
       creep.memory.goRenew = false;
       delete spawn.memory.lastRenewCreep;
       delete spawn.memory.lastRenew;
