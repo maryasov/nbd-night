@@ -189,7 +189,7 @@ module.exports = class RemoteMinesAspect {
     // back and forth while 10 energy per tick are generated
     var needed = logistic.distanceByPath(source, this.room.storage) * 20;
     // adding at least one extra CARRY to make up for inefficiencies
-    return _.min([needed + 60, 2000]) * 1.5;
+    return _.min([needed + 60, 2000]) * 1.25;
   }
 
   spawn(parts, memory, targetRoom) {
