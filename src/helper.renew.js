@@ -30,7 +30,7 @@ module.exports = {
       }
     }
     if (creep.memory.goRenew) {
-      creep.say('💀:'+creep.ticksToLive);
+      creep.say('💀:' + creep.ticksToLive);
       if (this.renew(creep)) return true;
     }
   },
@@ -51,6 +51,7 @@ module.exports = {
     let res = spawn.renewCreep(creep);
     // console.log('renew res', res)
     if (res === ERR_NOT_IN_RANGE) {
+      this.repare(creep);
       creep.goTo(spawn);
       return true;
     }
@@ -71,7 +72,7 @@ module.exports = {
     if (res === OK) {
       spawn.memory.lastRenewCreep = creep.name;
       spawn.memory.lastRenew = Game.time;
-      creep.say('🛠️:'+creep.ticksToLive);
+      creep.say('🛠️:' + creep.ticksToLive);
       return true;
     }
   },
@@ -90,6 +91,16 @@ module.exports = {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;
     if (creep.memory.role === 'carrier' && creep.memory.home !== creep.room.name) return false;
     return true;
+  },
+  repare: function (creep) {
+    if (creep.memory.role === 'miner') {
+      ress = Object.keys(creep.store);
+      if (ress.length > 0) {
+        let firstRes = _.first(ress);
+        result = creep.drop(firstRes);
+        // console.log('drop', firstRes, result)
+      }
+    }
   },
   conditions: function (creep) {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;

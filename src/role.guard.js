@@ -53,12 +53,13 @@ module.exports = {
         let gatedCreep = g.pos.lookFor(LOOK_CREEPS)[0];
         return !gatedCreep || gatedCreep === creep;
       });
-      return _.sortBy(gates, (g) => g.pos.getRangeTo(target))[0];
+      let sortedGates = _.sortBy(gates, (g) => g.pos.getRangeTo(target))
+      return sortedGates[0];
     }
   },
   moveTo: function (creep, target) {
     // TODO: figure out whether we can use newPathing
-    return creep.goTo(target, { ignoreRoads: true, avoidHostiles: true, newPathing: false });
+    return creep.goTo(target, { ignoreRoads: true, avoidHostiles: false, newPathing: false });
   },
 };
 
