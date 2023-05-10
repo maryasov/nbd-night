@@ -99,7 +99,7 @@ module.exports = {
     if (target.store) {
       objs = Object.keys(target.store);
       if (objs.length > 0) {
-        result = creep.withdraw(target, _.first(objs));
+        result = creep.withdraw(target, _.last(objs));
       }
     } else {
       result = creep.pickup(target);
@@ -110,6 +110,9 @@ module.exports = {
       creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
     }
   },
+  sortTargetsByPrice: function (targets) {
+
+  }
 };
 
 const profiler = require('screeps-profiler');
