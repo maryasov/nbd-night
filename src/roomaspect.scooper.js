@@ -33,7 +33,7 @@ module.exports = class ScooperAspect {
     }
 
     if (spawnPicker) {
-      this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, picker.configs(500)), {
+      this.roomai.spawn(spawnHelper.bestAvailableParts(this.room, picker.configs(1000)), {
         role: picker.name,
         home: this.room.name,
         target: this.room.name,
