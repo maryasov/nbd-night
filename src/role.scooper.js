@@ -59,7 +59,7 @@ module.exports = {
 
         let objs;
         if (tg && tg.store) {
-          objs = _.filter(Object.keys(tg.store), (e) => ['H', 'Z', 'U', 'L', 'O', 'X'].indexOf(e) < 0);
+          objs = _.filter(Object.keys(tg.store), (e) => this.resourceFilter(creep, e));
         }
 
         if (tg && objs && objs.length > 0) {
@@ -126,7 +126,7 @@ module.exports = {
     let result = null;
     if (target.store) {
       let objs;
-      objs = _.filter(Object.keys(target.store), (e) => ignoreResources.indexOf(e) < 0);
+      objs = _.filter(Object.keys(target.store), (e) => this.resourceFilter(creep, e));
       result = creep.withdraw(target, _.last(objs));
     } else {
       result = creep.pickup(target);
@@ -193,7 +193,7 @@ module.exports = {
     let objs = [];
     if (target.store) {
       // if (creep.room.name =='W13S11') {
-      objs = _.filter(Object.keys(target.store), (e) => ignoreResources.indexOf(e) < 0);
+      objs = _.filter(Object.keys(target.store), (e) => this.resourceFilter(creep, e));
       // } else {
       //     objs = Object.keys(target.store);
       // }
@@ -211,6 +211,12 @@ module.exports = {
       creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
     }
   },
+  resourceFilter: function (creep, r) {
+    if (creep.memory.resource === 'power') {
+      return ['power'].indexOf(r) >= 0
+    }
+    return ignoreResources.indexOf(r) < 0
+  }
 };
 
 const profiler = require('screeps-profiler');

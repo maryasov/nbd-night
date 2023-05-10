@@ -111,7 +111,7 @@ const powerStop = [
   // "healer",
   // "powerFarmer",
   'upgrader',
-  'picker',
+  // 'picker',
   'reserver',
   'discoverer',
   // "scooper",

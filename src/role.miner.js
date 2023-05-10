@@ -10,7 +10,7 @@ module.exports = {
     var configs = [];
     for (let work = workParts; work >= 3; work -= 1) {
       let carry = 2;
-      let move = Math.max(2, Math.floor(work / 2));
+      let move = Math.max(2, Math.ceil(work / 2)) + carry;
       let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
       if (config.length <= 50) configs.push(config);
     }

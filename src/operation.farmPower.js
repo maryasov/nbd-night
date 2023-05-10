@@ -191,6 +191,7 @@ module.exports = class FarmPowerOperation {
         target: this.targetRoomName,
         targetPos: this.targetFlag.pos,
         home: this.room.name,
+        resource: 'power',
         operation: this.operation,
         power: power,
       });
