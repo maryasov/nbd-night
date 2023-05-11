@@ -23,7 +23,7 @@ const constructions = new Map([
 // Essentials will even be planned if the room would not automatically layout
 const planningOrder = [
   { type: 'store', essential: true },
-  { type: 'exitWalls' },
+  { type: 'exitWalls', essential: true },
   { type: 'scalableExtensions' },
   { type: 'spawn' },
   { type: 'storage' },

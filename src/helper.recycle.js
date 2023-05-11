@@ -14,6 +14,26 @@ module.exports = {
     let spawns = creep.room.find(FIND_MY_SPAWNS);
     let spawn = spawns[0];
     if (!spawn) return;
+    let tombstones = creep.room
+        .find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
+    let amount = _.sum(tombstones, (c) => c.store)
+
+    console.log('amountamount', amount)
+
+    if (amount > 2500) {
+      creep.goTo(spawn, {
+        range: 15,
+        visualizePathStyle: {
+          fill: 'transparent',
+          stroke: '#fff',
+          lineStyle: 'dashed',
+          strokeWidth: .15,
+          opacity: .1
+        }
+      });
+      return true;
+    }
+
     var result;
 
     result = spawn.recycleCreep(creep);
@@ -21,7 +41,15 @@ module.exports = {
     if (result == OK) {
       console.log('recycled');
     } else if (result == ERR_NOT_IN_RANGE) {
-      creep.goTo(spawn);
+      creep.goTo(spawn, {
+        visualizePathStyle: {
+          fill: 'transparent',
+          stroke: '#ff0000',
+          lineStyle: 'dashed',
+          strokeWidth: .15,
+          opacity: .1
+        }
+      });
       return true;
     }
   },

@@ -15,7 +15,9 @@ module.exports = class PowerAspect {
     if (!powerModes.includes(this.roomai.mode)) return;
     if (this.roomai.defense.defcon >= 4) return;
 
-    if (!Memory.powerOperation) this.powerSpawn.processPower();
+    if (this.room.storage.store.energy > 5000) {
+      this.powerSpawn.processPower();
+    }
 
     if (!this.room.storage || this.room.storage.store.energy < 50000 || !this.room.storage.store[RESOURCE_POWER])
       return;
