@@ -6,7 +6,6 @@ module.exports = class ExtensionOperator {
   run() {
     this.generateOps();
     // return;
-    if (this.goHome()) return;
     if (this.renewPower()) return;
     if (this.enableRoom()) return;
 
@@ -22,6 +21,7 @@ module.exports = class ExtensionOperator {
     // console.log('3');
     if (this.regenSources()) return;
     // console.log('4');
+    if (this.goHome()) return;
     this.findPosition();
   }
 
@@ -293,8 +293,16 @@ module.exports = class ExtensionOperator {
 
     const room = roomai.room;
     let sources = room.find(FIND_SOURCES);
-    // let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 25);
-    let pureSources = _.filter(sources, (s) => !s.effects || (s.effects && s.effects.length === 0));
+    if (this.creep.memory.extSources && room.memory.remoteMines && room.memory.remoteMines.length) {
+      _.forEach(room.memory.remoteMines, (ext) => {
+        let extRoom = Game.rooms[ext]
+        if (extRoom) {
+          sources = sources.concat(extRoom.find(FIND_SOURCES));
+        }
+      });
+    }
+    let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 25);
+    let pureSources = _.filter(emptySources, (s) => !s.effects || (s.effects && s.effects.length === 0));
 
     // console.log('sources', sources, emptySources, pureSources)
 
