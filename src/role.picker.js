@@ -86,7 +86,9 @@ module.exports = {
 
     if (targets.length > 0) {
       var targetsByDistance = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
-      target = targetsByDistance[0];
+      var targetsByTime = _.sortBy(targets, (t) => t.ticksToDecay);
+      // target = targetsByDistance[0];
+      target = targetsByTime[0];
     }
 
     if (!target) {

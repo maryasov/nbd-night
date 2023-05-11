@@ -16,9 +16,9 @@ module.exports = {
     if (!spawn) return;
     let tombstones = creep.room
         .find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
-    let amount = _.sum(tombstones, (c) => c.store)
+    let amount = _.sum(tombstones, (c) => _.sum(c.store))
 
-    console.log('amountamount', amount)
+    console.log('tombstones', amount)
 
     if (amount > 2500) {
       creep.goTo(spawn, {
