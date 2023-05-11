@@ -18,9 +18,9 @@ module.exports = {
         .find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
     let amount = _.sum(tombstones, (c) => _.sum(c.store))
 
-    console.log('tombstones', amount)
 
-    if (amount > 2500) {
+    if (amount > 3000) {
+      console.log('tombstones', amount)
       creep.goTo(spawn, {
         range: 15,
         visualizePathStyle: {
