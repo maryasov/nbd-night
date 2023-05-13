@@ -30,7 +30,7 @@ module.exports = {
   },
   run: function (creep) {
     if (recycle.check(creep)) return;
-    if (creep.memory.operation && Memory.powerOperation) {
+    if (!creep.memory.goRecycle && creep.memory.operation && Memory.powerOperation) {
       let scoopers = _.filter(
         spawnHelper.globalCreepsWithRole(creep.memory.role),
         (c) => c.memory.operation == creep.memory.operation

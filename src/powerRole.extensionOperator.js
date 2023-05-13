@@ -293,14 +293,14 @@ module.exports = class ExtensionOperator {
 
     const room = roomai.room;
     let sources = room.find(FIND_SOURCES);
-    if (this.creep.memory.extSources && room.memory.remoteMines && room.memory.remoteMines.length) {
-      _.forEach(room.memory.remoteMines, (ext) => {
-        let extRoom = Game.rooms[ext]
-        if (extRoom) {
-          sources = sources.concat(extRoom.find(FIND_SOURCES));
-        }
-      });
-    }
+    // if (this.creep.memory.extSources && room.memory.remoteMines && room.memory.remoteMines.length) {
+    //   _.forEach(room.memory.remoteMines, (ext) => {
+    //     let extRoom = Game.rooms[ext]
+    //     if (extRoom) {
+    //       sources = sources.concat(extRoom.find(FIND_SOURCES));
+    //     }
+    //   });
+    // }
     let emptySources = _.filter(sources, (s) => s.energy === 0 && s.ticksToRegeneration > 25);
     let pureSources = _.filter(emptySources, (s) => !s.effects || (s.effects && s.effects.length === 0));
 

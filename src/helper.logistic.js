@@ -24,6 +24,10 @@ module.exports = {
       getFromTerminal = true;
     }
 
+    if (!creep.room.storage) {
+      getFromTerminal = true;
+    }
+
     if (!creep.room.terminal && !creep.room.storage) {
       let target;
       let targets = [];

@@ -91,6 +91,9 @@ module.exports = class Trading {
     if (this.room.ai().mode === 'unclaim') {
       return 0;
     }
+    if (this.room.ai().mode === 'stack') {
+      return 0;
+    }
     // console.log('neededImportToStorage', this.room.name, resource, this.terminal.store[resource], Math.min(this.terminalEnergyBuffer, this.storeEnergyBuffer))
     if (
       resource === RESOURCE_ENERGY &&
@@ -173,6 +176,9 @@ module.exports = class Trading {
   // amount that need to be imported into the room, because it currently has less
   // than it wants to have
   requiredImportToRoom(resource) {
+    if (this.room.ai().mode === 'stack') {
+      return 0;
+    }
     if (this.room.ai().mode === 'unclaim') return 0;
     let amountInTerminal = this.terminal.store[resource];
     let amountInStorage = this.storage.store[resource];
@@ -201,6 +207,9 @@ module.exports = class Trading {
   // if it goes above this level, it will start sharing with other rooms that
   // did not yet fill their minimum need.
   minNeededAmount(resource) {
+    if (this.room.ai().mode === 'stack') {
+      return 0;
+    }
     if (resource == RESOURCE_ENERGY) {
       if (this.room.ai().mode === 'unclaim') return 30000;
     }

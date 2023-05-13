@@ -6,6 +6,7 @@ const constructions = new Map([
   ['reactor', require('construction.reactor')],
   ['spawn', require('construction.spawn')],
   ['storage', require('construction.storage')],
+  ['stack', require('construction.stack')],
   ['store', require('construction.stores')],
   ['terminal', require('construction.terminal')],
   ['tower', require('construction.tower')],

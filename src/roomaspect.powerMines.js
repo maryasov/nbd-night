@@ -184,9 +184,9 @@ module.exports = class PowerMinesAspect {
     // );
     if (
       Memory.activeMines.length < Memory.powerMinesLimit &&
-      minerBoostCount >= 3000 &&
-      healerBoostCount >= 3000 &&
-      scooperBoostCount >= 3000 &&
+      minerBoostCount >= 2500 &&
+      healerBoostCount >= 2500 &&
+      scooperBoostCount >= 2500 &&
       powerBank.ticksToDecay > 1000 + distance &&
       powerBank.power > 2000
     ) {

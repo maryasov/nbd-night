@@ -5,6 +5,8 @@ const spawnHelper = require('helper.spawning');
 var carrier = require('role.carrier');
 var upgrader = require('role.upgrader');
 
+const specialRoom = 'W5N3'
+
 module.exports = class ControllerAspect {
   constructor(roomai) {
     this.roomai = roomai;
@@ -42,7 +44,7 @@ module.exports = class ControllerAspect {
 
   buildUpgraders() {
     //TODO не спавнить если нет линкКоллектора
-    const mult = this.room.name == '' ? 3 : 1;
+    const mult = this.room.name == specialRoom ? 3 : 1;
     let parts = spawnHelper.bestAvailableParts(
       this.room,
       upgrader.configsForEnergyPerTick(Math.floor((this.energyPerTick() / this.upgraderCount()) * mult))
@@ -71,7 +73,7 @@ module.exports = class ControllerAspect {
 
   buildCarriers() {
     if (!this.roomai.canSpawn()) return;
-    const mult = this.room.name == '' ? 3 : 1;
+    const mult = this.room.name == specialRoom ? 3 : 1;
 
     let controllerStore = logistic.storeFor(this.controller);
     let existingCarriers = spawnHelper.localCreepsWithRole(this.roomai, carrier.name);
@@ -111,7 +113,7 @@ module.exports = class ControllerAspect {
     if (this.roomai.defense.defcon >= 4) return 1;
 
     let energy = 10;
-    const mult = this.room.name == '' ? 4 : 1;
+    const mult = this.room.name == specialRoom ? 4 : 1;
 
     if (this.room.storage) {
       if (this.room.storage.store.energy > this.highLimit) {

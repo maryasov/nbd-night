@@ -9,6 +9,26 @@ module.exports = {
     };
   },
 
+  dirPoints: function (points, dir) {
+    const angle = dir * 90 - 90;
+    const rad = (angle * Math.PI) / 180;
+    let dirPints = [];
+    for (let point of points) {
+      const x = point.x * Math.cos(rad) - point.y * Math.sin(rad);
+      const y = point.y * Math.cos(rad) + point.x * Math.sin(rad);
+      dirPints.push({ x: x, y: y });
+    }
+    return dirPints;
+  },
+
+  dirPos: function (pos, dir) {
+    const angle = dir * 90 - 90;
+    const rad = (angle * Math.PI) / 180;
+    const x = pos.x * Math.cos(rad) - pos.y * Math.sin(rad);
+    const y = pos.y * Math.cos(rad) + pos.x * Math.sin(rad);
+    return { x: x, y: y };
+  },
+
   centerPos: function (rect) {
     return {
       x: Math.round(rect.x + rect.width / 2),
