@@ -101,7 +101,7 @@ module.exports = {
   updateCostMatrix: function (matrix, storage) {
     let dir = this.directions[storage.dir];
     matrix.set(storage.x, storage.y, 255);
-    matrix.set(storage.x + dir.x, storage.y + dir.y, 255);
+    // matrix.set(storage.x + dir.x, storage.y + dir.y, 255);
   },
   addBuilding: function (memory, flag) {
     let size = memory.push({ x: flag.pos.x, y: flag.pos.y, dir: flag.color });
