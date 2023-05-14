@@ -1,7 +1,7 @@
 const spawnHelper = require('helper.spawning');
 const trader = require('role.trader');
 
-const MAX_TRANSFER = 2500;
+const MAX_TRANSFER = 50000;
 const TERMINAL_MAX_FILL = 270000;
 
 const allowedSalesHistoryDeviation = 0.5;
@@ -169,6 +169,7 @@ module.exports = class TradingAspect {
   }
 
   balanceToEmpire(resource, amount, cache) {
+    //return
     let choice = cache.chooseRecipient(resource);
     if (choice) {
       let sentAmount = Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss));
@@ -199,6 +200,7 @@ module.exports = class TradingAspect {
   }
 
   provideSupport(resource, amount) {
+    //return
     let requests = Memory.tradeRequests;
     if (!requests || !requests[resource]) return false;
     if (resource === RESOURCE_POWER && Memory.sellPower) return false;

@@ -188,6 +188,7 @@ module.exports = class Trading {
   // amount that could be imported into the room, because there is capacity for the resource
   // left
   possibleImportToRoom(resource) {
+    if (this.room.ai().mode === 'stock') return 0;
     if (this.room.ai().mode === 'unclaim') return 0;
     let amountInTerminal = this.terminal.store[resource];
     let amountInStorage = this.storage.store[resource];

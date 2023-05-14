@@ -270,7 +270,7 @@ module.exports = {
         );
         // console.log('ress', resources);
         if (resources.length > 0) {
-          let first = _.first(resources);
+          let first = _.last(resources);
           // console.log('first', first);
           creep.memory.resource = first;
           return creep.withdraw(source, first);

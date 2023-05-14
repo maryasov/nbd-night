@@ -135,7 +135,7 @@ module.exports = {
   },
   pickupBoost: function (creep) {
     let target = _.sortBy(
-      _.filter(creep.room.ai().labs.boosters, (b) => b.lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0),
+      _.filter(creep.room.ai().labs.boosters, (b) => b.lab && b.lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0),
       (b) => b.lab.store.energy
     )[0];
     if (target) {

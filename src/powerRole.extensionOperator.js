@@ -26,11 +26,12 @@ module.exports = class ExtensionOperator {
   }
 
   findPosition() {
+    if (!this.creep) return;
     let room = this.creep.room;
     let positions = room.memory.virtuals['powerPosition'];
     positions = _.filter(
       positions,
-      (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos.x === pos.x && pc.pos.y === pos.y)
+      (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos && pc.pos.x === pos.x && pc.pos.y === pos.y)
     );
 
     if (!positions) return;
