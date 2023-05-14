@@ -10,6 +10,7 @@ module.exports = {
         positions,
         (pos) => creep.memory.role === pos.role
     );
+    if (!positions.length) return;
     let localCreeps = spawnHelper.localCreepsWithRole(creep.room.ai(), creep.memory.role)
     positions = _.filter(
         positions,

@@ -119,11 +119,18 @@ module.exports = class Virtuals {
     // console.log('match', this.room, JSON.stringify(results))
     for (let result of results) {
       let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
-      let ext = result.match[2].slice(1);
+      let ext;
+      if (result.match[2]) {
+        ext = result.match[2].slice(1);
+      }
+
       let builder = virtuals.get(type);
       if (!this.memory[type]) this.memory[type] = [];
-      // console.log('type', type, ext)
-      builder.addBuilding(this.memory[type], result.flag, ext);
+      if (ext) {
+        builder.addBuilding(this.memory[type], result.flag, ext);
+      } else {
+        builder.addBuilding(this.memory[type], result.flag);
+      }
       result.flag.remove();
     }
   }
@@ -135,9 +142,16 @@ module.exports = class Virtuals {
     );
     for (let result of results) {
       let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
-      let ext = result.match[2].slice(1);
+      let ext;
+      if (result.match[2]) {
+        ext = result.match[2].slice(1);
+      }
       let builder = virtuals.get(type);
-      builder.removeBuilding(this.memory[type], result.flag, ext);
+      if (ext) {
+        builder.removeBuilding(this.memory[type], result.flag, ext);
+      } else {
+        builder.removeBuilding(this.memory[type], result.flag);
+      }
       result.flag.remove();
     }
   }
