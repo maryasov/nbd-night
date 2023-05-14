@@ -1,6 +1,7 @@
 var spawnHelper = require('helper.spawning');
 var logistic = require('helper.logistic');
 var renew = require('helper.renew');
+const factoryWorker = require("./role.factoryWorker");
 
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
 
@@ -141,7 +142,7 @@ module.exports = {
       }
     }
 
-    if (targets.length == 0) {
+    if (targets.length == 0 && spawnHelper.numberOfLocalCreeps(creep.room.ai(), 'reloader') < 1) {
       targets = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (structure) => {
           return structure.structureType == STRUCTURE_TOWER && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
