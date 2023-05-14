@@ -3,11 +3,11 @@ const RoomAILite = require('roomai.lite');
 
 Room.prototype.aiLite = function () {
   if (!this._ail) {
-    // if(this.controller/* && this.controller.my*/) {
+    if(!this.controller || this.controller && !this.controller.my) {
     this._ail = new RoomAILite(this);
-    // } else {
-    //     this._ail = null;
-    // }
+    } else {
+        this._ail = null;
+    }
   }
 
   return this._ail;

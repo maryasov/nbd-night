@@ -4,14 +4,15 @@ const ConstructionSpaceFinder = require('constructionSpaceFinder');
 const virtuals = new Map([
   ['block', require('virtual.block')],
   ['powerPosition', require('virtual.powerPosition')],
+  ['rolePosition', require('virtual.rolePosition')],
 ]);
 
 // Defines the order in which virtuals are planned
 // Essentials will even be planned if the room would not automatically layout
 const planningOrder = [];
 
-const buildFlagRegex = /^add([A-Za-z]+)$/;
-const removeFlagRegex = /^clear([A-Za-z]+)$/;
+const buildFlagRegex = /^add([A-Za-z]+)(\.[A-Za-z]+)*$/;
+const removeFlagRegex = /^clear([A-Za-z]+)(\.[A-Za-z]+)*$/;
 
 class Building {
   constructor(builder, memory, room) {
@@ -115,11 +116,14 @@ module.exports = class Virtuals {
       _.map(this.flags, (f) => ({ match: buildFlagRegex.exec(f.name), flag: f })),
       (m) => m.match
     );
+    // console.log('match', this.room, JSON.stringify(results))
     for (let result of results) {
       let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
+      let ext = result.match[2].slice(1);
       let builder = virtuals.get(type);
       if (!this.memory[type]) this.memory[type] = [];
-      builder.addBuilding(this.memory[type], result.flag);
+      // console.log('type', type, ext)
+      builder.addBuilding(this.memory[type], result.flag, ext);
       result.flag.remove();
     }
   }
@@ -131,8 +135,9 @@ module.exports = class Virtuals {
     );
     for (let result of results) {
       let type = result.match[1].charAt(0).toLowerCase() + result.match[1].slice(1);
+      let ext = result.match[2].slice(1);
       let builder = virtuals.get(type);
-      builder.removeBuilding(this.memory[type], result.flag);
+      builder.removeBuilding(this.memory[type], result.flag, ext);
       result.flag.remove();
     }
   }

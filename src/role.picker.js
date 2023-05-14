@@ -1,5 +1,6 @@
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER, STRUCTURE_LINK];
 const renew = require('helper.renew');
+const parking = require('helper.parking');
 
 module.exports = {
   name: 'picker',
@@ -24,9 +25,10 @@ module.exports = {
         let target = { pos: new RoomPosition(25, 25, creep.memory.target) };
         creep.goTo(target, { avoidHostiles: true });
       } else {
-        this.scoopRoom(creep);
+        if (this.scoopRoom(creep)) return;
       }
     }
+    if (creep.memory.stopped) parking.check(creep);
   },
   returnHome: function (creep) {
     let home = Game.rooms[creep.memory.home];
@@ -54,7 +56,15 @@ module.exports = {
 
     // console.log('pick store', creep.room.name, JSON.stringify(targets))
 
-    if (!target) return;
+    if (!target) {
+      return;
+      creep.memory.stopped = true;
+    }
+    if (creep.store.getUsedCapacity() == 0) {
+      creep.memory.stopped = true;
+      creep.memory.returningHome = false;
+      return;
+    }
     if (creep.pos.isNearTo(target)) {
       creep.memory.stopped = true;
       let resource = _.findKey(creep.store, (amount) => amount > 0);
@@ -62,6 +72,7 @@ module.exports = {
         creep.transfer(target, resource);
       } else {
         creep.memory.returningHome = false;
+
       }
     } else {
       creep.memory.stopped = false;
@@ -93,6 +104,7 @@ module.exports = {
 
     if (!target) {
       creep.memory.returningHome = true;
+      creep.memory.stopped = true;
       return;
     }
 
@@ -112,9 +124,6 @@ module.exports = {
       creep.goTo(target, { ignoreRoads: true, avoidHostiles: true });
     }
   },
-  sortTargetsByPrice: function (targets) {
-
-  }
 };
 
 const profiler = require('screeps-profiler');
