@@ -8,7 +8,7 @@ const ppOutline = [
 ];
 
 const roleColors = {
-  picker: '#c9ff77',
+  picker: '#06a2fa',
   harvester: '#77ebff'
 }
 
