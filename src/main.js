@@ -230,6 +230,23 @@ function runCreeps() {
 
 runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
+Function.prototype.valueOf = function() {
+  this.call(this);
+  return 0;
+};
+
+global.r = ()=>(
+  Operation.count('', false)
+)
+
+global.b = ()=>{
+  Operation.boosts('', true);
+}
+
+global.e = ()=>{
+  Operation.count('energy', true);
+}
+
 module.exports.loop = function () {
   // profiler.wrap(function() {
   // globalStatistics.initialize();
