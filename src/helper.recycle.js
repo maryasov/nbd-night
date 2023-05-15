@@ -1,9 +1,9 @@
 module.exports = {
   check: function (creep) {
     if (creep.memory.goRecycle) {
-      creep.say('⌛' + creep.ticksToLive);
+      creep.say('📦' + creep.ticksToLive, true);
       if (this.conditions(creep)) {
-        creep.say('🗑️' + creep.ticksToLive);
+        creep.say('♻️' + creep.ticksToLive, true);
         if (this.recycle(creep)) return true;
       } else {
         return false;

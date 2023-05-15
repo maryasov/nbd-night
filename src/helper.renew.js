@@ -30,7 +30,7 @@ module.exports = {
       }
     }
     if (creep.memory.goRenew) {
-      creep.say('🤒:' + creep.ticksToLive, true);
+      creep.say('😰:' + creep.ticksToLive, true);
       if (this.renew(creep)) return true;
     }
   },
@@ -72,7 +72,7 @@ module.exports = {
     if (res === OK) {
       spawn.memory.lastRenewCreep = creep.name;
       spawn.memory.lastRenew = Game.time;
-      creep.say('🤩:' + creep.ticksToLive, true);
+      creep.say('😊:' + creep.ticksToLive, true);
       return true;
     }
   },
