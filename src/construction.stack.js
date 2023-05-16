@@ -90,7 +90,7 @@ module.exports = {
     const factoryPos = layout.dirPos(this.constructions[2].pos, storage.dir)
     proxy.planConstruction(storage.x + linkPos.x, storage.y + linkPos.y, STRUCTURE_LINK);
     proxy.planConstruction(storage.x + terminalPos.x, storage.y + terminalPos.y, STRUCTURE_TERMINAL);
-    proxy.planConstruction(storage.x + factoryPos.x, storage.y + factoryPos.y, STRUCTURE_FACTORY);
+    if (!storage.noFactory) proxy.planConstruction(storage.x + factoryPos.x, storage.y + factoryPos.y, STRUCTURE_FACTORY);
     for (let x = -1; x <= 1; x += 1) {
       for (let y = -1; y <= 1; y += 1) {
         if (x === 0 && y === 0) continue;

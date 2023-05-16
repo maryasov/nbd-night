@@ -2,6 +2,7 @@ const boosting = require('helper.boosting');
 const ff = require('helper.friendFoeRecognition');
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
+const recycle = require('helper.recycle');
 
 module.exports = {
   name: 'defender',
@@ -32,6 +33,7 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
     creep.memory.stopped = false;

@@ -93,14 +93,14 @@ module.exports = {
     return true;
   },
   repare: function (creep) {
-    if (creep.memory.role === 'miner') {
-      ress = Object.keys(creep.store);
-      if (ress.length > 0) {
-        let firstRes = _.first(ress);
-        result = creep.drop(firstRes);
-        // console.log('drop', firstRes, result)
-      }
-    }
+    // if (creep.memory.role === 'miner') {
+    //   ress = Object.keys(creep.store);
+    //   if (ress.length > 0) {
+    //     let firstRes = _.first(ress);
+    //     result = creep.drop(firstRes);
+    //     // console.log('drop', firstRes, result)
+    //   }
+    // }
   },
   conditions: function (creep) {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;

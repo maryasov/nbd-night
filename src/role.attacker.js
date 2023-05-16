@@ -2,6 +2,7 @@ const boosting = require('helper.boosting');
 const ff = require('helper.friendFoeRecognition');
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
+const recycle = require('helper.recycle');
 
 const prioritizedStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
 
@@ -27,6 +28,7 @@ module.exports = {
     return spawnHelper.makeParts(toughness, TOUGH, 40 - toughness, ATTACK, 10, MOVE);
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (creep.hits < creep.hitsMax) {
       creep.heal(creep);
       console.log('healing self', creep.name);

@@ -1,4 +1,4 @@
-const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER, STRUCTURE_LINK];
+const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_LINK];
 const renew = require('helper.renew');
 const parking = require('helper.parking');
 
@@ -35,8 +35,14 @@ module.exports = {
     // console.log('scoop storage', home.storage, JSON.stringify(home))
     let target;
     let targets = [];
-    if (home && home.storage) {
-      targets = targets.concat((home && home.storage) || []);
+    let storage = home && home.storage;
+    if (!storage && home && home.terminal) {
+      storage = home && home.terminal;
+          }
+
+
+    if (storage) {
+      targets = targets.concat(storage || []);
     } else {
       targets = targets.concat(
         creep.room.find(FIND_STRUCTURES, {

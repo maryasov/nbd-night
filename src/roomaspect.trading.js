@@ -1,7 +1,7 @@
 const spawnHelper = require('helper.spawning');
 const trader = require('role.trader');
 
-const MAX_TRANSFER = 5000;
+const MAX_TRANSFER = 20000;
 const TERMINAL_MAX_FILL = 270000;
 
 const allowedSalesHistoryDeviation = 0.5;
@@ -25,7 +25,7 @@ class DemandCache {
       targets = _.map(
         _.filter(
           Game.rooms,
-          (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL
+          (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL && r.memory.mode !== 'stack' && r.memory.mode !== 'unclaim'
         ),
         (r) => ({ room: r, miss: this.demandCallback(r.ai(), resource) })
       );
@@ -210,6 +210,7 @@ module.exports = class TradingAspect {
 
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
     this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
+    console.log('Supporting allied forces', resource, sendingAmount, target.room)
     target.amount -= sendingAmount;
 
     if (target.amount > 0) {

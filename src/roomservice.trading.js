@@ -74,7 +74,7 @@ module.exports = class Trading {
   }
 
   isTradingPossible() {
-    //return false;
+    // return false;
     return this.terminal && this.storage;
   }
 
