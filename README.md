@@ -2,6 +2,12 @@
 
 This is my personal AI for the computer game [Screeps](https://screeps.com).
 
+## Last updates
+- auto power harvest
+- auto creeps recycle after power harvest
+- auto renew
+- fixed creeps positions by roles (creep will stay at position, when not busy) 
+
 ## Manual control
 
 ### Memory Overrides

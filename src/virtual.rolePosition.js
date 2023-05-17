@@ -8,7 +8,7 @@ const ppOutline = [
 ];
 
 const roleColors = {
-  picker: '#06a2fa',
+  picker: '#0668fa',
   harvester: '#77ebff',
   linkCollector: '#fff800',
   trader: '#ffffff'
@@ -24,7 +24,7 @@ module.exports = {
     if (!color) {color = '#000'}
 
     // room.visual.circle(x, y, { stroke: "#0023fd", radius: 0.25, fill: null });
-    room.visual.circle(x, y, { stroke: color, radius: 0.2, fill: null });
+    room.visual.circle(x, y, { stroke: color, radius: 0.25, fill: null, strokeWidth: 0.05, opacity: 0.5 });
   },
   build: function (proxy, booster, roomai) {
     // proxy.planConstruction(booster.x, booster.y, STRUCTURE_LAB);
