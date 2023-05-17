@@ -1,6 +1,7 @@
 var spawnHelper = require('helper.spawning');
 var logistic = require('helper.logistic');
 var renew = require('helper.renew');
+const parking = require('helper.parking');
 const factoryWorker = require("./role.factoryWorker");
 
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
@@ -65,6 +66,7 @@ module.exports = {
     } else {
       if (this.pickup(creep)) this.deliver(creep);
     }
+    if (creep.memory.stopped) parking.check(creep);
   },
   deliver: function (creep) {
     let targets = this.findTargets(creep);

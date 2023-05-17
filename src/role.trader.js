@@ -1,5 +1,6 @@
 const spawnHelper = require('helper.spawning');
 const renew = require('helper.renew');
+const parking = require('helper.parking');
 
 // exporting anything does not make sense with less than
 // this amount of energy in the terminal
@@ -54,13 +55,17 @@ module.exports = {
         }
       }
     }
+    if (creep.memory.stopped) parking.check(creep);
   },
 
   carryTo: function (creep, target) {
     if (creep.pos.isNearTo(target)) {
-      if (_.sum(creep.store) == 0) return false;
+      if (_.sum(creep.store) == 0) {
+        creep.memory.stopped = true;
+        return false;}
       creep.transfer(target, _.last(_.keys(creep.store)));
     } else {
+      creep.memory.stopped = false;
       creep.goTo(target);
     }
 

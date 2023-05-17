@@ -9,7 +9,9 @@ const ppOutline = [
 
 const roleColors = {
   picker: '#06a2fa',
-  harvester: '#77ebff'
+  harvester: '#77ebff',
+  linkCollector: '#fff800',
+  trader: '#ffffff'
 }
 
 module.exports = {

@@ -1,4 +1,5 @@
 const renew = require('helper.renew');
+const parking = require('helper.parking');
 
 module.exports = {
   name: 'linkCollector',
@@ -11,6 +12,7 @@ module.exports = {
     } else {
       this.transfer(creep, roomai.links.storage(), roomai.room.storage);
     }
+    if (creep.memory.stopped) parking.check(creep);
   },
   transfer: function (creep, source, target) {
     if (creep.store.energy == 0) {
@@ -24,6 +26,7 @@ module.exports = {
       if (transferResult === OK) {
         creep.memory.stopped = true;
       } else if (transferResult === ERR_NOT_IN_RANGE) {
+        creep.memory.stopped = false;
         creep.goTo(target);
       }
     }
