@@ -33,8 +33,8 @@ module.exports = class BuildersAspect {
 
   numberOfBuilders() {
     if (this.roomai.mode === 'store') {
-      if (this.constructionMass >= 5000) {
-        return 2;
+      if (this.constructionMass > 0) {
+        return 1;
       } else {
         return 0;
       }

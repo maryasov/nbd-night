@@ -36,7 +36,7 @@ module.exports = class LabsAspect {
 
     this.updateDeficits();
     if (this.reactor) {
-      this.setCurrentReaction();
+      if (this.roomai.mode !== 'store') {this.setCurrentReaction();}
       this.reactor.react();
       this.reactor.renderVisuals();
     }
@@ -45,7 +45,9 @@ module.exports = class LabsAspect {
       return;
     }
 
-    this.buildScientists();
+    if (this.roomai.mode !== 'store') {
+      this.buildScientists();
+    }
 
     for (let booster of this.boosters) {
       booster.renderVisuals();

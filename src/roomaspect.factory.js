@@ -20,7 +20,7 @@ module.exports = class FactoryAspect {
 
     this.runFactory();
 
-    this.buildWorkers();
+    if (this.roomai.mode !== 'store') {this.buildWorkers();}
   }
 
   runFactory() {

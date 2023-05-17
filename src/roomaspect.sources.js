@@ -50,7 +50,7 @@ module.exports = class SourcesAspect {
     let spawnDuration = spawnHelper.spawnDuration(idealParts);
 
     let existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);
-    let longLivingMiners = _.filter(existingMiners, (c) => !c.ticksToLive || c.ticksToLive > spawnDuration);
+    let longLivingMiners = _.filter(existingMiners, (c) => !c.renew && (!c.ticksToLive || c.ticksToLive > spawnDuration));
     for (let source of this.sources) {
       if (!_.any(longLivingMiners, (m) => m.memory.target == source.id)) {
         let parts = _.any(existingMiners, (m) => m.memory.target == source.id) ? idealParts : minimalParts;

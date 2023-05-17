@@ -41,6 +41,19 @@ claiming new rooms and choosing remote mines.
 Global switch to enable pixel generation. Pixels will be generated whenever the
 bucket is full.
 
+### Virtual constructions
+
+flagName - description
+`addBlock` - add block
+`addPowerPosition` - add parking position for powerCreeps
+`addRolePosition.harvester` - add parking position for role harvester
+`addRolePosition.picker` - add parking position for role picker
+`addRolePosition.linkCollector` - add parking position for role linkCollector
+`addRolePosition.trader` - add parking position for role trader
+
+to remove virtual construction use `clear` prefix insted `add`
+
+
 ### Constructions
 
 Multiple structures and structure groups can be pre-planned.

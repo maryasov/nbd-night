@@ -11,12 +11,12 @@ module.exports = class PowerAspect {
   }
 
   run() {
-    //return;
+    return;
     if (!this.powerSpawn) return;
     if (!powerModes.includes(this.roomai.mode)) return;
     if (this.roomai.defense.defcon >= 4) return;
 
-    if (!this.room.storage) return;
+    if (!this.room.storage || this.roomai.mode === 'store') return;
     if (this.room.storage.store.energy > 5000) {
       this.powerSpawn.processPower();
     }
