@@ -3,6 +3,7 @@ const ConstructionSpaceFinder = require('constructionSpaceFinder');
 
 const virtuals = new Map([
   ['block', require('virtual.block')],
+  ['exit', require('virtual.exit')],
   ['powerPosition', require('virtual.powerPosition')],
   ['rolePosition', require('virtual.rolePosition')],
 ]);
