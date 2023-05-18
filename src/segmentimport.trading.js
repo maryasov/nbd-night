@@ -29,7 +29,7 @@ And maps them into a local memory structure for access by remaining code:
     }
 */
 
-const DEFAULT_TRADE_AMOUNT = 250;
+const DEFAULT_TRADE_AMOUNT = 1000;
 
 module.exports = class SegmentTrading {
   constructor(data, username) {

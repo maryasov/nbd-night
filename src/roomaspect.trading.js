@@ -214,6 +214,7 @@ module.exports = class TradingAspect {
     if (!target) return false;
 
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
+    if (sendingAmount < this.trading.minimumExportAmount(resource)) return false;
     this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
     console.log('Supporting allied forces', resource, sendingAmount, target.room);
     target.amount -= sendingAmount;

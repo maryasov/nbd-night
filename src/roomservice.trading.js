@@ -305,7 +305,7 @@ module.exports = class Trading {
   minimumExportAmount(resource) {
     if (resource !== 'energy' && this.room.ai().mode === 'unclaim') return 0;
     if (resource === RESOURCE_ENERGY) return 500;
-    if (resource === RESOURCE_POWER) return 10;
+    if (resource === RESOURCE_POWER) return 100;
     if (refinedCommodities.includes(resource)) return 10;
 
     return 100;
