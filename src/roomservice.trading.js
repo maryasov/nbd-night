@@ -286,7 +286,7 @@ module.exports = class Trading {
     if (t3Boosts.includes(resource)) return 25000;
     if (resource === 'G') return 10000;
     if (resource === 'ops') return 5000;
-    if (resource === 'power') return 5000;
+    // if (resource === 'power') return 5000;
 
     if (rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {
       if (this.room.ai().factory.isAvailable() && this.room.ai().factory.usableResources.includes(resource)) {

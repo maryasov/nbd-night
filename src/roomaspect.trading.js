@@ -183,6 +183,7 @@ module.exports = class TradingAspect {
         transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, choice.room.name);
         sentAmount = sentAmount - transactionPrice;
       }
+      if (sentAmount < this.trading.minimumExportAmount(resource)) return false;
       let status = this.terminal.send(resource, sentAmount, choice.room.name, 'empire balancing');
       if (status == 0 && sentAmount > transactionPrice) {
         console.log(
