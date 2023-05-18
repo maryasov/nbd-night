@@ -21,7 +21,7 @@ Exports trades to public segment
 Basic trading is a polyfill from advanced trading
 */
 
-const announcedResources = ['energy', 'O', 'H', 'L', 'U', 'K', 'Z', 'X'];
+const announcedResources = ['O', 'H', 'L', 'U', 'K', 'Z', 'X'];
 
 module.exports = class SegmentTrading {
   constructor() {}

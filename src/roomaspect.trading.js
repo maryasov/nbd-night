@@ -25,7 +25,12 @@ class DemandCache {
       targets = _.map(
         _.filter(
           Game.rooms,
-          (r) => r.ai() && r.ai().trading.isTradingPossible() && _.sum(r.terminal.store) < TERMINAL_MAX_FILL && r.memory.mode !== 'stack' && r.memory.mode !== 'unclaim'
+          (r) =>
+            r.ai() &&
+            r.ai().trading.isTradingPossible() &&
+            _.sum(r.terminal.store) < TERMINAL_MAX_FILL &&
+            r.memory.mode !== 'stack' &&
+            r.memory.mode !== 'unclaim'
         ),
         (r) => ({ room: r, miss: this.demandCallback(r.ai(), resource) })
       );
@@ -210,7 +215,7 @@ module.exports = class TradingAspect {
 
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
     this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
-    console.log('Supporting allied forces', resource, sendingAmount, target.room)
+    console.log('Supporting allied forces', resource, sendingAmount, target.room);
     target.amount -= sendingAmount;
 
     if (target.amount > 0) {
@@ -290,7 +295,9 @@ module.exports = class TradingAspect {
   buildTrader() {
     // console.log('build trader', this.room.name, JSON.stringify(this.trading.resourcesImportableToStorage));
     if (!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, trader.name) >= 1) return;
+    // console.log('tr', JSON.stringify(this.trading.hasTradingRequest));
     if (
+      this.trading.hasTradingRequest.length > 0 ||
       this.trading.resourcesExportableFromStorage.length > 0 ||
       this.trading.resourcesImportableToStorage.length > 0
     ) {

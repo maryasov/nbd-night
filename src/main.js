@@ -19,7 +19,7 @@ const roles = [
   require('role.healer'),
   require('role.hopper'),
   require('role.observer'),
-  // require("role.discoverer"),
+  // require('role.discoverer'),
   require('role.trader'),
   require('role.factoryWorker'),
   require('role.picker'),
@@ -230,25 +230,23 @@ function runCreeps() {
 
 runCreeps = profiler.registerFN(runCreeps, 'Creep Actions');
 
-Function.prototype.valueOf = function() {
+Function.prototype.valueOf = function () {
   this.call(this);
   return 0;
 };
 
-global.r = ()=>(
-  Operation.count('', false)
-)
+global.r = () => Operation.count('', false);
 
-global.b = ()=>{
+global.b = () => {
   Operation.boosts('', true);
-}
+};
 
-global.e = ()=>{
+global.e = () => {
   Operation.count('energy', true);
-}
+};
 
 module.exports.loop = function () {
-  // profiler.wrap(function() {
+  // profiler.wrap(function () {
   // globalStatistics.initialize();
   if (Memory.lastCompletedTick < Game.time - 1) {
     Memory.stats.skippedTicks += 1;
@@ -409,7 +407,7 @@ module.exports.loop = function () {
     suppressErrors(() => ui.render());
   }
 
-  // suppressErrors(() => MapKnowledge.drawMapVisuals());
+  suppressErrors(() => MapKnowledge.drawMapVisuals());
   suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
 
   if (Memory.generatePixels && Game.cpu.bucket >= 9999) {

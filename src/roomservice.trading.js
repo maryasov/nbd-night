@@ -74,7 +74,7 @@ module.exports = class Trading {
   }
 
   isTradingPossible() {
-    // return false;
+    //return false;
     return this.terminal && this.storage;
   }
 
@@ -117,6 +117,10 @@ module.exports = class Trading {
 
   get resourcesExportableFromStorage() {
     return _.filter(_.keys(this.storage.store), (res) => this.possibleExportFromStorage(res) > 0);
+  }
+
+  get hasTradingRequest() {
+    return _.filter(_.keys(Memory.tradeRequests), (res) => this.possibleExportFromRoom(res) > 0 && _.any(Memory.tradeRequests[res], tr=>tr.amount > 5000));
   }
 
   possibleExportFromStorage(resource) {
@@ -217,7 +221,7 @@ module.exports = class Trading {
 
     if (this.room.ai().mode === 'unclaim') return 0;
 
-    if (resource == RESOURCE_ENERGY) return 10000;
+    if (resource == RESOURCE_ENERGY) return 50000;
 
     if (resource == RESOURCE_POWER) {
       if (this.room.powerSpawn() && !Memory.sellPower) return 1000;

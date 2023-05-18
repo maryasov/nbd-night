@@ -17,11 +17,11 @@ module.exports = class PowerAspect {
     if (this.roomai.defense.defcon >= 4) return;
 
     if (!this.room.storage || this.roomai.mode === 'store') return;
-    if (this.room.storage.store.energy > 5000) {
+    if (this.room.storage.store.energy > 40000) {
       this.powerSpawn.processPower();
     }
 
-    if (!this.room.storage || this.room.storage.store.energy < 50000 || !this.room.storage.store[RESOURCE_POWER])
+    if (!this.room.storage || this.room.storage.store.energy < 40000 || !this.room.storage.store[RESOURCE_POWER])
       return;
     if (Memory.sellPower && this.room.storage.store.energy < 500000) return;
     if (!this.roomai.canSpawn() || spawnHelper.numberOfLocalCreeps(this.roomai, refiner.name) >= 1) return;

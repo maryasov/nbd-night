@@ -43,7 +43,7 @@ module.exports = class RemoteMinesAspect {
   run() {
     if (!this.room.storage) return;
     if (this.remoteMines.length < targetRemoteMineCount) {
-      if (!Memory.disableAutoExpansion && this.roomai.intervals.planRemoteMines.isActive()) {
+      if (Memory.enableAutoExpansion && this.roomai.intervals.planRemoteMines.isActive()) {
         this.planRemoteMines();
       }
     }

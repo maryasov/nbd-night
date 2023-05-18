@@ -77,7 +77,7 @@ module.exports = class Constructions {
 
     this.initializeMemory();
     if (this.buildings.length == 0) {
-      if (Memory.disableAutoExpansion) {
+      if (!Memory.enableAutoExpansion) {
         this.planRoomLayout({ essentialsOnly: true });
       } else {
         this.planRoomLayout();
