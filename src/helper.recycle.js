@@ -67,6 +67,14 @@ module.exports = {
       // console.log(creep.name, creep.store.getUsedCapacity(), JSON.stringify(creep.store));
       return false;
     }
+    if (
+      creep.memory.role === 'mover' &&
+        (creep.memory.support !== creep.room.name ||
+      creep.store.getUsedCapacity() !== 0)
+    ) {
+      // console.log(creep.name, creep.store.getUsedCapacity(), JSON.stringify(creep.store));
+      return false;
+    }
     if (creep.memory.role === 'powerFarmer' && creep.memory.home !== creep.room.name) return false;
     if (creep.memory.role === 'healer' && creep.memory.home !== creep.room.name) return false;
     if (creep.memory.role === 'observer' && creep.memory.home !== creep.room.name) return false;

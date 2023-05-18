@@ -61,9 +61,12 @@ module.exports = class LabsAspect {
   }
 
   setCurrentReaction() {
+    // console.log('setCurrentReaction', this.room.name, this.isCurrentReactionFinished())
     if (!this.isCurrentReactionFinished()) return;
 
     let nextReaction = this.findNextReaction();
+    // console.log('nextReaction', this.room.name, nextReaction);
+
     this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionCycleAmount);
   }
 

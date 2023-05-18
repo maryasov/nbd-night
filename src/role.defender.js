@@ -37,6 +37,10 @@ module.exports = {
     if (creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
     creep.memory.stopped = false;
+    if (creep.memory.goRecycle && creep.room.name !== creep.memory.originRoom) {
+      movement.moveToRoom(creep, creep.memory.originRoom);
+      return;
+    }
     if (creep.room.name === creep.memory.room) {
       if (creep.room.ai() && creep.room.ai().defense.defcon >= 3) {
         if (boosting.accept(creep, 'XUH2O')) return;
@@ -53,12 +57,15 @@ module.exports = {
     if (target) {
       this.attack(creep, target);
     } else {
-      let center = creep.room.getPositionAt(25, 25);
-      if (creep.pos.getRangeTo(center) > 10) {
-        creep.goTo({ pos: center }, { range: 10 });
-      } else {
-        creep.memory.stopped = true;
+      if (creep.room.name === creep.memory.room) {
+        creep.memory.goRecycle = true;
       }
+      // let center = creep.room.getPositionAt(25, 25);
+      // if (creep.pos.getRangeTo(center) > 10) {
+      //   creep.goTo({ pos: center }, { range: 10 });
+      // } else {
+      //   creep.memory.stopped = true;
+      // }
     }
   },
   attack: function (creep, target) {

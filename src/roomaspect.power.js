@@ -11,7 +11,7 @@ module.exports = class PowerAspect {
   }
 
   run() {
-    return;
+    if (this.room.memory.noPower) return;
     if (!this.powerSpawn) return;
     if (!powerModes.includes(this.roomai.mode)) return;
     if (this.roomai.defense.defcon >= 4) return;
