@@ -28,7 +28,7 @@ module.exports = {
   },
   updateCostMatrix: function (matrix, exit) {
     console.log('updateCostMatrix exit');
-    matrix.set(exit.x, exit.y, 255);
+    matrix.set(exit.x, exit.y, 0);
   },
   addBuilding: function (memory, flag) {
     // console.log('addBuilding', JSON.stringify(flag))
