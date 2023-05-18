@@ -39,7 +39,7 @@ module.exports = class PathBuilder {
     this.swampCost = 10;
     this.avoidCreeps = true;
     this.avoidHostiles = false;
-    this.debugCosts = false;
+    this.debugCosts = true;
     this.preferRoads = true;
     this.allowedRooms = null;
   }
@@ -57,7 +57,7 @@ module.exports = class PathBuilder {
     let builder = this;
     return function additiveCallback(roomName, matrix) {
       builder.doAvoidStructures(roomName, matrix);
-      builder.doAvoidVirtuals(roomName, matrix);
+      // builder.doAvoidVirtuals(roomName, matrix);
       if (builder.avoidHostiles) {
         builder.doAvoidHostiles(roomName, matrix);
       }
@@ -76,7 +76,7 @@ module.exports = class PathBuilder {
 
       let matrix = new PathFinder.CostMatrix();
       builder.doAvoidStructures(roomName, matrix);
-      builder.doAvoidVirtuals(roomName, matrix);
+      // builder.doAvoidVirtuals(roomName, matrix);
       builder.doAvoidConstructionSites(roomName, matrix);
       if (builder.avoidCreeps) {
         builder.doAvoidAllCreeps(roomName, matrix);

@@ -328,50 +328,6 @@ module.exports.loop = function () {
     logistic.cleanupCaches();
   }
 
-  // console.log('Game.time % 10', Game.time % 10, Game.time % 100)
-
-  for (let roomName in Game.rooms) {
-    let room = Game.rooms[roomName];
-    const _flags = room.find(FIND_FLAGS);
-    let resultsExits = _.filter(
-      _.map(_flags, (f) => ({ match: exitFlagRegex.exec(f.name), flag: f })),
-      (m) => m.match
-    );
-
-    for (let result of resultsExits) {
-      if (result.flag.color === 1) {
-        const roomName = result.flag.room.name;
-        const flagPos = result.flag.pos;
-        if (Memory.rooms[roomName] === undefined) {
-          Memory.rooms[roomName] = {};
-        }
-        if (Memory.rooms[roomName].exits === undefined) {
-          Memory.rooms[roomName].exits = [];
-        }
-        Memory.rooms[roomName].exits = _.filter(
-          Memory.rooms[roomName].exits,
-          (b) => b.x !== flagPos.x || b.y !== flagPos.y
-        );
-        Memory.rooms[roomName].exits.push({ x: flagPos.x, y: flagPos.y });
-      }
-      if (result.flag.color === 10) {
-        const roomName = result.flag.room.name;
-        const flagPos = result.flag.pos;
-        if (Memory.rooms[roomName] === undefined) {
-          Memory.rooms[roomName] = {};
-        }
-        if (Memory.rooms[roomName].exits === undefined) {
-          Memory.rooms[roomName].exits = [];
-        }
-        Memory.rooms[roomName].exits = _.filter(
-          Memory.rooms[roomName].exits,
-          (b) => b.x !== flagPos.x || b.y !== flagPos.y
-        );
-      }
-      result.flag.remove();
-    }
-  }
-
   if (Memory.enableAutoExpansion) {
     suppressErrors(() => MapKnowledge.updateKnowledge());
   }

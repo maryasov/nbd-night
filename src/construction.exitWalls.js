@@ -69,7 +69,7 @@ module.exports = {
       } else {
         const struct = Game.rooms[proxy.room.name].lookForAt('structure', pos.x, pos.y);
         const foundRoad = _.find(struct, (w) => w.structureType === 'road');
-        const exits = Memory.rooms[proxy.room.name].exits;
+        const exits = Memory.rooms[proxy.room.name].virtuals.exit;
         const exitsInPosition = _.find(exits, (ex) => ex.x === pos.x && ex.y === pos.y);
         // if (Memory.rooms[proxy.room.name].exits) {console.log('proxy.room', Memory.rooms[proxy.room.name].exits)}
         // const exitFlag =
