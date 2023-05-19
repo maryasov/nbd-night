@@ -12,7 +12,6 @@ module.exports = class ConstructionSitesCleaner {
   }
   run() {
     if (Game.time - (Memory.lastSitesCheck || 0) < checkInterval) return;
-    console.log('checked');
     Memory.lastSitesCheck = Game.time;
 
     let previousSites = _.compact(_.map(Object.keys(this.memory.sites), (id) => Game.getObjectById(id)));

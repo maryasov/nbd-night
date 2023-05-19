@@ -3,7 +3,7 @@ const RouteFinder = require('routefinder');
 
 const DEFAULT_STUCK_LIMIT = 5;
 
-const MINIMUM_OPS = 2000; // default value for PathFinder
+const MINIMUM_OPS = 300; // default value for PathFinder
 const OPS_PER_ROOM = 1000; // pathing a route of N rooms can take up to N CPU
 
 // TODO:
@@ -98,11 +98,13 @@ module.exports = class CreepMover {
       } else {
         let allowedRooms = this.routeFinder.findRoute();
         this.pathBuilder.allowedRooms = allowedRooms;
+        let maxOps = Math.max(MINIMUM_OPS, OPS_PER_ROOM * allowedRooms.length);
+        // console.log('maxOps', maxOps);
         let options = {
           plainCost: this.pathBuilder.plainCost,
           swampCost: this.pathBuilder.swampCost,
           roomCallback: this.pathBuilder.getRoomCallback(),
-          maxOps: Math.max(MINIMUM_OPS, OPS_PER_ROOM * allowedRooms.length),
+          maxOps: maxOps,
         };
 
         options = Object.assign({}, this.options, options);
@@ -116,7 +118,22 @@ module.exports = class CreepMover {
     }
 
     this.serializeData(data);
+    // let coo = this.coordsByPath(this.creep.pos, data.path);
+    // console.log('data', coo);
+    // this.creep.room.visual.poly(coo, {stroke: '#ffffff', strokeWidth: .8, opacity: .2, lineStyle: 'dashed'});
     return this.creep.move(this.nextDir(data));
+  }
+
+  coordsByPath(pos, path) {
+    const coords = [];
+    let cPos = pos;
+    coords.push(pos);
+    while (path.length > 0) {
+
+      cPos =  CreepMover.coordInDirection(cPos, parseInt(path[0], 10))
+      coords.push(cPos)
+      path = path.substr(1);
+    }
   }
 
   configurePathBuilder(creep, builderOptions) {

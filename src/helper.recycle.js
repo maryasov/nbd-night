@@ -44,17 +44,8 @@ module.exports = {
     result = spawn.recycleCreep(creep);
 
     if (result == OK) {
-      console.log('recycled');
     } else if (result == ERR_NOT_IN_RANGE) {
-      creep.goTo(spawn, {
-        visualizePathStyle: {
-          fill: 'transparent',
-          stroke: '#ff0000',
-          lineStyle: 'dashed',
-          strokeWidth: .15,
-          opacity: .1
-        }
-      });
+      creep.goTo(spawn);
       return true;
     }
   },

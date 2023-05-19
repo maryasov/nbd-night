@@ -242,7 +242,7 @@ module.exports = {
     result = spawn.recycleCreep(creep);
 
     if (result == OK) {
-      console.log('recycled');
+      console.log('recycled builder');
     } else if (result == ERR_NOT_IN_RANGE) {
       creep.goTo(spawn);
     }

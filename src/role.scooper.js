@@ -30,17 +30,20 @@ module.exports = {
   },
   run: function (creep) {
     if (recycle.check(creep)) return;
-    if (!creep.memory.goRecycle && creep.memory.operation && Memory.powerOperation) {
+    if (creep.room.name === creep.memory.home && !creep.memory.goRecycle && creep.memory.operation && Memory.powerOperation) {
       let scoopers = _.filter(
         spawnHelper.globalCreepsWithRole(creep.memory.role),
         (c) => c.memory.operation == creep.memory.operation
       );
+      //console.log('scoopers', JSON.stringify(scoopers));
       let scoopersCapacity = _.sum(scoopers, (c) => c.carryCapacity);
       if (scoopersCapacity < creep.memory.power) {
         if (_.some(creep.body, (p) => p.type === CARRY)) {
           // console.log('accept', creep.name);
           if (boosting.accept(creep, 'XKH2O')) return;
         }
+      } else {
+        this.cancelSpawning(creep);
       }
     }
     if (creep.memory.returningHome) {
@@ -216,6 +219,33 @@ module.exports = {
       return ['power'].indexOf(r) >= 0
     }
     return ignoreResources.indexOf(r) < 0
+  },
+  cancelSpawning: function (creep) {
+    let scoopers = _.filter(
+        spawnHelper.globalCreepsWithRole(creep.memory.role),
+        (c) => c.memory.operation == creep.memory.operation
+    );
+    let spawned = _.filter(
+        scoopers,
+        (c) => c.memory.operation == creep.memory.operation && c.spawning === false
+    );
+    let spawning = _.filter(
+        scoopers,
+        (c) => c.memory.operation == creep.memory.operation && c.spawning === true
+    );
+    let roomai = creep.room.ai();
+    if (!roomai) return;
+    let spawns = roomai.spawns.getBusySpawns();
+    // console.log('spawning', JSON.stringify(spawns))
+    let spawnedCapacity = _.sum(spawned, (c) => c.carryCapacity);
+    if (spawnedCapacity > creep.memory.power && spawning.length) {
+      console.log('Over capacity 🛢️', spawnedCapacity - creep.memory.power, 'for', creep.memory.target);
+      _.forEach(spawning, (sCreep) => {
+        let currentSpawn = _.find(spawns, (s) => s.spawning && s.spawning.name === sCreep.name);
+        Game.spawns[currentSpawn.name].spawning.cancel();
+        console.log(currentSpawn.name, 'Cancel spawning of', sCreep.name);
+      });
+    }
   }
 };
 
