@@ -162,7 +162,7 @@ module.exports = class TradingAspect {
     if (exportable >= this.trading.minimumExportAmount(resource)) {
       let result = this.terminal.send(resource, exportable, exportDescription.room, 'Manual export');
       if (result === OK) {
-        console.log('performManualExport', this.terminal.room.name, resource, exportable, exportDescription.room);
+        console.log('Manual export', this.terminal.room.name, '📦', exportDescription.room, resource, exportable);
         exportDescription.amount -= exportable;
         if (exportDescription.amount < this.trading.minimumExportAmount(resource)) {
           delete this.trading.manualExports[resource];
@@ -217,7 +217,7 @@ module.exports = class TradingAspect {
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
     if (sendingAmount < this.trading.minimumExportAmount(resource)) return false;
     this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
-    console.log('Supporting allied forces', this.terminal.room.name, '📦', target.room, resource, sendingAmount);
+    console.log('Supporting allied forces', this.terminal.room.name, '🌐', target.room, resource, sendingAmount);
     target.amount -= sendingAmount;
 
     if (target.amount > 0) {
