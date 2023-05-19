@@ -27,7 +27,7 @@ module.exports = {
     // if(lab) roomai.labs.setBooster(lab);
   },
   updateCostMatrix: function (matrix, exit) {
-    console.log('updateCostMatrix exit');
+    // console.log('updateCostMatrix exit');
     matrix.set(exit.x, exit.y, 0);
   },
   addBuilding: function (memory, flag) {

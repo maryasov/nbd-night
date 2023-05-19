@@ -24,7 +24,7 @@ module.exports = {
     // if(lab) roomai.labs.setBooster(lab);
   },
   updateCostMatrix: function (matrix, booster) {
-    matrix.set(booster.x, booster.y, 200);
+    matrix.set(booster.x, booster.y, 10);
   },
   addBuilding: function (memory, flag) {
     memory.push({ x: flag.pos.x, y: flag.pos.y });
