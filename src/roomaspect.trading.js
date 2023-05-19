@@ -187,13 +187,13 @@ module.exports = class TradingAspect {
       let status = this.terminal.send(resource, sentAmount, choice.room.name, 'empire balancing');
       if (status == 0 && sentAmount > transactionPrice) {
         console.log(
-          'balanceToEmpire',
-          status,
+          'Balance rooms',
           this.terminal.room.name,
+          '📨',
+          choice.room.name,
           resource,
-          sentAmount,
-          transactionPrice,
-          choice.room.name
+          sentAmount/*,
+          transactionPrice*/
         );
       } else {
         // console.log('-balanceToEmpire', status, this.terminal.room.name, resource, sentAmount, choice.room.name)
@@ -217,7 +217,7 @@ module.exports = class TradingAspect {
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
     if (sendingAmount < this.trading.minimumExportAmount(resource)) return false;
     this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
-    console.log('Supporting allied forces', resource, sendingAmount, target.room);
+    console.log('Supporting allied forces', this.terminal.room.name, '📦', target.room, resource, sendingAmount);
     target.amount -= sendingAmount;
 
     if (target.amount > 0) {

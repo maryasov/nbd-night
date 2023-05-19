@@ -70,7 +70,7 @@ module.exports = class CreepMover {
           return OK;
         } else {
           this.log(
-            'Unexpected movement. Expected: ' +
+            `${this.creep.room.name} 🚧 Unexpected movement. Expected: ` +
               expectedPos.x +
               '|' +
               expectedPos.y +
