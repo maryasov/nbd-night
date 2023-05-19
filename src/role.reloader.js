@@ -1,5 +1,6 @@
 const spawnHelper = require('helper.spawning');
 const renew = require('helper.renew');
+const parking = require('helper.parking');
 
 module.exports = {
   //TODO if has towers
@@ -34,7 +35,10 @@ module.exports = {
       (s) => s.energy
     );
     let target = towers[0];
-    if (!target) return;
+    if (!target) {
+      parking.check(creep);
+      return;
+    }
     if (creep.pos.isNearTo(target)) {
       creep.transfer(target, RESOURCE_ENERGY);
     } else {

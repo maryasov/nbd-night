@@ -11,7 +11,8 @@ const roleColors = {
   picker: '#0668fa',
   harvester: '#77ebff',
   linkCollector: '#fff800',
-  trader: '#ffffff'
+  trader: '#ffffff',
+  reloader: '#a2ff00'
 }
 
 module.exports = {
