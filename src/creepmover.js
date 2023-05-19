@@ -69,16 +69,16 @@ module.exports = class CreepMover {
           data.stuck += 1;
           return OK;
         } else {
-          this.log(
-            `${this.creep.room.name} 🚧 Unexpected movement. Expected: ` +
-              expectedPos.x +
-              '|' +
-              expectedPos.y +
-              ' Got: ' +
-              this.creep.pos.x +
-              '|' +
-              this.creep.pos.y
-          );
+          // this.log(
+          //   `${this.creep.room.name} 🚧 Unexpected movement. Expected: ` +
+          //     expectedPos.x +
+          //     '|' +
+          //     expectedPos.y +
+          //     ' Got: ' +
+          //     this.creep.pos.x +
+          //     '|' +
+          //     this.creep.pos.y
+          // );
           data.path = null;
         }
       }
