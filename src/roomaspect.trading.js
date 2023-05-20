@@ -211,7 +211,8 @@ module.exports = class TradingAspect {
     if (!requests || !requests[resource]) return false;
     if (resource === RESOURCE_POWER && Memory.sellPower) return false;
 
-    let target = _.shuffle(requests[resource]).shift();
+    requests[resource] = _.shuffle(requests[resource])
+    let target = requests[resource].shift();
     if (!target) return false;
 
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
