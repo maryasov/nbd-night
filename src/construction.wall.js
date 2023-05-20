@@ -23,15 +23,31 @@ module.exports = {
           [end.x, start.y],
           [end.x, end.y],
         ],
-        { stroke: '#77f' }
+        {
+          stroke: wall.type === 'rampart' ? '#a2ff00' : '#ffffff',
+          // lineStyle: 'dotted',
+          opacity: 0.25,
+          strokeWidth: 0.2,
+        }
       );
     } else {
       room.visual.poly(
         [
-          [start.x - 0.5, start.y],
-          [start.x + 0.5, start.y],
+          [start.x - 0.25, start.y- 0.25],
+          [start.x + 0.25, start.y+ 0.25],
         ],
-        { stroke: '#f77' }
+        { stroke: '#f77',
+          lineStyle: 'dotted',
+          strokeWidth: 0.25, }
+      );
+      room.visual.poly(
+        [
+          [start.x - 0.25, start.y+ 0.25],
+          [start.x + 0.25, start.y- 0.25],
+        ],
+        { stroke: '#f77',
+          lineStyle: 'dotted',
+          strokeWidth: 0.25, }
       );
     }
   },
@@ -41,31 +57,51 @@ module.exports = {
     // keeping number of construction sites in low-level rooms down
     if (proxy.room.controller.level < 3) return;
 
-    proxy.planConstruction(wall.end.x, wall.end.y, STRUCTURE_RAMPART);
-    let lastWasWall = true;
+    this.setWallAtPos(proxy, wall, { x: wall.end.x, y: wall.end.y });
     eachWallPosition(wall, (pos) => {
-      if (wall.pure || lastWasWall) {
-        proxy.planConstruction(pos.x, pos.y, STRUCTURE_RAMPART);
-      } else {
-        proxy.planConstruction(pos.x, pos.y, STRUCTURE_WALL);
-      }
-
-      lastWasWall = !lastWasWall;
+      this.setWallAtPos(proxy, wall, pos);
     });
   },
   updateCostMatrix: function (matrix, wall) {
-    if (wall.pure) return;
+    if (!wall.type || wall.type === 'rampart') return;
 
-    let isWall = false;
+    let isWall = true;
     eachWallPosition(wall, (pos) => {
       if (isWall) {
         if (pos.x !== wall.end.x || pos.y !== wall.end.y) {
           matrix.set(pos.x, pos.y, 255);
         }
       }
-
-      isWall = !isWall;
     });
+  },
+  setWallAtPos: function (proxy, wall, pos) {
+    if (wall.type === 'rampart') {
+      proxy.planConstruction(pos.x, pos.y, STRUCTURE_RAMPART);
+    } else {
+      const struct = Game.rooms[proxy.room.name].lookForAt('structure', pos.x, pos.y);
+      const foundRoad = _.find(struct, (w) => w.structureType === 'road');
+      const exits = Memory.rooms[proxy.room.name].virtuals.exit;
+      const exitsInPosition = _.find(exits, (ex) => ex.x === pos.x && ex.y === pos.y);
+      if (exitsInPosition) {
+        // const str = Game.rooms[proxy.room.name].lookForAt('structure',pos.x,pos.y);
+        const foundWall = _.find(struct, (w) => w.structureType === 'constructedWall');
+        if (foundWall) {
+          foundWall.destroy();
+        }
+        // console.log('str', str)
+        if (!foundRoad) {
+          proxy.planConstruction(pos.x, pos.y, STRUCTURE_ROAD);
+        } else {
+          proxy.planConstruction(pos.x, pos.y, STRUCTURE_RAMPART);
+        }
+      } else {
+        if (!foundRoad) {
+          proxy.planConstruction(pos.x, pos.y, STRUCTURE_WALL);
+        } else {
+          proxy.planConstruction(pos.x, pos.y, STRUCTURE_RAMPART);
+        }
+      }
+    }
   },
   addBuilding: function (memory, flag) {
     let lastWall = _.last(memory);
@@ -75,7 +111,11 @@ module.exports = {
       memory.push({ start: { x: flag.pos.x, y: flag.pos.y } });
     } else {
       lastWall.end = { x: flag.pos.x, y: flag.pos.y };
-      if (flag.color > 1) lastWall.pure = true;
+      if (flag.color === 5) {
+        lastWall.type = 'rampart';
+      } else {
+        lastWall.type = 'wall';
+      }
     }
   },
   removeBuilding: function (memory, flag) {
