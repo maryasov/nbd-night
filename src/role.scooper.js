@@ -242,6 +242,7 @@ module.exports = {
       console.log('Over capacity 🛢️', spawnedCapacity - creep.memory.power, 'for', creep.memory.target);
       _.forEach(spawning, (sCreep) => {
         let currentSpawn = _.find(spawns, (s) => s.spawning && s.spawning.name === sCreep.name);
+        if (!currentSpawn) return;
         Game.spawns[currentSpawn.name].spawning.cancel();
         console.log(currentSpawn.name, 'Cancel spawning of', sCreep.name);
       });
