@@ -7,6 +7,9 @@ module.exports = {
     let friends = tower.room.find(FIND_MY_CREEPS, {
       filter: (creep) => creep.hits < creep.hitsMax && creep.memory.role !== 'hopper',
     });
+    friends = friends.concat(tower.room.find(FIND_MY_POWER_CREEPS, {
+      filter: (creep) => creep.hits < creep.hitsMax,
+    }));
     let warriors = _.filter(friends, (f) => _.some(f.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK));
 
     if (warriors.length > 0) {
