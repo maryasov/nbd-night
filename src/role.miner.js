@@ -69,7 +69,8 @@ module.exports = {
     }
 
     var harvestResult = OK;
-    if (creep.store.getFreeCapacity() > 0) {
+    let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
+    if (creep.store.getFreeCapacity() >= harvestPower * creep.getActiveBodyparts(WORK)) {
       harvestResult = creep.harvest(target);
     }
 
@@ -77,7 +78,7 @@ module.exports = {
       creep.memory.stopped = true;
       var store = logistic.storeFor(target);
       if (store) {
-        let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
+        // let harvestPower = creep.memory.resource === RESOURCE_ENERGY ? HARVEST_POWER : HARVEST_MINERAL_POWER;
         if (creep.memory.resource === RESOURCE_ENERGY && store.hits / store.hitsMax < 0.5) {
           if (creep.repair(store) == ERR_NOT_IN_RANGE) {
             creep.goTo(store);
