@@ -14,8 +14,10 @@ const parkStructures = [
 const blockStructures = [
   /*STRUCTURE_RAMPART*/
 ];
-const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
+const storeStructures = [STRUCTURE_TERMINAL, STRUCTURE_STORAGE];
 const wayStructures = [STRUCTURE_POWER_BANK];
+const ignoreResources = ['energy', 'H'];
+
 
 module.exports = {
   name: 'scooper',
@@ -105,7 +107,6 @@ module.exports = {
     }
   },
   scoopWay: function (creep) {
-    const ignoreResources = [];
     if (creep.store.getFreeCapacity() < creep.store.getCapacity() * 0.1) {
       creep.memory.returningHome = true;
       return;
@@ -146,7 +147,6 @@ module.exports = {
       return;
     }
 
-    const ignoreResources = [];
 
     let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'H' });
     if (!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
