@@ -69,10 +69,8 @@ require('patch.room');
 const profiler = require('screeps-profiler');
 const structureTower = require('./structure.tower');
 const movement = require('./helper.movement');
-// profiler.enable();
+profiler.enable();
 
-const blockFlagRegex = /^b$/;
-const exitFlagRegex = /^e$/;
 const creepsStat = false;
 let bucket = [];
 
@@ -246,8 +244,8 @@ global.e = () => {
 };
 
 module.exports.loop = function () {
-  // profiler.wrap(function () {
-  // globalStatistics.initialize();
+  profiler.wrap(function () {
+  globalStatistics.initialize();
   if (Memory.lastCompletedTick < Game.time - 1) {
     Memory.stats.skippedTicks += 1;
   }
@@ -380,5 +378,5 @@ module.exports.loop = function () {
   RawMemory.setDefaultPublicSegment(98);
 
   Memory.lastCompletedTick = Game.time;
-  // });
+  });
 };

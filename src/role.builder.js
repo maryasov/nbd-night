@@ -2,6 +2,7 @@ const boosting = require('helper.boosting');
 const logistic = require('helper.logistic');
 const movement = require('helper.movement');
 const renew = require('helper.renew');
+const recycle = require('helper.recycle');
 
 const fullHealthEquiv = 10000;
 const emergencyHitPercent = 0.3;
@@ -32,16 +33,13 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (renew.check(creep)) return;
     if (creep.memory.room && creep.room.name !== creep.memory.room) {
       movement.moveToRoom(creep, creep.memory.room);
       return;
     } else if (movement.isOnExit(creep)) {
       movement.leaveExit(creep);
-    }
-
-    if (creep.memory.goRecycle && Game.rooms[creep.room.name].ai().mode !== 'way') {
-      this.recycle(creep);
     }
 
     // if(boosting.accept(creep, "XLH2O")) {
@@ -105,7 +103,7 @@ module.exports = {
       }
     }
 
-    if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 20 && !creep.memory.renew) {
+    if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 50 && !creep.memory.renew) {
       creep.memory.goRecycle = true;
     }
   },

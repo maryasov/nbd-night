@@ -76,12 +76,12 @@ module.exports = {
       targets = targets.concat(storage || []);
     } else {
       targets = targets.concat(
-          creep.room.find(FIND_STRUCTURES, {
-            filter: (s) =>
-                storeStructures.includes(s.structureType) &&
-                _.sum(s.store) < s.storeCapacity &&
-                s.storeCapacity - _.sum(s.store) > _.sum(creep.store),
-          })
+        creep.room.find(FIND_STRUCTURES, {
+          filter: (s) =>
+            storeStructures.includes(s.structureType) &&
+            _.sum(s.store) < s.storeCapacity &&
+            s.storeCapacity - _.sum(s.store) > _.sum(creep.store),
+        })
       );
       // console.log('targ scoo', JSON.stringify(target))
     }
@@ -98,7 +98,6 @@ module.exports = {
       return true;
     }
 
-
     if (creep.pos.isNearTo(target)) {
       let resource = _.findKey(creep.store, (amount) => amount > 0);
       if (resource) {
@@ -107,7 +106,6 @@ module.exports = {
     } else {
       creep.goTo(target, { ignoreRoads: false, avoidHostiles: true });
     }
-
 
     if (creep.store.getUsedCapacity() == 0) {
       creep.memory.stopped = true;
@@ -121,10 +119,9 @@ module.exports = {
     // let myNumber = this.harvesterIdx(creep);
     // let evenOdd = myNumber % 2;
     let targets = creep.room
-        .find(FIND_DROPPED_RESOURCES, { filter: (r) => _.sum(r.store) > creep.pos.getRangeTo(r) })
-        .concat(creep.room.find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 }))
-        .concat(creep.room.find(FIND_RUINS, { filter: (t) => _.sum(t.store) > 0 }));
-
+      .find(FIND_DROPPED_RESOURCES, { filter: (r) => r.amount > creep.pos.getRangeTo(r) })
+      .concat(creep.room.find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 }))
+      .concat(creep.room.find(FIND_RUINS, { filter: (t) => _.sum(t.store) > 0 }));
 
     const targetsByTime = _.sortBy(targets, (t) => t.ticksToDecay);
 
@@ -139,8 +136,7 @@ module.exports = {
     let storage = home && home.storage;
     if (!storage && home && home.terminal) {
       storage = home && home.terminal;
-          }
-
+    }
 
     if (storage) {
       targets = targets.concat(storage || []);
@@ -179,7 +175,6 @@ module.exports = {
         creep.transfer(target, resource);
       } else {
         creep.memory.returningHome = false;
-
       }
     } else {
       creep.memory.stopped = false;
@@ -234,6 +229,6 @@ module.exports = {
 };
 
 const profiler = require('screeps-profiler');
-const logistic = require("./helper.logistic");
-const spawnHelper = require("./helper.spawning");
+const logistic = require('./helper.logistic');
+const spawnHelper = require('./helper.spawning');
 profiler.registerObject(module.exports, 'picker');
