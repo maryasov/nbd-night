@@ -102,7 +102,7 @@ module.exports = {
       let consType = cons[loc];
       let points = this.outlines[consType];
       let pos = this.positions[loc];
-      console.log(loc, consType, JSON.stringify(pos));
+      // console.log(loc, consType, JSON.stringify(pos));
       let transPoints = _.map(points, (p) => ({ x: p.x + pos.x, y: p.y + pos.y }));
       // console.log(JSON.stringify(points), JSON.stringify(transPoints));
       let dirOutline = layout.dirPoints(transPoints, storage.dir);
