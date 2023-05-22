@@ -103,9 +103,9 @@ module.exports = {
       }
     }
 
-    if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 50 && !creep.memory.renew) {
-      creep.memory.goRecycle = true;
-    }
+    // if (creep.memory.noTargetsSinc && Game.time - creep.memory.noTargetsSinc > 50 && !creep.memory.renew) {
+    //   creep.memory.goRecycle = true;
+    // }
   },
   chooseTarget: function (creep) {
     let lastTarget = Game.getObjectById(creep.memory.lastTarget);

@@ -5,12 +5,13 @@ const aspectsLite = [
   require('roomaspect.trading'),
   require('roomaspect.power'),
   require('roomaspect.virtuals'),
+  require('roomaspect.operations'),
+  require('roomaspect.defense'),
 ];
 
 const aspects = [
   require('roomaspect.supplies'),
   require('roomaspect.sources'),
-  require('roomaspect.defense'),
   require('roomaspect.builders'),
   require('roomaspect.scooper'),
   require('roomaspect.minerals'),
@@ -21,7 +22,6 @@ const aspects = [
   // require("roomaspect.intelligence"),
   require('roomaspect.labs'),
   require('roomaspect.factory'),
-  require('roomaspect.operations'),
   require('roomaspect.nuker'),
 ];
 

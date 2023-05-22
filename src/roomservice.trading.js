@@ -84,7 +84,7 @@ module.exports = class Trading {
   }
 
   get resourcesImportableToStorage() {
-    return _.filter(_.keys(this.terminal.store), (res) => this.neededImportToStorage(res) > 0);
+    return _.sortBy(_.filter(_.keys(this.terminal.store), (res) => this.neededImportToStorage(res) > 0), (res) => res === 'energy');
   }
 
   neededImportToStorage(resource) {

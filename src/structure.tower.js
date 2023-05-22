@@ -1,6 +1,6 @@
 const ff = require('helper.friendFoeRecognition');
 
-const fullHealthEquiv = 50000;
+let fullHealthEquiv = 50000;
 
 module.exports = {
   run: function (tower) {
@@ -37,10 +37,25 @@ module.exports = {
     if (tower.room.storage && tower.room.storage.store.energy < 5000) {
       return;
     }
+    // console.log('tow', tower.room.name, tower.room.storage.store.energy)
+    if (tower.room.storage.store.energy > 50000) {
+      fullHealthEquiv = 100000;
+    } else if (tower.room.storage.store.energy > 100000) {
+      fullHealthEquiv = 150000;
+    } else if (tower.room.storage.store.energy > 200000) {
+      fullHealthEquiv = 300000;
+    } else if (tower.room.storage.store.energy > 300000) {
+      fullHealthEquiv = 1000000;
+    }
     let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-      filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+      filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
     });
-    if (closestDamagedStructure) {
+    if (!closestDamagedStructure) {
+      closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+      });
+    }
+    if (closestDamagedStructure && tower.energy > tower.energyCapacity * 0.8) {
       tower.repair(closestDamagedStructure);
     }
   },

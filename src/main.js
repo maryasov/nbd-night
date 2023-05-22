@@ -111,7 +111,7 @@ const powerStop = [
   'upgrader',
   // 'picker',
   'reserver',
-  'discoverer',
+  // 'discoverer',
   // "scooper",
   // 'linkCollector',
   // 'miner',
@@ -245,138 +245,138 @@ global.e = () => {
 
 module.exports.loop = function () {
   profiler.wrap(function () {
-  globalStatistics.initialize();
-  if (Memory.lastCompletedTick < Game.time - 1) {
-    Memory.stats.skippedTicks += 1;
-  }
+    globalStatistics.initialize();
+    if (Memory.lastCompletedTick < Game.time - 1) {
+      Memory.stats.skippedTicks += 1;
+    }
 
-  bucket.push(Game.cpu.bucket);
-  if (Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
-    console.log('Bucket at ' + JSON.stringify(bucket));
-    bucket = [];
-  }
+    bucket.push(Game.cpu.bucket);
+    if (Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
+      console.log('Bucket at ' + JSON.stringify(bucket));
+      bucket = [];
+    }
 
-  // if (Game.cpu.bucket < 150) {return;}
+    // if (Game.cpu.bucket < 150) {return;}
 
-  // suppressErrors(() => ShardTravel.loadArrivals());
-  // const startCreeps = Game.cpu.getUsed();
-  runCreeps();
-  // if (Game.cpu.getUsed() < 5) {
-  //     runCreeps();
-  // }
-  // const endCreeps = Game.cpu.getUsed();
-  // console.log(`Creeps time: ${endCreeps - startCreeps} ms`);
-  // suppressErrors(() => ShardTravel.announceDepartures());
-
-  // const gbt = Game.cpu.bucket;
-  // let gfree = Math.max(Math.floor((1000 - bt)/10), 0) + 1;
-
-  // const startLinks = Game.cpu.getUsed();
-  for (let roomName in Game.rooms) {
-    let room = Game.rooms[roomName];
-    // if (roomName === 'W8N7') {
-    //     console.log('loop')
+    // suppressErrors(() => ShardTravel.loadArrivals());
+    // const startCreeps = Game.cpu.getUsed();
+    runCreeps();
+    // if (Game.cpu.getUsed() < 5) {
+    //     runCreeps();
     // }
-    if (room.aiLite()) {
-      suppressErrors(() => room.aiLite().run());
-    }
-    if (room.ai()) {
-      suppressErrors(() => room.ai().runLite());
-    }
-  }
-  // const endLinks = Game.cpu.getUsed();
-  // console.log(`Links time: ${endLinks - startLinks} ms`);
+    // const endCreeps = Game.cpu.getUsed();
+    // console.log(`Creeps time: ${endCreeps - startCreeps} ms`);
+    // suppressErrors(() => ShardTravel.announceDepartures());
 
-  if (Game.cpu.bucket > 100) {
-    // const startTowers = Game.cpu.getUsed();
+    // const gbt = Game.cpu.bucket;
+    // let gfree = Math.max(Math.floor((1000 - bt)/10), 0) + 1;
+
+    // const startLinks = Game.cpu.getUsed();
     for (let roomName in Game.rooms) {
       let room = Game.rooms[roomName];
-
-      for (let tower of room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => structure.structureType == STRUCTURE_TOWER,
-      })) {
-        structureTower.run(tower);
+      // if (roomName === 'W8N7') {
+      //     console.log('loop')
+      // }
+      if (room.aiLite()) {
+        suppressErrors(() => room.aiLite().run());
+      }
+      if (room.ai()) {
+        suppressErrors(() => room.ai().runLite());
       }
     }
-    // const endTowers = Game.cpu.getUsed();
-    // console.log(`Towers time: ${endTowers - startTowers} ms`);
-  }
+    // const endLinks = Game.cpu.getUsed();
+    // console.log(`Links time: ${endLinks - startLinks} ms`);
 
-  if (Game.time % 100 == 51) {
-    for (let name in Memory.creeps) {
-      if (!Game.creeps[name]) {
-        delete Memory.creeps[name];
+    if (Game.cpu.bucket > 100) {
+      // const startTowers = Game.cpu.getUsed();
+      for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
+
+        for (let tower of room.find(FIND_MY_STRUCTURES, {
+          filter: (structure) => structure.structureType == STRUCTURE_TOWER,
+        })) {
+          structureTower.run(tower);
+        }
+      }
+      // const endTowers = Game.cpu.getUsed();
+      // console.log(`Towers time: ${endTowers - startTowers} ms`);
+    }
+
+    if (Game.time % 100 == 51) {
+      for (let name in Memory.creeps) {
+        if (!Game.creeps[name]) {
+          delete Memory.creeps[name];
+        }
       }
     }
-  }
 
-  if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
+    if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
 
-  if (Game.cpu.bucket < (Memory.powerOperation ? 500 : 230)) {
-    return;
-  }
-
-  // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
-
-  if (Game.cpu.bucket < 1000 && Game.time % 10 !== 1) return;
-
-  // console.log('Game.time % 2', Game.time % 2)
-
-  if (Game.time % 10000 === 0) {
-    logistic.cleanupCaches();
-  }
-
-  if (Memory.enableAutoExpansion) {
-    suppressErrors(() => MapKnowledge.updateKnowledge());
-  }
-
-  suppressErrors(() => new SegmentScanner().run());
-
-  for (let operation of Operation.operations) {
-    suppressErrors(() => operation.run());
-  }
-
-  // console.log('rooms', JSON.stringify(Game.rooms))
-  for (let roomName in Game.rooms) {
-    let room = Game.rooms[roomName];
-    if (room.ai()) {
-      suppressErrors(() => room.ai().run());
+    if (Game.cpu.bucket < (Memory.powerOperation ? 500 : 230)) {
+      return;
     }
-  }
 
-  new ConstructionSitesCleaner().run();
+    // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
 
-  suppressErrors(() => new ExpansionPlanner().run());
+    if (Game.cpu.bucket < 1000 && Game.time % 10 !== 1) return;
 
-  suppressErrors(() => new TradeLogger().logTrades());
-  suppressErrors(() => new PixelTrader().run());
+    // console.log('Game.time % 2', Game.time % 2)
 
-  for (let operation of Operation.operations) {
-    suppressErrors(() => operation.drawVisuals());
-  }
+    if (Game.time % 10000 === 0) {
+      logistic.cleanupCaches();
+    }
 
-  suppressErrors(() => new SegmentExport().run());
+    if (Memory.enableAutoExpansion) {
+      suppressErrors(() => MapKnowledge.updateKnowledge());
+    }
 
-  for (let ui of RoomUI.all) {
-    suppressErrors(() => ui.render());
-  }
+    suppressErrors(() => new SegmentScanner().run());
 
-  suppressErrors(() => MapKnowledge.drawMapVisuals());
-  suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
+    for (let operation of Operation.operations) {
+      suppressErrors(() => operation.run());
+    }
 
-  if (Memory.generatePixels && Game.cpu.bucket >= 9999) {
-    Game.cpu.generatePixel();
-  }
+    // console.log('rooms', JSON.stringify(Game.rooms))
+    for (let roomName in Game.rooms) {
+      let room = Game.rooms[roomName];
+      if (room.ai()) {
+        suppressErrors(() => room.ai().run());
+      }
+    }
 
-  ExpansionPlanner.sampleCpuUsage();
+    new ConstructionSitesCleaner().run();
 
-  globalStatistics.run();
-  profitVisual.run();
+    suppressErrors(() => new ExpansionPlanner().run());
 
-  RawMemory.setActiveSegments([98, 99]);
-  RawMemory.setPublicSegments([98]);
-  RawMemory.setDefaultPublicSegment(98);
+    suppressErrors(() => new TradeLogger().logTrades());
+    suppressErrors(() => new PixelTrader().run());
 
-  Memory.lastCompletedTick = Game.time;
+    for (let operation of Operation.operations) {
+      suppressErrors(() => operation.drawVisuals());
+    }
+
+    suppressErrors(() => new SegmentExport().run());
+
+    for (let ui of RoomUI.all) {
+      suppressErrors(() => ui.render());
+    }
+
+    suppressErrors(() => MapKnowledge.drawMapVisuals());
+    suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
+
+    if (Memory.generatePixels && Game.cpu.bucket >= 9999) {
+      Game.cpu.generatePixel();
+    }
+
+    ExpansionPlanner.sampleCpuUsage();
+
+    globalStatistics.run();
+    profitVisual.run();
+
+    RawMemory.setActiveSegments([98, 99]);
+    RawMemory.setPublicSegments([98]);
+    RawMemory.setDefaultPublicSegment(98);
+
+    Memory.lastCompletedTick = Game.time;
   });
 };
