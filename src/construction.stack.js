@@ -62,6 +62,10 @@ module.exports = {
     ],
   },
   positions: {
+    main: {
+      x: 0,
+      y: 0,
+    },
     center: {
       x: 0,
       y: -2,
@@ -96,21 +100,26 @@ module.exports = {
   outline: function (room, storage) {
     let x = storage.x,
       y = storage.y;
+    this.drawCons(room, x, y, 'main', 'storage', storage.dir)
+
     let cons = this.options(storage);
     // console.log(room.name, JSON.stringify(cons));
     for (let loc of Object.keys(cons)) {
       let consType = cons[loc];
-      let points = this.outlines[consType];
-      let pos = this.positions[loc];
-      // console.log(loc, consType, JSON.stringify(pos));
-      let transPoints = _.map(points, (p) => ({ x: p.x + pos.x, y: p.y + pos.y }));
-      // console.log(JSON.stringify(points), JSON.stringify(transPoints));
-      let dirOutline = layout.dirPoints(transPoints, storage.dir);
-      room.visual.poly(
+      this.drawCons(room, x, y, loc, consType, storage.dir)
+    }
+  },
+  drawCons: function (room, x, y, loc, consType, dir) {
+    let points = this.outlines[consType];
+    let pos = this.positions[loc];
+    // console.log(JSON.stringify(loc), consType, JSON.stringify(pos));
+    let transPoints = _.map(points, (p) => ({ x: p.x + pos.x, y: p.y + pos.y }));
+    // console.log(JSON.stringify(points), JSON.stringify(transPoints));
+    let dirOutline = layout.dirPoints(transPoints, dir);
+    room.visual.poly(
         _.map(dirOutline, (p) => [x + p.x, y + p.y]),
         { stroke: '#77f' }
-      );
-    }
+    );
   },
   build: function (proxy, storage) {
     proxy.planConstruction(storage.x, storage.y, STRUCTURE_STORAGE);
