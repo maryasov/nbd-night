@@ -7,75 +7,105 @@ module.exports = {
     3: { x: 0, y: 1 },
     4: { x: -1, y: 0 },
   },
-  outlines: [
-    [
+  outlines: {
+    storage: [
       { x: -0.7, y: -0.77 },
       { x: 0.7, y: -0.77 },
       { x: 0.7, y: 0.77 },
-      { x: -0.7, y: 0.77},
+      { x: -0.7, y: 0.77 },
       { x: -0.7, y: -0.77 },
-    ] /*[
-    { x: -1.5, y: -2.5 },
-    { x: 1.5, y: -2.5 },
-    { x: 1.5, y: -1.5 },
-    { x: -1.5, y: -1.5 },
-    { x: -1.5, y: -2.5 },
-  ],*/,
-    [
-      { x: -0.4, y: -2 },
-      { x: 0, y: -1.5 },
-      { x: 0.4, y: -2 },
-      { x: 0, y: -2.5 },
-      { x: -0.4, y: -2 },
-      { x: 0, y: -1.5 },
     ],
-    [
-      { x: 0.75, y: -2.5 },
-      { x: 1.25, y: -2.5 },
-      { x: 1.5, y: -2.25 },
-      { x: 1.5, y: -1.75 },
-      { x: 1.25, y: -1.5 },
-      { x: 0.75, y: -1.5 },
-      { x: 0.5, y: -1.75 },
-      { x: 0.5, y: -2.25 },
-      { x: 0.75, y: -2.5 },
+    link: [
+      { x: -0.4, y: 0 },
+      { x: 0, y: 0.5 },
+      { x: 0.4, y: 0 },
+      { x: 0, y: -0.5 },
+      { x: -0.4, y: 0 },
+      { x: 0, y: 0.5 },
     ],
-    [
-      { x: -1.25, y: -2.5 },
-      { x: -1, y: -2.25 },
-      { x: -0.75, y: -2.5 },
-      { x: -0.5, y: -2.25 },
-      { x: -0.75, y: -2 },
-      { x: -0.5, y: -1.75 },
-      { x: -0.75, y: -1.5 },
-      { x: -1, y: -1.75 },
-      { x: -1.25, y: -1.5 },
-      { x: -1.5, y: -1.75 },
-      { x: -1.25, y: -2 },
-      { x: -1.5, y: -2.25 },
-      { x: -1.25, y: -2.5 },
+    terminal: [
+      { x: -0.25, y: -0.5 },
+      { x: 0.25, y: -0.5 },
+      { x: 0.5, y: -0.25 },
+      { x: 0.5, y: 0.25 },
+      { x: 0.25, y: 0.5 },
+      { x: -0.25, y: 0.5 },
+      { x: -0.5, y: 0.25 },
+      { x: -0.5, y: -0.25 },
+      { x: -0.25, y: -0.5 },
     ],
-  ],
-  constructions: [
-    {
-      structure: STRUCTURE_LINK,
-      pos: { x: 0, y: -2 },
+    powerSpawn: [
+      { x: -0.1, y: -0.5 },
+      { x: 0.1, y: -0.5 },
+      { x: 0.5, y: -0.1 },
+      { x: 0.5, y: 0.1 },
+      { x: 0.1, y: 0.5 },
+      { x: -0.1, y: 0.5 },
+      { x: -0.5, y: 0.1 },
+      { x: -0.5, y: -0.1 },
+      { x: -0.1, y: -0.5 },
+    ],
+    factory: [
+      { x: -0.25, y: -0.5 },
+      { x: 0, y: -0.25 },
+      { x: 0.25, y: -0.5 },
+      { x: 0.5, y: -0.25 },
+      { x: 0.25, y: 0 },
+      { x: 0.5, y: 0.25 },
+      { x: 0.25, y: 0.5 },
+      { x: 0, y: 0.25 },
+      { x: -0.25, y: 0.5 },
+      { x: -0.5, y: 0.25 },
+      { x: -0.25, y: 0 },
+      { x: -0.5, y: -0.25 },
+      { x: -0.25, y: -0.5 },
+    ],
+  },
+  positions: {
+    center: {
+      x: 0,
+      y: -2,
     },
-    {
-      structure: STRUCTURE_TERMINAL,
-      pos: { x: 1, y: -2 },
+    right: {
+      x: 1,
+      y: -2,
     },
-    {
-      structure: STRUCTURE_FACTORY,
-      pos: { x: -1, y: -2 },
+    left: {
+      x: -1,
+      y: -2,
     },
-  ],
+  },
+  constructions: {
+    center: STRUCTURE_LINK,
+    right: STRUCTURE_TERMINAL,
+    left: STRUCTURE_FACTORY,
+  },
   type: 'stack',
+  options: function (storage) {
+    let mergeCons;
+    if (storage.locations) {
+      mergeCons = storage.locations;
+    } else {
+      mergeCons = this.constructions;
+      if (storage.noFactory) {
+        mergeCons = _.omit(mergeCons, 'left');
+      }
+    }
+    return mergeCons;
+  },
   outline: function (room, storage) {
     let x = storage.x,
       y = storage.y;
-    for (let points of this.outlines) {
-      let dirOutline = layout.dirPoints(points, storage.dir);
+    let cons = this.options(storage);
+    // console.log(room.name, JSON.stringify(cons));
+    for (let loc of Object.keys(cons)) {
+      let consType = cons[loc];
+      let points = this.outlines[consType];
+      let pos = this.positions[loc];
+      console.log(loc, consType, JSON.stringify(pos));
+      let transPoints = _.map(points, (p) => ({ x: p.x + pos.x, y: p.y + pos.y }));
+      // console.log(JSON.stringify(points), JSON.stringify(transPoints));
+      let dirOutline = layout.dirPoints(transPoints, storage.dir);
       room.visual.poly(
         _.map(dirOutline, (p) => [x + p.x, y + p.y]),
         { stroke: '#77f' }
@@ -83,14 +113,19 @@ module.exports = {
     }
   },
   build: function (proxy, storage) {
-    let dir = this.directions[storage.dir];
     proxy.planConstruction(storage.x, storage.y, STRUCTURE_STORAGE);
-    const linkPos = layout.dirPos(this.constructions[0].pos, storage.dir)
-    const terminalPos = layout.dirPos(this.constructions[1].pos, storage.dir)
-    const factoryPos = layout.dirPos(this.constructions[2].pos, storage.dir)
-    proxy.planConstruction(storage.x + linkPos.x, storage.y + linkPos.y, STRUCTURE_LINK);
-    proxy.planConstruction(storage.x + terminalPos.x, storage.y + terminalPos.y, STRUCTURE_TERMINAL);
-    if (!storage.noFactory) proxy.planConstruction(storage.x + factoryPos.x, storage.y + factoryPos.y, STRUCTURE_FACTORY);
+
+    let cons = this.options(storage);
+    for (let loc of Object.keys(cons)) {
+      let consType = cons[loc];
+      let points = this.outlines[consType];
+      let pos = this.positions[loc];
+      // console.log(loc, consType, JSON.stringify(pos));
+      let transPoints = _.map(points, (p) => ({ x: p.x + pos.x, y: p.y + pos.y }));
+      // console.log(JSON.stringify(points), JSON.stringify(transPoints));
+      let consPos = layout.dirPos(pos, storage.dir)
+      proxy.planConstruction(storage.x + consPos.x, storage.y + consPos.y, consType);
+    }
     for (let x = -1; x <= 1; x += 1) {
       for (let y = -1; y <= 1; y += 1) {
         if (x === 0 && y === 0) continue;
