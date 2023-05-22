@@ -33,7 +33,7 @@ module.exports = class ClaimOperation extends Operation {
 
     let targetRoom = this.spawnPosition.room;
     if (targetRoom && targetRoom.find(FIND_MY_SPAWNS).length > 0) {
-      if (targetRoom.controller.level > 4) {
+      if (this.memory.autoRemove && targetRoom.controller.level > 4) {
         Operation.removeOperation(this);
         return;
       }

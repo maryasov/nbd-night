@@ -44,10 +44,17 @@ module.exports = {
       fullHealthEquiv = 150000;
     } else if (tower.room.storage.store.energy > 200000) {
       fullHealthEquiv = 300000;
+    } else if (tower.room.storage.store.energy > 300000) {
+      fullHealthEquiv = 1000000;
     }
     let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-      filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+      filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
     });
+    if (!closestDamagedStructure) {
+      closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+      });
+    }
     if (closestDamagedStructure && tower.energy > tower.energyCapacity * 0.8) {
       tower.repair(closestDamagedStructure);
     }

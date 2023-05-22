@@ -1,7 +1,7 @@
 const spawnHelper = require('helper.spawning');
 const trader = require('role.trader');
 
-const MAX_TRANSFER = 10000;
+const MAX_TRANSFER = 5000;
 const TERMINAL_MAX_FILL = 270000;
 
 const allowedSalesHistoryDeviation = 0.5;

@@ -7,7 +7,9 @@ module.exports = {
   configs: function () {
     let configs = [];
     // TODO: probably use 2:1 ATTACK MOVE ratio
+    // TODO: probably use 2:1 ATTACK MOVE ratio
     for (let parts = 25; parts >= 4; parts -= 1) {
+      // RANGED_ATTACK ATTACK
       configs.push(spawnHelper.makeParts(parts, ATTACK, parts, MOVE));
     }
 
