@@ -38,15 +38,15 @@ module.exports = {
       return;
     }
     // console.log('tow', tower.room.name, tower.room.storage.store.energy)
-    if (tower.room.storage.store.energy > 50000) {
-      fullHealthEquiv = 100000;
-    } else if (tower.room.storage.store.energy > 100000) {
-      fullHealthEquiv = 150000;
-    } else if (tower.room.storage.store.energy > 200000) {
-      fullHealthEquiv = 300000;
-    } else if (tower.room.storage.store.energy > 300000) {
-      fullHealthEquiv = 1000000;
-    }
+    // if (tower.room.storage.store.energy > 50000) {
+    //   fullHealthEquiv = 100000;
+    // } else if (tower.room.storage.store.energy > 100000) {
+    //   fullHealthEquiv = 150000;
+    // } else if (tower.room.storage.store.energy > 200000) {
+    //   fullHealthEquiv = 300000;
+    // } else if (tower.room.storage.store.energy > 300000) {
+    //   fullHealthEquiv = 1000000;
+    // }
     let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
       filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
     });
