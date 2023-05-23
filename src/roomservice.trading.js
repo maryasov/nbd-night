@@ -15,7 +15,7 @@ const refinedCommodities = Object.keys(COMMODITIES).filter(
 );
 
 // TODO: remove duplication with labs aspect and selling blacklist
-const t3Boosts = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2'];
+const t3Boosts = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
 const intermediateCompounds = Object.keys(REACTIONS).filter((c) => !baseMinerals.includes(c));
 
 const maximumExportBuffer = 10000;
@@ -34,26 +34,15 @@ module.exports = class Trading {
     this.memory = room.memory.trading;
   }
 
-  get sellingBlacklist() {
-    return [RESOURCE_ENERGY, 'XGHO2', 'XGH2O', 'XKHO2', 'XKH2O', 'XLHO2', 'XLH2O', 'XUHO2', 'XUH2O', 'XZHO2', 'XZH2O'];
-  }
-
   get sellingWhitelist() {
     let wl = [
       // "Z",
       'XGH2O',
       'XUHO2',
       'XLH2O',
-      'XZHO2',
-      'XZH2O',
       'GH2O',
       'UHO2',
       'LH2O',
-      'ZHO2',
-      'ZH2O',
-      // "XUH2O",
-      // "XZHO2",
-      // "XZH2O",
     ];
     // let mineral = this.room.find(FIND_MINERALS)[0];
     // if (mineral) {
