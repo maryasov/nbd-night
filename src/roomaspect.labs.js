@@ -10,6 +10,7 @@ const targetCompounds = [
   'XGHO2' /*tough -70*/,
   'XKHO2' /*range +300*/,
   'XZHO2' /*move +300*/,
+  'XZH2O' /*work +300*/,
   'G' /*nuke*/,
 ];
 const reactionCycleAmount = 500;
