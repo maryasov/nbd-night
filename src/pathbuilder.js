@@ -2,6 +2,7 @@ const ff = require('helper.friendFoeRecognition');
 
 const AVOID_CREEPS_COST = 50;
 const AVOID_HOSTILE_COST = 200;
+const AVOID_EXITS = 50;
 const AVOID_BLOCK_COST = 255;
 const ROAD_COST = 1;
 
@@ -38,6 +39,7 @@ module.exports = class PathBuilder {
     this.plainCost = 2;
     this.swampCost = 10;
     this.avoidCreeps = true;
+    this.avoidExits = false;
     this.avoidHostiles = false;
     this.debugCosts = false;
     this.preferRoads = true;
@@ -61,6 +63,9 @@ module.exports = class PathBuilder {
       if (builder.avoidHostiles) {
         builder.doAvoidHostiles(roomName, matrix);
       }
+      if (builder.avoidExits) {
+        builder.doAvoidExits(roomName, matrix);
+      }
       builder.doAvoidBlock(roomName, matrix);
     };
   }
@@ -78,6 +83,9 @@ module.exports = class PathBuilder {
       builder.doAvoidStructures(roomName, matrix);
       builder.doAvoidVirtuals(roomName, matrix);
       builder.doAvoidConstructionSites(roomName, matrix);
+      if (builder.avoidExits) {
+        builder.doAvoidExits(roomName, matrix);
+      }
       if (builder.avoidCreeps) {
         builder.doAvoidAllCreeps(roomName, matrix);
       } else {
@@ -130,6 +138,15 @@ module.exports = class PathBuilder {
     if (!buildings) return;
     for (let building of buildings) {
       building.updateCostMatrix(matrix);
+    }
+  }
+
+  doAvoidExits(roomName, matrix) {
+    for (let i = 0; i < 50; i += 1) {
+      matrix.set(i, 0, AVOID_EXITS);
+      matrix.set(i, 49, AVOID_EXITS);
+      matrix.set(0, i, AVOID_EXITS);
+      matrix.set(49, i, AVOID_EXITS);
     }
   }
 

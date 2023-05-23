@@ -95,7 +95,7 @@ module.exports = {
     creep.memory.lastTarget = target.id;
 
     if (result == ERR_NOT_IN_RANGE) {
-      creep.goTo(target, { range: 3 });
+      creep.goTo(target, { range: 3, avoidExits: true, debugCosts: true, newPathing: false });
     }
   },
   harvestEnergy: function (creep) {
