@@ -182,7 +182,7 @@ global.Operation = class Operation {
     }
     let store = {};
     let rooms = [];
-    let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2'];
+    let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
     let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.owner && r.controller.my);
     _.forEach(myRooms, (cr) => {
       rooms.push(cr.name);
