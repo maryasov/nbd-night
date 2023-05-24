@@ -236,6 +236,10 @@ Function.prototype.valueOf = function () {
 global.r = () => Operation.count('', false);
 
 global.b = () => {
+  Operation.boosts('', false);
+};
+
+global.bb = () => {
   Operation.boosts('', true);
 };
 
