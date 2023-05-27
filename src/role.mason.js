@@ -1,6 +1,8 @@
 const boosting = require('helper.boosting');
 const logistic = require('helper.logistic');
 const movement = require('helper.movement');
+const renew = require('helper.renew');
+const recycle = require('helper.recycle');
 
 const NUKE_MARGIN = 1000000;
 
@@ -26,6 +28,8 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
+    if (renew.check(creep)) return;
     if (boosting.accept(creep, 'XLH2O')) {
       return;
     }

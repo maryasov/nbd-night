@@ -31,7 +31,7 @@ module.exports = class MasonsAspect {
     }
 
     let parts = spawnHelper.bestAvailableParts(this.room, mason.configs(16));
-    this.roomai.spawn(parts, { role: mason.name, room: this.room.name });
+    this.roomai.spawn(parts, { role: mason.name, room: this.room.name, renew: true });
   }
 
   masonCount() {

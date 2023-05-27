@@ -1,4 +1,4 @@
-const checkInterval = 100;
+const checkInterval = 50;
 const valuableSiteThreshold = 500;
 
 module.exports = class ConstructionSitesCleaner {

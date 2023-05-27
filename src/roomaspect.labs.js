@@ -4,14 +4,14 @@ const scientist = require('role.scientist');
 // const targetCompounds = ["GH2O", "XUHO2", "XGH2O", "XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XKHO2", "XKH2O", "G"];
 
 const targetCompounds = [
-  'XUH2O' /*attack +300*/,
-  'XKH2O' /*carry +150*/,
-  'XLHO2' /*heal +300*/,
+  // 'XUH2O' /*attack +300*/,
+  // 'XKH2O' /*carry +150*/,
+  // 'XLHO2' /*heal +300*/,
   'XGHO2' /*tough -70*/,
-  'XKHO2' /*range +300*/,
-  'XZHO2' /*move +300*/,
-  'XZH2O' /*work +300*/,
-  'G' /*nuke*/,
+  // 'XKHO2' /*range +300*/,
+  // 'XZHO2' /*move +300*/,
+  // 'XZH2O' /*work +300*/,
+  // 'G' /*nuke*/,
 ];
 const reactionCycleAmount = 500;
 
@@ -29,6 +29,7 @@ module.exports = class LabsAspect {
   }
 
   run() {
+    // console.log('lab', this.room.name,!this.room.storage, !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0))
     if (!this.room.storage || !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0)) return;
     // if(Game.cpu.bucket < 190) {
     //     return;
@@ -69,7 +70,9 @@ module.exports = class LabsAspect {
     let nextReaction = this.findNextReaction();
     // console.log('nextReaction', this.room.name, nextReaction);
 
-    this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionCycleAmount);
+    if (nextReaction !== null) {
+      this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionCycleAmount);
+    }
   }
 
   isCurrentReactionFinished() {

@@ -182,7 +182,8 @@ global.Operation = class Operation {
     }
     let store = {};
     let rooms = [];
-    let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
+    // let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
+    let baseMaterials = ['XLHO2', 'XGHO2', 'XKHO2', 'XZHO2'];
     let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.owner && r.controller.my);
     _.forEach(myRooms, (cr) => {
       rooms.push(cr.name);
@@ -200,7 +201,7 @@ global.Operation = class Operation {
           if (store[mat] === undefined) {
             store[mat] = [];
           }
-          store[mat].push({ r: room.name, a: amount });
+          store[mat].push({ r: room.name, s: amount, t: 0 });
         });
       }
       if (room.terminal && room.terminal.store) {
@@ -214,11 +215,12 @@ global.Operation = class Operation {
           if (store[mat] === undefined) {
             store[mat] = [];
           }
-          store[mat].push({ r: room.name, a: amount });
+          store[mat].push({ r: room.name, s: 0, t: amount });
         });
       }
     });
     console.log('Total materials');
+    _.sortBy(store, (e)=> (e))
     let total = {};
     if (byRooms) {
       _.forEach(store, (data, mat) => {
@@ -227,20 +229,25 @@ global.Operation = class Operation {
           if (total[mat] === undefined) {
             total[mat] = {};
           }
-          total[mat][amount.r] = total[mat][amount.r] !== undefined ? total[mat][amount.r] + amount.a : amount.a;
-          mTotal = mTotal + amount.a;
+          if (total[mat][amount.r] === undefined) {
+            total[mat][amount.r] = {};
+          }
+          // console.log('amount', JSON.stringify(amount))
+          total[mat][amount.r]['s'] = total[mat][amount.r]['s'] !== undefined ? total[mat][amount.r]['s'] + amount.s : amount.s;
+          total[mat][amount.r]['t'] = total[mat][amount.r]['t'] !== undefined ? total[mat][amount.r]['t'] + amount.t : amount.t;
+          mTotal = mTotal + amount.s;
         });
         console.log(mat, ' (' + mTotal + ')');
         _.forEach(total[mat], (a, r) => {
-          console.log(r, a);
+          console.log(r, `s: ${a.s} t: ${a.t}`);
         });
       });
     } else {
       _.forEach(store, (data, mat) => {
         let mTotal = 0;
         _.forEach(data, (amount) => {
-          total[mat] = total[mat] !== undefined ? total[mat] + amount.a : amount.a;
-          mTotal = mTotal + amount.a;
+          total[mat] = total[mat] !== undefined ? total[mat] + amount.s + amount.t : amount.s + amount.t;
+          mTotal = mTotal + amount.s + amount.t;
         });
         console.log(mat, ' (' + mTotal + ')');
       });
