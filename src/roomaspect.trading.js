@@ -159,6 +159,7 @@ module.exports = class TradingAspect {
 
     let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
     exportable = Math.min(exportable, MAX_TRANSFER);
+    console.log('me', exportable, this.trading.minimumExportAmount(resource))
     if (exportable >= this.trading.minimumExportAmount(resource)) {
       let result = this.terminal.send(resource, exportable, exportDescription.room, 'Manual export');
       if (result === OK) {

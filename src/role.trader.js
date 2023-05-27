@@ -42,8 +42,9 @@ module.exports = {
         creep.memory.exporting = true;
 
         let exportResource = _.last(trading.resourcesExportableFromStorage);
+        // console.log('refs', exportResource, trading.possibleExportFromStorage(exportResource))
         if (exportResource) {
-          let amount = Math.min(creep.store.getCapacity(), trading.possibleExportFromStorage(exportResource));
+          let amount = Math.min(creep.store.getFreeCapacity(), trading.possibleExportFromStorage(exportResource));
 
           // overflow protection for terminal
           // do not put further minerals in, if there is no energy to export them
@@ -51,7 +52,8 @@ module.exports = {
           //     return;
           // }
 
-          creep.withdraw(storage, exportResource, amount);
+          let res = creep.withdraw(storage, exportResource, amount);
+          // console.log('res', res, storage, exportResource, amount)
         }
       }
     }

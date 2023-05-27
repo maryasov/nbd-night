@@ -35,8 +35,6 @@ module.exports = class DefenseAspect {
       return;
     }
 
-    // low-level rooms can't spawn anything meaningful in defense anyways
-    if (this.room.controller.level < 4) return;
 
     if (this.defense.defcon < 3) {
       // keep a reserve on stock unless boosters are otherwise needed
@@ -57,6 +55,9 @@ module.exports = class DefenseAspect {
       this.roomai.labs.requestBoost('XLHO2', 79);
       this.roomai.labs.requestBoost('XKH2O', 78);
     }
+
+    // low-level rooms can't spawn anything meaningful in defense anyways
+    if (this.room.controller.level < 4) return;
 
     if (spawnHelper.localCreepsWithRole(this.roomai, reloader.name).length < 1 && this.room.controller.level >= 4) {
       let towers = this.room.find(FIND_MY_STRUCTURES, {

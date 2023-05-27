@@ -13,18 +13,25 @@ module.exports = {
 
     let reactor = creep.room.ai().labs.reactor;
     if (creep.memory.state === 'deliver') {
+      // console.log(creep.room.name, 1);
       this.deliverToReactor(creep, reactor);
     } else if (creep.memory.state === 'deliverBoost') {
+      // console.log(creep.room.name, 2);
       this.deliverBoost(creep, reactor);
     } else if (creep.memory.state === 'pickAtReactor') {
+      // console.log(creep.room.name, 3);
       this.pickAtReactor(creep, reactor);
     } else if (creep.memory.state === 'store') {
+      // console.log(creep.room.name, 4);
       this.store(creep, reactor);
     } else if (creep.memory.state === 'pickAtStorage') {
+      // console.log(creep.room.name, 5);
       this.pickAtStorage(creep, reactor);
     } else if (creep.memory.state === 'pickAtBooster') {
+      // console.log(creep.room.name, 6);
       this.pickAtBooster(creep, reactor);
     } else {
+      // console.log(creep.room.name, 7);
       // by default move to store
       this.store(creep, reactor);
     }

@@ -125,9 +125,12 @@ module.exports = class Trading {
     if (manualExport) {
       let sentAmount = manualExport.amount;
       let transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, manualExport.room);
-      sentAmount = sentAmount + transactionPrice;
+      if (resource === 'energy') {
+        sentAmount = sentAmount + transactionPrice;
+      }
       let sendVal = Math.max(0, sentAmount - amountInTerminal);
       val = sendVal;
+      // console.log('mme', resource, manualExport.amount, sentAmount, sendVal)
     } else {
       val = Math.max(
         0,
