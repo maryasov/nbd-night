@@ -13,7 +13,6 @@ const targetCompounds = [
   // 'XZH2O' /*work +300*/,
   // 'G' /*nuke*/,
 ];
-const reactionCycleAmount = 500;
 
 module.exports = class LabsAspect {
   constructor(roomai) {
@@ -39,7 +38,9 @@ module.exports = class LabsAspect {
 
     this.updateDeficits();
     if (this.reactor) {
-      if (this.roomai.mode !== 'store') {this.setCurrentReaction();}
+      if (this.roomai.mode !== 'store') {
+        this.setCurrentReaction();
+      }
       this.reactor.react();
       this.reactor.renderVisuals();
     }
@@ -71,22 +72,39 @@ module.exports = class LabsAspect {
     // console.log('nextReaction', this.room.name, nextReaction);
 
     if (nextReaction !== null) {
-      this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionCycleAmount);
+      let reactionAmount = this.compoundAmount(nextReaction, this.reactor.reactionCycleAmount);
+      this.reactor.setupReaction(nextReaction, this.amount(nextReaction) + reactionAmount, reactionAmount);
+      // console.log(
+      //   'this.reactor',
+      //   this.reactor.memory.compound,
+      //   this.reactor.memory.targetAmount,
+      //   this.amount(nextReaction),
+      //   reactionAmount
+      // );
     }
   }
 
+  compoundAmount(reaction, cycle) {
+    let minAmount = cycle;
+    _.forEach(this.decompose(reaction), (r) => {
+      // console.log('dec', r, this.amount(r));
+      minAmount = Math.min(minAmount, this.amount(r));
+    });
+    return minAmount;
+  }
   isCurrentReactionFinished() {
     let currentReaction = this.reactor.compound;
     if (!currentReaction) return true;
     // console.log('r', _.any(this.reactor.inputs, (r) => _.sum(r.store) < (LAB_REACTION_AMOUNT + 6)), this.amount(currentReaction), this.reactor.targetAmount, this.amount(currentReaction) >= this.reactor.targetAmount, JSON.stringify(this.reactor.inputs))
-    if (_.any(this.reactor.inputs, (r) => _.sum(r.store) < LAB_REACTION_AMOUNT + 6)) {
+    // console.log('w', LAB_REACTION_AMOUNT + this.reactor.minReaction);
+    if (_.any(this.reactor.inputs, (r) => _.sum(r.store) < LAB_REACTION_AMOUNT + this.reactor.minReaction)) {
       // console.log('reaction finished', this.decompose(currentReaction))
       return true;
     }
     if (
       _.any(this.decompose(currentReaction), (r) => {
-        // console.log('a', r, this.amount(r));
-        return this.amount(r) < LAB_REACTION_AMOUNT + 6;
+        // console.log('a', r, this.amount(r), LAB_REACTION_AMOUNT + this.reactor.minReaction);
+        return this.amount(r) < LAB_REACTION_AMOUNT + this.reactor.minReaction;
       })
     )
       return true;
@@ -103,7 +121,8 @@ module.exports = class LabsAspect {
       let missing = [target];
       while (missing.length > 0) {
         let nextReaction = missing[0];
-        missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) < LAB_REACTION_AMOUNT + 6);
+        missing = _.filter(this.decompose(nextReaction), (r) => this.amount(r) < (LAB_REACTION_AMOUNT + this.reactor.minReaction));
+        // console.log('mis', missing, LAB_REACTION_AMOUNT + this.reactor.minReaction)
         if (missing.length === 0) return nextReaction;
 
         // filter uncookable resources (e.g. H). Can't get those using reactions.

@@ -45,16 +45,19 @@ function decompose(compound) {
 }
 
 function renderMineral(lab, resource, minAmount) {
-  let color = '#f00';
+  let color = '#ffffff';
   if ((resource === lab.mineralType && lab.mineralAmount >= minAmount) || (!lab.mineralType && minAmount === 0))
-    color = '#0f0';
-  lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.2, {
+    color = '#06a2fa';
+  lab.room.visual.text(resource, lab.pos.x, lab.pos.y + 0.05, {
     color: color,
-    stroke: '#000',
+    stroke: 'rgb(0,0,0)',
+    strokeWidth: 0.075,
     align: 'center',
-    font: 0.5,
+    font: 0.3,
   });
 }
+
+const reactionCycleAmount = 500;
 
 class Reactor {
   constructor(memory, labs) {
@@ -96,6 +99,21 @@ class Reactor {
     return this.labs.room.getPositionAt(this.memory.rally[0], this.memory.rally[1]);
   }
 
+  get minReaction() {
+    let levels = _.map(this.outputs, l=>{
+      let foundEffect = l.effects && _.find(l.effects, e => e.effect === PWR_OPERATE_LAB)
+      let level = foundEffect && foundEffect.level * 2
+      // console.log(level, foundEffect);
+      return Number(level)
+    })
+    // console.log('levels',_.max(levels),  levels)
+    return _.max(levels)
+  }
+
+  get reactionCycleAmount() {
+    return reactionCycleAmount;
+  }
+
   get outputs() {
     if (!this._outputs) {
       this._outputs = _.compact(_.map(this.memory.outputs, (id) => Game.getObjectById(id)));
@@ -113,9 +131,10 @@ class Reactor {
     return this._inputs;
   }
 
-  setupReaction(compound, targetAmount) {
+  setupReaction(compound, targetAmount, need) {
     this.memory.compound = compound;
     this.memory.targetAmount = targetAmount;
+    this.memory.need = need;
   }
 
   get compound() {
@@ -129,6 +148,10 @@ class Reactor {
 
   get targetAmount() {
     return this.memory.targetAmount;
+  }
+
+  get needAmount() {
+    return this.memory.need;
   }
 
   react() {
@@ -200,6 +223,14 @@ class Booster {
   }
 
   needMineral() {
+    if (!this.lab) return false;
+    if (!this.resource) return false;
+    if (this.lab.mineralType !== this.resource) return true;
+
+    return this.lab.mineralAmount < this.lab.mineralCapacity;
+  }
+
+  get needMineralg() {
     if (!this.lab) return false;
     if (!this.resource) return false;
     if (this.lab.mineralType !== this.resource) return true;

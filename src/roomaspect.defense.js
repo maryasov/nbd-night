@@ -44,12 +44,12 @@ module.exports = class DefenseAspect {
       // XLHO2 150 - heal +300%
       // XUH2O 10 - boost power miners
       //
-      // this.roomai.labs.requestBoost('XUH2O', 150);
-      // this.roomai.labs.requestBoost('XLHO2', 149);
-      // this.roomai.labs.requestBoost('XKH2O', 148);
-      this.roomai.labs.unloadBoost('XUH2O');
-      this.roomai.labs.unloadBoost('XLHO2');
-      this.roomai.labs.unloadBoost('XKH2O');
+      this.roomai.labs.requestBoost('XUH2O', 150);
+      this.roomai.labs.requestBoost('XLHO2', 149);
+      this.roomai.labs.requestBoost('XKH2O', 148);
+      // this.roomai.labs.unloadBoost('XUH2O');
+      // this.roomai.labs.unloadBoost('XLHO2');
+      // this.roomai.labs.unloadBoost('XKH2O');
     } else {
       this.roomai.labs.requestBoost('XUH2O', 80);
       this.roomai.labs.requestBoost('XLHO2', 79);

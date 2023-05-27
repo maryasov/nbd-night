@@ -59,6 +59,7 @@ module.exports = {
     if (range === expectedRange) {
       if (!target.isRally) creep.transfer(target, resource);
       creep.memory.state = 'pickAtReactor';
+      // console.log('pick', reactor.needMineralg)
       this.pickAtReactor(creep, reactor);
     } else {
       // console.log('room', creep.room, JSON.stringify(target))
@@ -115,15 +116,33 @@ module.exports = {
       _.filter(resources, (r) => creep.room.storage.store[r.type]),
       (r) => r.amount
     );
+
     let resource = resources[0];
+
     if (resource) {
+      let compMax = reactor.reactionCycleAmount
+      _.forEach([reactor.baseMinerals[0], reactor.baseMinerals[1]], (r) => {
+        let tot = this.compoundAmount(creep, reactor, r)
+        // console.log('dec', r, tot);
+        compMax = Math.min(compMax, tot);
+      });
+
       let actualAmount =
         (creep.room.storage.store[reactor.compound] || 0) + _.sum(reactor.outputs, (l) => l.store[l.mineralType]);
-      let neededProduce = Math.max(reactor.targetAmount - actualAmount, LAB_REACTION_AMOUNT);
-      let missingInput = Math.max(0, neededProduce - resource.amount);
+      let neededProduce = Math.min(
+        reactor.targetAmount - actualAmount,
+          compMax,
+        reactor.reactionCycleAmount
+      );
+      let missingInput = /*Math.max(0, */ neededProduce - resource.amount; /*)*/
+      if (missingInput > 0) {
+        missingInput = Math.min(missingInput, neededProduce, 3000);
+      }
+      // if (missingInput)
+      //   console.log('missingInput', JSON.stringify(resource), neededProduce, missingInput, reactor.needAmount);
       let inStore = creep.room.storage.store[resource.type] || 0;
       if (missingInput > 0 && inStore > 0) {
-        missingInput = Math.max(missingInput, LAB_REACTION_AMOUNT);
+        missingInput = Math.max(missingInput);
         creep.withdraw(creep.room.storage, resource.type, Math.min(creep.store.getCapacity(), missingInput, inStore));
       } else {
         if (this.pickupBoost(creep)) {
@@ -235,6 +254,14 @@ module.exports = {
     creep.memory.state = 'store';
     this.store(creep, reactor);
   },
+  compoundAmount(creep, reactor, compound) {
+    let inStore = creep.room.storage.store[compound]
+    let inCreep = 0;//creep.store[compound]
+    let inReactor = _.sum(_.map(reactor.inputs.concat(reactor.outputs), (i)=>i.store[compound]))
+    // console.log('ca', inStore, inReactor)
+    return inStore + inCreep + inReactor;
+  }
+
 };
 
 const profiler = require('screeps-profiler');
