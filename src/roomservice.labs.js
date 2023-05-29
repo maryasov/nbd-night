@@ -102,12 +102,12 @@ class Reactor {
   get minReaction() {
     let levels = _.map(this.outputs, l=>{
       let foundEffect = l.effects && _.find(l.effects, e => e.effect === PWR_OPERATE_LAB)
-      let level = foundEffect && foundEffect.level * 2
+      let level = foundEffect && foundEffect.level * 2 || 0
       // console.log(level, foundEffect);
       return Number(level)
     })
     // console.log('levels',_.max(levels),  levels)
-    return _.max(levels)
+    return _.max(levels) || 0
   }
 
   get reactionCycleAmount() {
