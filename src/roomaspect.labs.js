@@ -4,13 +4,13 @@ const scientist = require('role.scientist');
 // const targetCompounds = ["GH2O", "XUHO2", "XGH2O", "XUH2O", "XLH2O", "XLHO2", "XGHO2", "XZHO2", "XZH2O", "XKHO2", "XKH2O", "G"];
 
 const targetCompounds = [
-  // 'XUH2O' /*attack +300*/,
-  // 'XKH2O' /*carry +150*/,
-  // 'XLHO2' /*heal +300*/,
-  // 'XGHO2' /*tough -70*/,
+  'XUH2O' /*attack +300*/,
+  'XKH2O' /*carry +150*/,
+  'XLHO2' /*heal +300*/,
+  'XGHO2' /*tough -70*/,
   'XKHO2' /*range +300*/,
-  // 'XZHO2' /*move +300*/,
-  // 'XZH2O' /*work +300*/,
+  'XZHO2' /*move +300*/,
+  'XZH2O' /*work +300*/,
   // 'G' /*nuke*/,
 ];
 

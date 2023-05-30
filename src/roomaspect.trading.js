@@ -305,7 +305,7 @@ module.exports = class TradingAspect {
       this.trading.resourcesExportableFromStorage.length > 0 ||
       this.trading.resourcesImportableToStorage.length > 0
     ) {
-      this.roomai.spawn(trader.parts, { role: trader.name });
+      this.roomai.spawn(trader.parts, { role: trader.name, renew: true });
     }
   }
 

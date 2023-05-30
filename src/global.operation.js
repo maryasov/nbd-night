@@ -104,7 +104,7 @@ global.Operation = class Operation {
     }
     let store = {};
     let rooms = [];
-    let baseMaterials = ['energy', 'power', 'ops', 'O', 'H', 'K', 'L', 'Z', 'U', 'X'];
+    let baseMaterials = ['energy', 'power', 'ops', 'O', 'H', 'K', 'L', 'Z', 'U', 'X', 'G'];
     let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.owner && r.controller.my);
     _.forEach(myRooms, (cr) => {
       rooms.push(cr.name);
@@ -182,8 +182,8 @@ global.Operation = class Operation {
     }
     let store = {};
     let rooms = [];
-    // let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
-    let baseMaterials = ['XLHO2', 'XGHO2', 'XKHO2', 'XZHO2'];
+    let baseMaterials = ['XUH2O', 'XKH2O', 'XLHO2', 'XGHO2', 'XKHO2', 'XZHO2', 'XZH2O'];
+    // let baseMaterials = ['XLHO2', 'XGHO2', 'XKHO2', 'XZHO2'];
     let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.owner && r.controller.my);
     _.forEach(myRooms, (cr) => {
       rooms.push(cr.name);
@@ -235,11 +235,11 @@ global.Operation = class Operation {
           // console.log('amount', JSON.stringify(amount))
           total[mat][amount.r]['s'] = total[mat][amount.r]['s'] !== undefined ? total[mat][amount.r]['s'] + amount.s : amount.s;
           total[mat][amount.r]['t'] = total[mat][amount.r]['t'] !== undefined ? total[mat][amount.r]['t'] + amount.t : amount.t;
-          mTotal = mTotal + amount.s;
+          mTotal = mTotal + amount.s + amount.t;
         });
         console.log(mat, ' (' + mTotal + ')');
         _.forEach(total[mat], (a, r) => {
-          console.log(r, `s: ${a.s} t: ${a.t}`);
+          console.log(r, `s: ${a.s} t: ${a.t} (${a.s+a.t})`);
         });
       });
     } else {
