@@ -342,7 +342,7 @@ module.exports.loop = function () {
     // const endLinks = Game.cpu.getUsed();
     // console.log(`Links time: ${endLinks - startLinks} ms`);
 
-    if (Game.cpu.bucket > 100) {
+    if (Game.cpu.bucket > safeLimit) {
       // const startTowers = Game.cpu.getUsed();
       for (let roomName in Game.rooms) {
         let room = Game.rooms[roomName];
@@ -367,7 +367,7 @@ module.exports.loop = function () {
 
     if (Game.cpu.bucket < aspectsSafe && Game.time % 10 !== 1) return;
 
-    if (Game.cpu.bucket < (PowerState.isActive ? 500 : 230)) {
+    if (Game.cpu.bucket < (PowerState.isActive ? powerSafe : safeLimit)) {
       return;
     }
 

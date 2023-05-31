@@ -10,9 +10,9 @@ module.exports = {
       this.returnHome(creep);
       return;
     }
-    if (Game.cpu.bucket < 100) {
-      return;
-    }
+    // if (Game.cpu.bucket < 100) {
+    //   return;
+    // }
     movement.moveToRoom(creep, creep.memory.target);
   },
   returnHome: function (creep) {
