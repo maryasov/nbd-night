@@ -83,6 +83,7 @@ const aspectsLiteLimit = 5000;
 const aspectsLiteSafe = 250;
 const aspectsLimit = 9900;
 const aspectsSafe = 8000;
+const aspectsMax = 50;
 const powerSafe = 9700;
 const safeLimit = 250;
 const commonLimit = 25;
@@ -108,19 +109,14 @@ const roleLimit = {
   factoryWorker: 45,
 };
 
-const powerWorks = [
-  "healer",
-  "powerFarmer",
-  "scooper",
-  'picker',
-];
+const powerWorks = ['healer', 'powerFarmer', 'scooper', 'picker'];
 const powerStop = [
   'builder',
   'attacker',
   // 'carrier',
   'mover',
   // "observer",
-  "scientist",
+  'scientist',
   // "factoryWorker",
   'powerRefiner',
   'harvester',
@@ -295,8 +291,8 @@ module.exports.loop = function () {
       Math.ceil(Math.max(((Game.cpu.bucket - aspectsLiteSafe) * 100) / (aspectsLiteLimit - aspectsLiteSafe), 0))
     );
     global.aspestFree = Math.min(
-      100,
-      Math.ceil(Math.max(((Game.cpu.bucket - aspectsSafe) * 100) / (targetLimit - aspectsSafe), 0))
+      aspectsMax,
+      Math.ceil(Math.max(((Game.cpu.bucket - aspectsSafe) * aspectsMax) / (targetLimit - aspectsSafe), 0))
     );
 
     bucket.push(Game.cpu.bucket);
@@ -304,7 +300,12 @@ module.exports.loop = function () {
     freesAspoctsLite.push(global.aspestLiteFree);
     freesAspocts.push(global.aspestFree);
     if (Game.time % 10 === 0 /* && Game.cpu.bucket < 3000*/) {
-      console.log('Bucket at ' + JSON.stringify(bucket), JSON.stringify(frees), JSON.stringify(freesAspoctsLite), JSON.stringify(freesAspocts));
+      console.log(
+        'Bucket at ' + JSON.stringify(bucket),
+        JSON.stringify(frees),
+        JSON.stringify(freesAspoctsLite),
+        JSON.stringify(freesAspocts)
+      );
       bucket = [];
       frees = [];
       freesAspoctsLite = [];
