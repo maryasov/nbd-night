@@ -6,6 +6,12 @@ module.exports = class PowerState {
   }
 
   static get isActive() {
+    if (!Memory.activeMines) {
+      Memory.activeMines = [];
+    }
+    if (!Memory.terminateMines) {
+      Memory.terminateMines = [];
+    }
     if (Memory.powerOperation) return true;
     if (Memory.activeMines.length) return true;
     if (Memory.terminateMines.length) return true;
@@ -13,15 +19,7 @@ module.exports = class PowerState {
   }
 
   constructor() {
-    if (!Memory.segmentScanner) {
-      Memory.segmentScanner = {
-        lastScan: 0,
-        partners: [],
-      };
-    }
 
-    this.memory = Memory.segmentScanner;
-    if (!this.memory.partners) this.memory.partners = [];
   }
 
   run() {}
