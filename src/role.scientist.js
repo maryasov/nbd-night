@@ -35,6 +35,10 @@ module.exports = {
       // by default move to store
       this.store(creep, reactor);
     }
+    if (this.needToWork(creep)) {
+      console.log('needToWork')
+      creep.memory.state = 'deliverBoost';
+    }
   },
   deliverToReactor: function (creep, reactor) {
     let target = null;
@@ -230,7 +234,7 @@ module.exports = {
     }
 
     if (!target) {
-      creep.memory.state = 'store';
+      creep.memory.state = 'stop';
     } else {
       let transferResult = creep.transfer(target.lab, creepMineral || RESOURCE_ENERGY);
       if (transferResult === ERR_NOT_IN_RANGE) {
@@ -253,6 +257,14 @@ module.exports = {
 
     creep.memory.state = 'store';
     this.store(creep, reactor);
+  },
+  needToWork(creep){
+    let inps = creep.room.ai().labs.reactor.inputs
+    let ops = creep.room.ai().labs.reactor.outputs
+    return _.find(
+        inps.concat(ops),
+        (b) => b.resource && b.lab.mineralType && b.lab.mineralType !== b.resource
+    )
   },
   compoundAmount(creep, reactor, compound) {
     let inStore = creep.room.storage.store[compound]

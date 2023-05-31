@@ -12,6 +12,7 @@ module.exports = class PowerMinesAspect {
     this.room = roomai.room;
     if (!this.room.memory.powerMines) this.room.memory.powerMines = [];
     if (!Memory.activeMines) Memory.activeMines = [];
+    if (!Memory.terminateMines) Memory.terminateMines = [];
     if (Memory.powerMinesLimit === undefined) Memory.powerMinesLimit = 0;
     this.powerMines = this.room.memory.powerMines;
   }
@@ -80,6 +81,21 @@ module.exports = class PowerMinesAspect {
         Memory.activeMines = _.reject(Memory.activeMines, (r) => r.room === powerMine);
       }
     });
+    _.forEach(Memory.terminateMines, (terminateMine) => {
+      let scoopers = spawnHelper.numberOfCreepsWithProps('scooper',{operation: terminateMine.id});
+      let farmers = spawnHelper.numberOfCreepsWithProps('powerFarmer',{operation: terminateMine.id});
+      let healers = spawnHelper.numberOfCreepsWithProps('healer',{operation: terminateMine.id});
+
+      if (scoopers + farmers + healers) {
+        // console.log('pc', scoopers, farmers, healers)
+        // Memory.powerOperation = true;
+      } else {
+        // Memory.powerOperation = false;
+        Memory.terminateMines = _.reject(Memory.terminateMines, (r) => r.id === terminateMine.id);
+      }
+    });
+
+    // console.log('pm ps', PowerState.isActive)
 
     if (this.roomai.observer.isAvailable() /* && Memory.activeMines.length < Memory.powerMinesLimit*/) {
       _.forEach(this.powerMines, (powerMine) => {
@@ -143,6 +159,7 @@ module.exports = class PowerMinesAspect {
       observerCreep.memory.returningHome = true;
       observerCreep.memory.goRecycle = true;
     }
+    Memory.terminateMines.push(powerFlag.memory);
     powerFlag.remove();
   }
   setFlagStatus(powerFlag, status) {
@@ -187,7 +204,7 @@ module.exports = class PowerMinesAspect {
       minerBoostCount >= 2500 &&
       healerBoostCount >= 2500 &&
       scooperBoostCount >= 2500 &&
-      powerBank.ticksToDecay > 1000 + distance &&
+        powerBank && powerBank.ticksToDecay > 1000 + distance &&
       powerBank.power > 2000
     ) {
       return true;

@@ -32,7 +32,7 @@ module.exports = {
   },
   run: function (creep) {
     if (recycle.check(creep)) return;
-    if (creep.room.name === creep.memory.home && !creep.memory.goRecycle && creep.memory.operation && Memory.powerOperation) {
+    if (creep.room.name === creep.memory.home && !creep.memory.goRecycle && creep.memory.operation && PowerState.isActive) {
       let scoopers = _.filter(
         spawnHelper.globalCreepsWithRole(creep.memory.role),
         (c) => c.memory.operation == creep.memory.operation

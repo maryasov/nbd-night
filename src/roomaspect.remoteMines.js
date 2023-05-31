@@ -123,7 +123,7 @@ module.exports = class RemoteMinesAspect {
   }
 
   spawnMiner(source) {
-    if (Memory.powerOperation) return;
+    if (PowerState.isActive) return;
     if (!this.roomai.canSpawn()) return;
 
     var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
@@ -143,7 +143,7 @@ module.exports = class RemoteMinesAspect {
   }
 
   spawnCarrier(source) {
-    if (Memory.powerOperation) return;
+    if (PowerState.isActive) return;
     if (!this.roomai.canSpawn()) return;
 
     let hasStore = logistic.storeFor(source);

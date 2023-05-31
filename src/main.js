@@ -58,6 +58,7 @@ global.FriendList = require('global.friendList');
 global.MapKnowledge = require('global.mapKnowledge');
 global.RoomUI = require('global.roomui');
 global.SegmentScanner = require('global.segmentScanner');
+global.PowerState = require('global.powerState');
 
 require('global.operation');
 
@@ -73,39 +74,56 @@ profiler.enable();
 
 const creepsStat = false;
 let bucket = [];
+let frees = [];
+let freesAspoctsLite = [];
+let freesAspocts = [];
 
+const targetLimit = 10000;
+const aspectsLiteLimit = 5000;
+const aspectsLiteSafe = 250;
+const aspectsLimit = 9900;
+const aspectsSafe = 8000;
+const powerSafe = 9700;
 const safeLimit = 250;
-const commonLimit = 150;
+const commonLimit = 25;
 const roleLimit = {
-  builder: 25,
-  attacker: -15,
-  carrier: -15,
-  mover: -15,
-  observer: -20,
+  miner: 1,
+  harvester: 1,
+  linkCollector: 1,
+  picker: 1,
+  trader: 5,
+  reloader: 5,
+  builder: 10,
+  mason: 10,
+  upgrader: 12,
   scientist: 15,
-  factoryWorker: -5,
-  harvester: -20,
-  healer: -35,
-  powerFarmer: -35,
-  upgrader: -5,
-  picker: -35,
-  reserver: -35,
-  scooper: -35,
-  linkCollector: -35,
-  miner: -50,
-  trader: -5,
+  observer: 15,
+  powerFarmer: 15,
+  healer: 15,
+  scooper: 15,
+  reserver: 15,
+  carrier: 25,
+  mover: 35,
+  attacker: 35,
+  factoryWorker: 45,
 };
 
+const powerWorks = [
+  "healer",
+  "powerFarmer",
+  "scooper",
+  'picker',
+];
 const powerStop = [
   'builder',
   'attacker',
   // 'carrier',
   'mover',
   // "observer",
-  // "scientist",
+  "scientist",
   // "factoryWorker",
   'powerRefiner',
-  // 'harvester',
+  'harvester',
   // "healer",
   // "powerFarmer",
   'upgrader',
@@ -128,7 +146,7 @@ function suppressErrors(callback) {
 
 function runCreeps() {
   const bt = Game.cpu.bucket;
-  let free = Math.max(Math.floor(((safeLimit - bt) / safeLimit) * 10), 0) / 2 + 1;
+  let free = global.free;
   const rls = {};
 
   // console.log('free', bt, free)
@@ -136,10 +154,10 @@ function runCreeps() {
     // const workFine = [];
     // const workIdle = [];
 
-    let limit = (roleLimit[role.name] || 0) + commonLimit;
+    let limit = roleLimit[role.name] || commonLimit;
 
-    if (bt < limit && role.name !== 'miner') {
-      return;
+    if (free < limit && role.name !== 'miner') {
+      continue;
     }
 
     // console.log('-', role.name, limit)
@@ -149,12 +167,17 @@ function runCreeps() {
     creeps.sort((a, b) => (a.memory.lastTick || 0) - (b.memory.lastTick || 0));
 
     let cnt = creeps.length;
-    let runLimit = cnt / free;
-    if (Memory.powerOperation) {
+    // if (!cnt) continue;
+    let runLimit = Math.min(cnt, Math.max(Math.round((cnt * free) / 100), 1));
+    // console.log('rl', cnt, runLimit, free, role.name)
+    if (PowerState.isActive) {
       // console.log('po', role.name)
-      if (powerStop.indexOf(role.name) > -1 && bt < 1000) {
+      if (powerWorks.indexOf(role.name) > -1 && bt < powerSafe) {
+        runLimit = cnt;
+      }
+      if (powerStop.indexOf(role.name) > -1 && bt < powerSafe) {
         // console.log('list')
-        if (Game.time % 4 === 0) {
+        if (Game.time % 5 === 0) {
           // console.log('limit')
           runLimit = 1;
         } else {
@@ -167,7 +190,7 @@ function runCreeps() {
     let endCreeps;
     for (const [idx, creep] of creeps.entries()) {
       let mustBreake = false;
-      if (idx >= runLimit /*&& role.name !== 'miner'*/) {
+      if (idx + 1 > runLimit && role.name !== 'miner') {
         // rls[role.name] = {}
         // console.log('off', `role: ${role.name} cnt: ${cnt} limit: ${runLimit} free: ${free} idx: ${idx} bt: ${bt}`);
         // console.log('off', cnt, runLimit, free, idx, bt);
@@ -249,6 +272,13 @@ global.e = () => {
   Operation.count('energy', true);
 };
 
+global.free = 0;
+global.aspestLiteFree = 0;
+global.aspestFree = 0;
+global.lastAiLiteAspect = {};
+global.lastAiAspectLite = {};
+global.lastAiAspect = {};
+
 module.exports.loop = function () {
   profiler.wrap(function () {
     globalStatistics.initialize();
@@ -256,10 +286,29 @@ module.exports.loop = function () {
       Memory.stats.skippedTicks += 1;
     }
 
+    global.free = Math.min(
+      100,
+      Math.ceil(Math.max(((Game.cpu.bucket - safeLimit) * 100) / (targetLimit - safeLimit), 0))
+    );
+    global.aspestLiteFree = Math.min(
+      100,
+      Math.ceil(Math.max(((Game.cpu.bucket - aspectsLiteSafe) * 100) / (aspectsLiteLimit - aspectsLiteSafe), 0))
+    );
+    global.aspestFree = Math.min(
+      100,
+      Math.ceil(Math.max(((Game.cpu.bucket - aspectsSafe) * 100) / (targetLimit - aspectsSafe), 0))
+    );
+
     bucket.push(Game.cpu.bucket);
-    if (Game.time % 10 === 0 && Game.cpu.bucket < 3000) {
-      console.log('Bucket at ' + JSON.stringify(bucket));
+    frees.push(global.free);
+    freesAspoctsLite.push(global.aspestLiteFree);
+    freesAspocts.push(global.aspestFree);
+    if (Game.time % 10 === 0 /* && Game.cpu.bucket < 3000*/) {
+      console.log('Bucket at ' + JSON.stringify(bucket), JSON.stringify(frees), JSON.stringify(freesAspoctsLite), JSON.stringify(freesAspocts));
       bucket = [];
+      frees = [];
+      freesAspoctsLite = [];
+      freesAspocts = [];
     }
 
     // if (Game.cpu.bucket < 150) {return;}
@@ -316,15 +365,15 @@ module.exports.loop = function () {
       }
     }
 
-    if (Game.cpu.bucket < safeLimit * 0.8 && Game.time % 10 !== 1) return;
+    if (Game.cpu.bucket < aspectsSafe && Game.time % 10 !== 1) return;
 
-    if (Game.cpu.bucket < (Memory.powerOperation ? 500 : 230)) {
+    if (Game.cpu.bucket < (PowerState.isActive ? 500 : 230)) {
       return;
     }
 
     // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
 
-    if (Game.cpu.bucket < 1000 && Game.time % 10 !== 1) return;
+    if (Game.cpu.bucket < aspectsLimit && Game.time % 10 !== 1) return;
 
     // console.log('Game.time % 2', Game.time % 2)
 

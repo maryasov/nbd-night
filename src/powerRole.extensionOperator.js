@@ -266,7 +266,7 @@ module.exports = class ExtensionOperator {
     // console.log('sm', this.creep.room.name, supportRoom)
     if (!supportRoom) return;
     // console.log('Memory.powerOperation', Memory.powerOperation)
-    if (!Memory.powerOperation) return;
+    if (!PowerState.isActive) return;
     if (this.creep.powers[PWR_OPERATE_SPAWN].cooldown > 0) return;
 
     let spawns = roomai.spawns.getBusySpawns();

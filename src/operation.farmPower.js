@@ -159,11 +159,7 @@ module.exports = class FarmPowerOperation {
           });
           // if (resPow !== 0) {console.log('cant spawn', JSON.stringify(parts))}
         }
-        Memory.powerOperation = true;
-      } else if (dropedPower) {
-        Memory.powerOperation = true;
-      } else {
-        Memory.powerOperation = false;
+        // Memory.powerOperation = true;
       }
     } else {
       if (!targetObservers) {

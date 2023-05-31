@@ -1,29 +1,33 @@
-const aspectsLite = [
-  require('roomaspect.controller'),
-  require('roomaspect.powerOperation'),
-  require('roomaspect.powerMines'),
-  require('roomaspect.trading'),
-  require('roomaspect.power'),
-  require('roomaspect.virtuals'),
-  require('roomaspect.labs'),
+const aspectsLiteNames = [
+  { name: 'ControllerAspect', module: 'roomaspect.controller' },
+  { name: 'FarmPowerOperation', module: 'roomaspect.powerOperation' },
+  { name: 'PowerMinesAspect', module: 'roomaspect.powerMines' },
+  { name: 'TradingAspect', module: 'roomaspect.trading' },
+  { name: 'PowerAspect', module: 'roomaspect.power' },
+  { name: 'VirtualsAspect', module: 'roomaspect.virtuals' },
+  { name: 'LabsAspect', module: 'roomaspect.labs' },
 ];
 
-const aspects = [
-  require('roomaspect.supplies'),
-  require('roomaspect.sources'),
-  require('roomaspect.builders'),
-  require('roomaspect.scooper'),
-  require('roomaspect.minerals'),
-  require('roomaspect.remoteMines'),
-  require('roomaspect.operations'),
-  require('roomaspect.defense'),
-  require('roomaspect.manualOperations'),
-  require('roomaspect.constructions'),
-  require('roomaspect.masons'),
-  // require("roomaspect.intelligence"),
-  require('roomaspect.factory'),
-  require('roomaspect.nuker'),
+
+let aspectsLite = [];
+
+const aspectsNames = [
+  { name: 'SuppliesAspect', module: 'roomaspect.supplies' },
+  { name: 'SourcesAspect', module: 'roomaspect.sources' },
+  { name: 'BuildersAspect', module: 'roomaspect.builders' },
+  { name: 'ScooperAspect', module: 'roomaspect.scooper' },
+  { name: 'MineralsAspect', module: 'roomaspect.minerals' },
+  { name: 'RemoteMinesAspect', module: 'roomaspect.remoteMines' },
+  { name: 'OperationsAspect', module: 'roomaspect.operations' },
+  { name: 'DefenseAspect', module: 'roomaspect.defense' },
+  { name: 'ManualOperationsAspect', module: 'roomaspect.manualOperations' },
+  { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
+  { name: 'MasonsAspect', module: 'roomaspect.masons' },
+  { name: 'FactoryAspect', module: 'roomaspect.factory' },
+  { name: 'NukerAspect', module: 'roomaspect.nuker' },
 ];
+
+let aspects = [];
 
 // const structureTower = require("structure.tower");
 
@@ -55,23 +59,64 @@ module.exports = class RoomAI {
   }
 
   runLite() {
-    for (let aspect of aspectsLite) {
-      new aspect(this).run();
+    if (!global.lastAiAspectLite[this.room.name]) {
+      const rnd = _.random(0, aspectsLiteNames.length - 1)
+      // console.log('set rnd', this.room.name, rnd, aspectsNames[rnd] && aspectsNames[rnd].name)
+      global.lastAiAspectLite[this.room.name] = aspectsLiteNames[rnd].name;
+    }
+    let lastAspectIndex = _.findIndex(aspectsLiteNames, a=>(a.name === global.lastAiAspectLite[this.room.name]));
+    let shiftedAspectsNames = [];
+    if (lastAspectIndex > -1) {
+      shiftedAspectsNames = aspectsLiteNames.slice(lastAspectIndex+1).concat(aspectsLiteNames.slice(0, lastAspectIndex+1))
+    } else {
+      shiftedAspectsNames = aspectsLiteNames
+    }
+    aspectsLite = _.map(shiftedAspectsNames, a=>(a.module)).map(require);
+    let aspectsCnt = aspectsLite.length;
+    // console.log('aspects', JSON.stringify(_.map(aspects, (a) => a.name)));
+    let runLimit = Math.min(aspectsCnt, Math.max(Math.round((aspectsCnt * aspestLiteFree) / 100), 1));
+    // console.log('global.lastAiAspect', runLimit, global.lastAiAspectLite[this.room.name], lastAspectIndex/*, JSON.stringify(shiftedAspectsNames)*/);
+
+    for (const [idx, aspect] of aspectsLite.entries()) {
+      if (idx + 1 <= runLimit) {
+        global.lastAiAspectLite[this.room.name] = aspect.name;
+        new aspect(this).run();
+      }
+
     }
     this.observer.performObservation();
     this.links.fullfillRequests();
   }
 
   run() {
-    for (let aspect of aspects) {
-      new aspect(this).run();
+    if (!global.lastAiAspect[this.room.name]) {
+      const rnd = _.random(0, aspectsNames.length - 1)
+      // console.log('set rnd', this.room.name, rnd, aspectsNames[rnd] && aspectsNames[rnd].name)
+      global.lastAiAspect[this.room.name] = aspectsNames[rnd].name;
+    }
+    let lastAspectIndex = _.findIndex(aspectsNames, a=>(a.name === global.lastAiAspect[this.room.name]));
+    let shiftedAspectsNames = [];
+    if (lastAspectIndex > -1) {
+      shiftedAspectsNames = aspectsNames.slice(lastAspectIndex+1).concat(aspectsNames.slice(0, lastAspectIndex+1))
+    } else {
+      shiftedAspectsNames = aspectsNames
+    }
+    aspects = _.map(shiftedAspectsNames, a=>(a.module)).map(require);
+    let aspectsCnt = aspects.length;
+    // console.log('aspects', JSON.stringify(_.map(aspects, (a) => a.name)));
+    let runLimit = Math.min(aspectsCnt, Math.max(Math.round((aspectsCnt * aspestFree) / 100), 1));
+    // console.log('global.lastAiAspect', runLimit, global.lastAiAspect[this.room.name], lastAspectIndex/*, JSON.stringify(shiftedAspectsNames)*/);
+    if (PowerState.isActive) {
+      runLimit = 1;
+    }
+    for (const [idx, aspect] of aspects.entries()) {
+      // console.log('asp', JSON.stringify(aspect))
+      if (idx + 1 <= runLimit) {
+        global.lastAiAspect[this.room.name] = aspect.name;
+        new aspect(this).run();
+      }
     }
 
-    // for(let tower of this.room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER })) {
-    //     structureTower.run(tower);
-    // }
-
-    // this.links.fullfillRequests();
     this.links.replaceNextContainerByLink();
     this.labs.selectPrioritizedBoosts();
 
