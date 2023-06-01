@@ -56,6 +56,8 @@ module.exports = class RoomAI {
     this.spawns = new Spawns(room);
     this.trading = new Trading(room);
     this.mode = this.room.memory.mode || 'normal';
+    this.noPower = this.room.memory.noPower || false;
+    this.noLabs = this.room.memory.noLabs || false;
   }
 
   runLite() {

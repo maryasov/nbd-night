@@ -78,6 +78,7 @@ let frees = [];
 let freesAspoctsLite = [];
 let freesAspocts = [];
 
+const logLimit = 9500;
 const targetLimit = 10000;
 const aspectsLiteLimit = 5000;
 const aspectsLiteSafe = 250;
@@ -299,13 +300,15 @@ module.exports.loop = function () {
     frees.push(global.free);
     freesAspoctsLite.push(global.aspestLiteFree);
     freesAspocts.push(global.aspestFree);
-    if (Game.time % 10 === 0 /* && Game.cpu.bucket < 3000*/) {
-      console.log(
-        'Bucket at ' + JSON.stringify(bucket),
-        JSON.stringify(frees),
-        JSON.stringify(freesAspoctsLite),
-        JSON.stringify(freesAspocts)
-      );
+    if (Game.time % 10 === 0) {
+      if (_.min(bucket) <= aspectsLimit) {
+        console.log(
+            'Bucket at ' + JSON.stringify(bucket),
+            JSON.stringify(frees),
+            JSON.stringify(freesAspoctsLite),
+            JSON.stringify(freesAspocts)
+        );
+      }
       bucket = [];
       frees = [];
       freesAspoctsLite = [];

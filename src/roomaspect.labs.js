@@ -30,22 +30,22 @@ module.exports = class LabsAspect {
   run() {
     // console.log('lab', this.room.name,!this.room.storage, !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0))
     if (!this.room.storage || !((this.reactor && this.reactor.isValid()) || this.boosters.length > 0)) return;
-    // if(Game.cpu.bucket < 190) {
-    //     return;
-    // }
-    //
-    // if (Memory.powerOperation) return;
+
+    if (this.roomai.noLabs && this.isCurrentReactionFinished()) {
+      this.reactor.clearReaction();
+      return;
+    }
 
     this.updateDeficits();
     if (this.reactor) {
-      if (this.roomai.mode !== 'store') {
+      if (this.roomai.mode !== 'store' && !this.roomai.noLabs) {
         this.setCurrentReaction();
       }
       this.reactor.react();
       this.reactor.renderVisuals();
     }
 
-    if (Memory.rooms[this.room.name] && Memory.rooms[this.room.name].mode === 'unclaim') {
+    if (this.roomai.mode === 'unclaim') {
       return;
     }
 
