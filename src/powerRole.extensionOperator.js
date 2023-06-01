@@ -31,7 +31,11 @@ module.exports = class ExtensionOperator {
     let positions = room.memory.virtuals['powerPosition'];
     positions = _.filter(
       positions,
-      (pos) => !_.any(Game.powerCreeps, (pc) => pc.name !== this.creep.name && pc.pos && pc.pos.x === pos.x && pc.pos.y === pos.y)
+      (pos) =>
+        !_.any(
+          Game.powerCreeps,
+          (pc) => pc.name !== this.creep.name && pc.pos && pc.pos.x === pos.x && pc.pos.y === pos.y
+        )
     );
 
     if (!positions) return;
@@ -209,7 +213,7 @@ module.exports = class ExtensionOperator {
     if (!this.creep.powers[PWR_OPERATE_LAB]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
-
+    if (roomai.noLabs) return;
     let labs = roomai.labs.getPureLabs();
     // console.log('spawns', spawns)
     if (labs.length > 0) {
@@ -262,7 +266,7 @@ module.exports = class ExtensionOperator {
     if (!this.creep.powers[PWR_OPERATE_SPAWN]) return;
     let roomai = this.creep.room.ai();
     if (!roomai) return;
-    let supportRoom = !_.any(Memory.activeMines, (am) => am.support !== this.creep.room.name );
+    let supportRoom = !_.any(Memory.activeMines, (am) => am.support !== this.creep.room.name);
     // console.log('sm', this.creep.room.name, supportRoom)
     if (!supportRoom) return;
     // console.log('Memory.powerOperation', Memory.powerOperation)

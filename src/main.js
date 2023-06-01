@@ -99,15 +99,15 @@ const roleLimit = {
   mason: 10,
   upgrader: 12,
   scientist: 15,
+  factoryWorker: 15,
   observer: 15,
   powerFarmer: 15,
   healer: 15,
   scooper: 15,
   reserver: 15,
-  carrier: 25,
-  mover: 35,
-  attacker: 35,
-  factoryWorker: 45,
+  carrier: 20,
+  mover: 30,
+  attacker: 30,
 };
 
 const powerWorks = ['healer', 'powerFarmer', 'scooper', 'picker'];
