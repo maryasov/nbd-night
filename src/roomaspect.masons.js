@@ -57,8 +57,8 @@ module.exports = class MasonsAspect {
     let result = 0;
     if (this.roomai.mode == 'walls') result++;
     if (this.room.storage.store.energy > 150000 && wallHeight < this.minWalls) result++;
-    if (this.room.storage.store.energy > 300000) result++;
-    if (this.room.storage.store.energy > 400000) result++;
+    // if (this.room.storage.store.energy > 300000) result++;
+    // if (this.room.storage.store.energy > 400000) result++;
 
     return result;
   }

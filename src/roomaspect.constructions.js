@@ -6,27 +6,30 @@ module.exports = class ConstructionsAspect {
     this.room = roomai.room;
   }
 
-  run() {
-    // console.log('const asp', this.room)
-    // this.roomai.constructions.addBlocks();
-    this.roomai.constructions.addBuildings();
-    this.roomai.constructions.removeBuildings();
+  run(lite) {
+    if (lite) {
+      this.roomai.constructions.addBuildings();
+      this.roomai.constructions.removeBuildings();
 
-    let buildProxy = new BuildProxy(this.room);
-    for (let building of this.roomai.constructions.buildings) {
-      if (!Memory.noOutline && this.roomai.mode !== 'store') {
-        building.outline();
+      for (let building of this.roomai.constructions.buildings) {
+        if (!Memory.noOutline && this.roomai.mode !== 'store') {
+          building.outline();
+        }
       }
+
+      this.roomai.constructions.drawDebugMarkers();
+    } else {
+      let buildProxy = new BuildProxy(this.room);
+      for (let building of this.roomai.constructions.buildings) {
+        if (this.roomai.intervals.buildStructure.isActive()) {
+          building.build(buildProxy);
+        }
+      }
+
       if (this.roomai.intervals.buildStructure.isActive()) {
-        building.build(buildProxy);
+        buildProxy.commit();
       }
     }
-
-    if (this.roomai.intervals.buildStructure.isActive()) {
-      buildProxy.commit();
-    }
-
-    this.roomai.constructions.drawDebugMarkers();
   }
 };
 

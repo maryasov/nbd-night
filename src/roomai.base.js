@@ -5,6 +5,7 @@ const aspectsLiteNames = [
   { name: 'TradingAspect', module: 'roomaspect.trading' },
   { name: 'PowerAspect', module: 'roomaspect.power' },
   { name: 'VirtualsAspect', module: 'roomaspect.virtuals' },
+  { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
   { name: 'LabsAspect', module: 'roomaspect.labs' },
 ];
 
@@ -82,7 +83,7 @@ module.exports = class RoomAI {
     for (const [idx, aspect] of aspectsLite.entries()) {
       if (idx + 1 <= runLimit) {
         global.lastAiAspectLite[this.room.name] = aspect.name;
-        new aspect(this).run();
+        new aspect(this).run(true);
       }
 
     }
