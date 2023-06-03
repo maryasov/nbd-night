@@ -80,7 +80,7 @@ let freesAspocts = [];
 
 const logLimit = 9500;
 const targetLimit = 10000;
-const aspectsLiteLimit = 5000;
+const aspectsLiteLimit = 4000;
 const aspectsLiteSafe = 250;
 const aspectsLimit = 9900;
 const aspectsSafe = 8000;
