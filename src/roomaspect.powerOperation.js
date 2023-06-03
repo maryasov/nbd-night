@@ -17,6 +17,7 @@ module.exports = class ManualOperationsAspect {
       let spawnFlag = Game.flags[spawnFlagMatch.match[0]];
       // console.log('chk mo', this.room.name, spawnFlag.color, JSON.stringify(spawnFlagMatch));
       if (spawnFlag.color === 10) {
+        Memory.rooms[this.room.name].autoPower = true;
         for (let activeMine of Memory.activeMines) {
           // console.log('flag', JSON.stringify(result));
           let targetFlag = Game.flags['autoPower' + activeMine.room];
@@ -29,6 +30,8 @@ module.exports = class ManualOperationsAspect {
           }
         }
 
+      } else {
+        Memory.rooms[this.room.name].autoPower = false;
       }
     }
   }

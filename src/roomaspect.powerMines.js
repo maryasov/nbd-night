@@ -19,6 +19,7 @@ module.exports = class PowerMinesAspect {
 
   run() {
     // console.log('pm')
+    if (!Memory.rooms[this.room.name].autoPower && !PowerState.isActive) return;
     _.forEach(this.powerMines, (powerMine) => {
       let mineRoom = Game.rooms[powerMine];
       if (!mineRoom) return;
@@ -82,9 +83,9 @@ module.exports = class PowerMinesAspect {
       }
     });
     _.forEach(Memory.terminateMines, (terminateMine) => {
-      let scoopers = spawnHelper.numberOfCreepsWithProps('scooper',{operation: terminateMine.id});
-      let farmers = spawnHelper.numberOfCreepsWithProps('powerFarmer',{operation: terminateMine.id});
-      let healers = spawnHelper.numberOfCreepsWithProps('healer',{operation: terminateMine.id});
+      let scoopers = spawnHelper.numberOfCreepsWithProps('scooper', { operation: terminateMine.id });
+      let farmers = spawnHelper.numberOfCreepsWithProps('powerFarmer', { operation: terminateMine.id });
+      let healers = spawnHelper.numberOfCreepsWithProps('healer', { operation: terminateMine.id });
 
       if (scoopers + farmers + healers) {
         // console.log('pc', scoopers, farmers, healers)
@@ -122,7 +123,7 @@ module.exports = class PowerMinesAspect {
       powerFlag.memory.id = this.getMineId();
       // Memory.activeMines = _.reject(Memory.activeMines, (r) => r.room === room.name);
       Memory.activeMines.push(powerFlag.memory);
-      console.log('⚒️ new powerBank at ', room.name)
+      console.log('⚒️ new powerBank at ', room.name);
       return powerFlag;
     }
   }
@@ -204,7 +205,8 @@ module.exports = class PowerMinesAspect {
       minerBoostCount >= 2500 &&
       healerBoostCount >= 2500 &&
       scooperBoostCount >= 2500 &&
-        powerBank && powerBank.ticksToDecay > 1000 + distance &&
+      powerBank &&
+      powerBank.ticksToDecay > 1000 + distance &&
       powerBank.power > 2000
     ) {
       return true;

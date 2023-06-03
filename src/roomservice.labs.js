@@ -137,12 +137,6 @@ class Reactor {
     this.memory.need = need;
   }
 
-  clearReaction() {
-    this.memory.compound = null;
-    this.memory.targetAmount = undefined;
-    this.memory.need = undefined;
-  }
-
   get compound() {
     return this.memory.compound;
   }

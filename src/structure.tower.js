@@ -7,9 +7,15 @@ module.exports = {
     let friends = tower.room.find(FIND_MY_CREEPS, {
       filter: (creep) => creep.hits < creep.hitsMax && creep.memory.role !== 'hopper',
     });
-    friends = friends.concat(tower.room.find(FIND_MY_POWER_CREEPS, {
-      filter: (creep) => creep.hits < creep.hitsMax,
-    }));
+    if (!friends.length) {
+      friends = friends.concat(tower.room.find(FIND_MY_POWER_CREEPS, {
+        filter: (creep) => creep.hits < creep.hitsMax,
+      }));
+    }
+    if (friends.length > 0) {
+      tower.heal(_.sortBy(friends, (f) => f.pos.getRangeTo(tower))[0]);
+      return;
+    }
     let warriors = _.filter(friends, (f) => _.some(f.body, (p) => p.type === ATTACK || p.type === RANGED_ATTACK));
 
     if (warriors.length > 0) {
@@ -26,10 +32,6 @@ module.exports = {
       return;
     }
 
-    if (friends.length > 0) {
-      tower.heal(_.sortBy(friends, (f) => f.pos.getRangeTo(tower))[0]);
-      return;
-    }
     //console.log(tower.room.name);
     if (Memory.rooms[tower.room.name] && Memory.rooms[tower.room.name].mode === 'unclaim') {
       return;
@@ -47,16 +49,19 @@ module.exports = {
     // } else if (tower.room.storage.store.energy > 300000) {
     //   fullHealthEquiv = 1000000;
     // }
-    let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-      filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
-    });
-    if (!closestDamagedStructure) {
-      closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+    if (tower.energy > tower.energyCapacity * 0.8) {
+      let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
       });
-    }
-    if (closestDamagedStructure && tower.energy > tower.energyCapacity * 0.8) {
-      tower.repair(closestDamagedStructure);
+      if (!closestDamagedStructure) {
+        closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+          filter: (s) => s.hits < s.hitsMax && s.hits < fullHealthEquiv,
+        });
+      }
+      if (closestDamagedStructure) {
+        tower.repair(closestDamagedStructure);
+      }
+
     }
   },
 };
