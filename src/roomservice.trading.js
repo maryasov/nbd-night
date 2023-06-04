@@ -139,6 +139,7 @@ module.exports = class Trading {
           maximumExportBufferLocal - amountInTerminal
         )
       );
+      // console.log(this.room.name, resource, this.minNeededAmount(resource), this.storage.store[resource] - this.minNeededAmount(resource), maximumExportBufferLocal - amountInTerminal)
     }
     // if (val > 0) {console.log('posible', this.room.name, resource, val, this.storage.store[resource], this.minNeededAmount(resource), maximumExportBufferLocal, amountInTerminal)}
     if (this.room.ai().mode === 'unclaim') {
@@ -167,6 +168,7 @@ module.exports = class Trading {
     let amountInStorage = this.storage.store[resource];
     let excessAmount = amountInTerminal + amountInStorage - this.minNeededAmount(resource);
     return Math.min(amountInTerminal, excessAmount);
+    // return excessAmount;
   }
 
   // amount that need to be imported into the room, because it currently has less
@@ -221,7 +223,7 @@ module.exports = class Trading {
     }
 
     if (baseMinerals.includes(resource)) {
-      if (this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid()) {
+      if (this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid() && !this.room.ai().noLabs) {
         return 10000;
       } else {
         return 0;
@@ -237,7 +239,7 @@ module.exports = class Trading {
     // TODO: should we actually consider the current reaction for this,
     // so that materials are shifted towards the right reactors?
     if (intermediateCompounds.includes(resource)) {
-      if (this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid()) {
+      if (this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid() && !this.room.ai().noLabs) {
         return 2500;
       } else {
         return 0;
