@@ -56,7 +56,7 @@ module.exports = {
       { stroke: '#77f' }
     );
   },
-  build: function (proxy, stack) {
+  build: function (proxy, stack, roomai) {
     let x = stack.x,
       y = stack.y,
       direction = stack.dir;
@@ -67,6 +67,7 @@ module.exports = {
     for (let pos of rotatePositions(roadParts, direction)) {
       proxy.planConstruction(x + pos.x, y + pos.y, STRUCTURE_ROAD);
     }
+    roomai.towers.updateTowerStack(stack);
   },
   updateCostMatrix: function (matrix, stack) {
     let x = stack.x,

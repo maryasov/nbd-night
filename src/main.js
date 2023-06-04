@@ -68,7 +68,6 @@ require('patch.powerCreep');
 require('patch.room');
 
 const profiler = require('screeps-profiler');
-const structureTower = require('./structure.tower');
 const movement = require('./helper.movement');
 profiler.enable();
 
@@ -315,50 +314,17 @@ module.exports.loop = function () {
       freesAspocts = [];
     }
 
-    // if (Game.cpu.bucket < 150) {return;}
-
-    // suppressErrors(() => ShardTravel.loadArrivals());
-    // const startCreeps = Game.cpu.getUsed();
     runCreeps();
-    // if (Game.cpu.getUsed() < 5) {
-    //     runCreeps();
-    // }
-    // const endCreeps = Game.cpu.getUsed();
-    // console.log(`Creeps time: ${endCreeps - startCreeps} ms`);
-    // suppressErrors(() => ShardTravel.announceDepartures());
 
-    // const gbt = Game.cpu.bucket;
-    // let gfree = Math.max(Math.floor((1000 - bt)/10), 0) + 1;
-
-    // const startLinks = Game.cpu.getUsed();
     for (let roomName in Game.rooms) {
       let room = Game.rooms[roomName];
-      // if (roomName === 'W8N7') {
-      //     console.log('loop')
-      // }
+
       if (room.aiLite()) {
         suppressErrors(() => room.aiLite().run());
       }
       if (room.ai()) {
         suppressErrors(() => room.ai().runLite());
       }
-    }
-    // const endLinks = Game.cpu.getUsed();
-    // console.log(`Links time: ${endLinks - startLinks} ms`);
-
-    if (Game.cpu.bucket > safeLimit) {
-      // const startTowers = Game.cpu.getUsed();
-      for (let roomName in Game.rooms) {
-        let room = Game.rooms[roomName];
-
-        for (let tower of room.find(FIND_MY_STRUCTURES, {
-          filter: (structure) => structure.structureType == STRUCTURE_TOWER,
-        })) {
-          structureTower.run(tower);
-        }
-      }
-      // const endTowers = Game.cpu.getUsed();
-      // console.log(`Towers time: ${endTowers - startTowers} ms`);
     }
 
     if (Game.time % 100 == 51) {

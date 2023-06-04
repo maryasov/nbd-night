@@ -7,6 +7,7 @@ const aspectsLiteNames = [
   { name: 'VirtualsAspect', module: 'roomaspect.virtuals' },
   { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
   { name: 'LabsAspect', module: 'roomaspect.labs' },
+  { name: 'TowersAspect', module: 'roomaspect.towers' },
 ];
 
 
@@ -38,6 +39,7 @@ const Defense = require('roomservice.defense');
 const Factory = require('roomservice.factory');
 const Intervals = require('roomservice.intervals');
 const Labs = require('roomservice.labs');
+const Towers = require('roomservice.towers');
 const Links = require('roomservice.links');
 const Observer = require('roomservice.observer');
 const Spawns = require('roomservice.spawns');
@@ -53,6 +55,7 @@ module.exports = class RoomAI {
     this.intervals = new Intervals();
     this.links = new Links(room);
     this.labs = new Labs(room);
+    this.towers = new Towers(room);
     this.observer = new Observer(room);
     this.spawns = new Spawns(room);
     this.trading = new Trading(room);
