@@ -48,6 +48,9 @@ module.exports = class SuppliesAspect {
     if (this.roomai.mode === 'store') {
       neededHarvesters = 1;
     }
+    if (spawnHelper.localPowerCreeps(this.roomai).length) {
+      neededHarvesters = 1;
+    }
     // console.log('need', neededHarvesters, partConfigs)
     var hz = spawnHelper.numberOfLocalCreeps(this.roomai, harvester.name);
     if (!this.roomai.canSpawnHarv() || hz >= neededHarvesters) {
