@@ -95,7 +95,6 @@ module.exports = class TowersAspect {
     //   fullHealthEquiv = 1000000;
     // }
     if (towers.length) {
-
       // console.log('this.towerStack', JSON.stringify(this.towerStack.reloadPos))
       this.damaged = this.room.find(FIND_STRUCTURES, {
         filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
@@ -103,18 +102,18 @@ module.exports = class TowersAspect {
 
       // console.log('this.damaged', JSON.stringify(this.damaged))
 
-      if (!this.damaged.length) return;
+      if (this.damaged.length) {
+        do {
+          let tower = towers.shift();
 
-      do {
-        let tower = towers.shift();
-
-        this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
-        let cons = this.damaged.shift();
-        tower.repair(cons);
-        if (cons.hits < cons.hitsMax && cons.hits < 5000) {
-          this.damaged.unshift(cons);
-        }
-      } while (this.damaged.length && towers.length);
+          this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
+          let cons = this.damaged.shift();
+          tower.repair(cons);
+          if (cons.hits < cons.hitsMax && cons.hits < 5000) {
+            this.damaged.unshift(cons);
+          }
+        } while (this.damaged.length && towers.length);
+      }
 
       if (!towers.length) return;
 
@@ -124,17 +123,18 @@ module.exports = class TowersAspect {
         });
       }
 
-      do {
-        let tower = towers.shift();
+      if (this.damaged.length) {
+        do {
+          let tower = towers.shift();
 
-        this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
-        let cons = this.damaged.shift();
-        tower.repair(cons);
-        if (cons.hits < cons.hitsMax && cons.hits < fullHealthEquiv) {
-          this.damaged.unshift(cons);
-        }
-      } while (this.damaged.length && towers.length);
-
+          this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
+          let cons = this.damaged.shift();
+          tower.repair(cons);
+          if (cons.hits < cons.hitsMax && cons.hits < fullHealthEquiv) {
+            this.damaged.unshift(cons);
+          }
+        } while (this.damaged.length && towers.length);
+      }
     }
   }
 

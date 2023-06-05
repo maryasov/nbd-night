@@ -73,7 +73,7 @@ module.exports = class DefenseAspect {
       });
       let perc = Math.floor((freeCapacity * 100) / allCapacity)
       // console.log('rel', allCapacity, freeCapacity, perc)
-      if (perc > 40) {
+      if (perc >= 20) {
         this.roomai.spawn(reloader.parts, { role: reloader.name, renew: true });
       }
     }

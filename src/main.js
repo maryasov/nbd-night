@@ -116,7 +116,7 @@ const powerStop = [
   // 'carrier',
   'mover',
   // "observer",
-  'scientist',
+  // 'scientist',
   // "factoryWorker",
   'powerRefiner',
   'harvester',
