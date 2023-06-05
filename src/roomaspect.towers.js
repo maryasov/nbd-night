@@ -130,7 +130,7 @@ module.exports = class TowersAspect {
           this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
           let cons = this.damaged.shift();
           tower.repair(cons);
-          if (cons.hits < cons.hitsMax && cons.hits < fullHealthEquiv) {
+          if (cons && cons.hits < cons.hitsMax && cons.hits < fullHealthEquiv) {
             this.damaged.unshift(cons);
           }
         } while (this.damaged.length && towers.length);
