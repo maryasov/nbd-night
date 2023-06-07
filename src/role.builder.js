@@ -20,7 +20,7 @@ module.exports = {
   name: 'builder',
   configs: function (workParts) {
     var configs = [];
-    for (let work = workParts; work >= 2; work -= 1) {
+    for (let work = workParts; work >= 1; work -= 1) {
       let carry = Math.floor(work * 2);
       let move = work + carry;
       let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
@@ -28,7 +28,6 @@ module.exports = {
     }
 
     // TODO: probably more handcrafted configs for low tiers?
-    configs.push([WORK, WORK, CARRY, MOVE]); // spawn-only config
 
     return configs;
   },
