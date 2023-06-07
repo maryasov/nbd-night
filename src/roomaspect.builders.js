@@ -24,10 +24,14 @@ module.exports = class BuildersAspect {
   }
 
   numberOfWorkParts() {
-    if (this.constructionMass >= 20000) {
-      return 20;
+    if (Memory.simpleBuilders && this.constructionsSimple) {
+      return 1;
     } else {
-      return 8;
+      if (this.constructionMass >= 20000) {
+        return 20;
+      } else {
+        return 8;
+      }
     }
   }
 
@@ -58,6 +62,13 @@ module.exports = class BuildersAspect {
     }
 
     return this._constructionMass;
+  }
+
+  get constructionsSimple() {
+    const cons = this.room.find(FIND_MY_CONSTRUCTION_SITES)
+    const simple = _.every(cons, c=> c.structureType === STRUCTURE_RAMPART || c.structureType === STRUCTURE_WALL)
+
+    return simple;
   }
 };
 
