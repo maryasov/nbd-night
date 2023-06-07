@@ -111,7 +111,7 @@ const roleLimit = {
 
 const powerWorks = ['healer', 'powerFarmer', 'scooper', 'picker'];
 const powerStop = [
-  'builder',
+  // 'builder',
   'attacker',
   // 'carrier',
   'mover',

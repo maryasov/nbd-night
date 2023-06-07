@@ -39,6 +39,7 @@ module.exports = {
       parking.check(creep);
       return;
     }
+    // console.log(creep.room.name, creep.pos.isNearTo(target), creep.pos.inRangeTo(target, 1))
     if (creep.pos.isNearTo(target)) {
       creep.transfer(target, RESOURCE_ENERGY);
     } else {

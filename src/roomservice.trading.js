@@ -218,7 +218,7 @@ module.exports = class Trading {
     if (resource == RESOURCE_ENERGY) return 50000;
 
     if (resource == RESOURCE_POWER) {
-      if (this.room.powerSpawn() && !Memory.sellPower) return 1000;
+      if (this.room.powerSpawn() && !Memory.sellPower && !this.room.ai().noPower) return 5000;
       return 0;
     }
 
@@ -230,10 +230,9 @@ module.exports = class Trading {
       }
     }
 
-    if (t3Boosts.includes(resource)) return 20000;
+    if (t3Boosts.includes(resource)) return 15000;
     if (resource === 'G') return 5000;
     if (resource === 'ops') return 5000;
-    if (resource === 'power') return 5000;
 
     // ensures that compounds don't get stuck in terminal
     // TODO: should we actually consider the current reaction for this,

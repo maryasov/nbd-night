@@ -68,7 +68,7 @@ module.exports = class ControllerAspect {
       return; // strictly conserve energy when supply is very low
     }
 
-    this.roomai.spawn(parts, { role: upgrader.name, room: this.room.name });
+    this.roomai.spawn(parts, { role: upgrader.name, room: this.room.name, renew: true });
   }
 
   buildCarriers() {
