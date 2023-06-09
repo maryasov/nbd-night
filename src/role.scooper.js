@@ -171,9 +171,15 @@ module.exports = {
         creep.memory.returningHome = true;
       } else {
         // Wait at a parking position.
-        target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-          filter: (s) => parkStructures.includes(s.structureType),
-        });
+        if (creep.memory.resource === 'power') {
+          target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_POWER_BANK,
+          });
+        } else {
+          target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (s) => parkStructures.includes(s.structureType),
+          });
+        }
         if (!target) {
           if (creep.memory.targetPos) {
             target = { pos: creep.room.getPositionAt(creep.memory.targetPos.x, creep.memory.targetPos.y) };
