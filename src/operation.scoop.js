@@ -66,6 +66,7 @@ module.exports = class ScoopOperation extends Operation {
         home: room.name,
         target: this.memory.targetRoom,
         operation: this.id,
+        renew: true
       });
     }
   }

@@ -1,22 +1,23 @@
 const recycle = require('helper.recycle');
+const renew = require('helper.renew');
 // const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_FACTORY, STRUCTURE_SPAWN];
 const sParkStructures = [STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_SPAWN];
 const parkStructures = [
   STRUCTURE_LAB,
   STRUCTURE_EXTENSION,
-  STRUCTURE_STORAGE,
   STRUCTURE_POWER_BANK,
   STRUCTURE_TERMINAL,
   STRUCTURE_CONTAINER,
   STRUCTURE_FACTORY,
   STRUCTURE_TOWER,
+  STRUCTURE_STORAGE,
 ];
 const blockStructures = [
   /*STRUCTURE_RAMPART*/
 ];
 const storeStructures = [STRUCTURE_TERMINAL, STRUCTURE_STORAGE];
 const wayStructures = [STRUCTURE_POWER_BANK];
-const ignoreResources = ['energy', 'H'];
+const ignoreResources = [];
 
 
 module.exports = {
@@ -32,6 +33,7 @@ module.exports = {
   },
   run: function (creep) {
     if (recycle.check(creep)) return;
+    if (renew.check(creep)) return;
     if (creep.room.name === creep.memory.home && !creep.memory.goRecycle && creep.memory.operation && PowerState.isActive) {
       let scoopers = _.filter(
         spawnHelper.globalCreepsWithRole(creep.memory.role),
@@ -206,8 +208,9 @@ module.exports = {
       // } else {
       //     objs = Object.keys(target.store);
       // }
+      // objs = _.sortBy(Object.keys(target.store), (e) => this.resourceFilter(creep, e));
       if (objs.length > 0) {
-        result = creep.withdraw(target, _.first(objs));
+        result = creep.withdraw(target, _.last(objs));
       }
     } else {
       // console.log('droped', JSON.stringify(target))

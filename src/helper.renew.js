@@ -7,6 +7,9 @@ module.exports = {
         case 'mover':
           renewTimeout = 500;
           break;
+        case 'scooper':
+          renewTimeout = 500;
+          break;
         case 'miner':
           renewTimeout = 300;
           break;
@@ -104,6 +107,7 @@ module.exports = {
   },
   conditions: function (creep) {
     if (creep.memory.role === 'mover' && creep.memory.support !== creep.room.name) return false;
+    if (creep.memory.role === 'scooper' && creep.memory.home !== creep.room.name) return false;
     if (
       creep.memory.role === 'harvester' &&
       (creep.memory.level !== creep.room.controller.level || creep.memory.affordable)
