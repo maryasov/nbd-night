@@ -124,7 +124,7 @@ module.exports = class PowerMinesAspect {
       powerFlag.memory.power = power;
       // Memory.activeMines = _.reject(Memory.activeMines, (r) => r.room === room.name);
       Memory.activeMines.push(powerFlag.memory);
-      console.log('⚒️ new powerBank at ', room.name);
+      console.log('⚒️ new powerBank at ', room.name, 'with', power);
       return powerFlag;
     }
   }
