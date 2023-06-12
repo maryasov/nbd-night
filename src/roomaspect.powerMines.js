@@ -42,7 +42,7 @@ module.exports = class PowerMinesAspect {
 
       if (powerBank) {
         if (!powerFlag) {
-          powerFlag = this.addFlag(this.room.name, mineRoom, powerBank.pos);
+          powerFlag = this.addFlag(this.room.name, mineRoom, powerBank.pos, powerBank.power);
         }
         if (powerFlag) {
           if (powerBank.hits > 800000) {
@@ -107,7 +107,7 @@ module.exports = class PowerMinesAspect {
       });
     }
   }
-  addFlag(support, room, pos) {
+  addFlag(support, room, pos, power) {
     let cond = this.condition(room);
     // console.log(JSON.stringify(cond))
     if (cond) {
@@ -121,6 +121,7 @@ module.exports = class PowerMinesAspect {
       powerFlag.memory.support = support;
       powerFlag.memory.room = room.name;
       powerFlag.memory.id = this.getMineId();
+      powerFlag.memory.power = power;
       // Memory.activeMines = _.reject(Memory.activeMines, (r) => r.room === room.name);
       Memory.activeMines.push(powerFlag.memory);
       console.log('⚒️ new powerBank at ', room.name);
@@ -167,7 +168,7 @@ module.exports = class PowerMinesAspect {
     if (powerFlag.memory.status !== status) {
       powerFlag.memory.status = status;
       if (['bank', 'ruin'].indexOf(status) > -1) {
-        Game.notify(powerFlag.room.name + ' ' + status);
+        Game.notify(powerFlag.room.name + ' ' + status + ' (' + powerFlag.memory.power + ')');
       }
     }
     if (powerFlag.color !== colors[status]) {
