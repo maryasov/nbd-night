@@ -52,7 +52,7 @@ module.exports = {
 
     if (creep.store.getFreeCapacity() > 0 && creep.pos.isNearTo(creep.room.storage)) {
       // Safety valve: protect storage from overflowing with anything but energy
-      if (creep.room.storage.my && creep.room.storage.store.getFreeCapacity() < 10000) {
+      if (creep.room.storage.my && creep.room.storage.store.getFreeCapacity() < 2000) {
         let excessResource = _.invert(creep.room.storage.store)[_.sortBy(creep.room.storage.store, (r) => -r)[0]];
         console.log('Storage in room ' + creep.room.name + ' is overfilled! Removing excess ' + excessResource);
         creep.withdraw(creep.room.storage, excessResource);
