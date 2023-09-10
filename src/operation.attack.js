@@ -98,6 +98,9 @@ module.exports = class AttackOperation extends Operation {
 
   requestBoosts(roomai) {
     roomai.labs.requestBoost(this.attackRole.mainBoost, 40);
+    if (this.attackRole.secondBoost) {
+      roomai.labs.requestBoost(this.attackRole.secondBoost, 41);
+    }
     if (this.memory.useHeal) roomai.labs.requestBoost('XLHO2', 50);
     if (this.memory.useTough) {
       roomai.labs.requestBoost('XGHO2', 45);

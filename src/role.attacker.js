@@ -9,6 +9,7 @@ const prioritizedStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
 module.exports = {
   name: 'attacker',
   mainBoost: 'XUH2O',
+  secondBoost: 'XZHO2',
   configs: function (options) {
     options = options || {};
     var configs = [];
@@ -38,7 +39,7 @@ module.exports = {
     if (creep.body[0].type === TOUGH) {
       if (boosting.accept(creep, 'XZHO2', 'XUH2O', 'XGHO2')) return;
     } else {
-      if (boosting.accept(creep, 'XUH2O')) return;
+      if (boosting.accept(creep, 'XUH2O', 'XZHO2')) return;
     }
 
     let target = AbsolutePosition.deserialize(creep.memory.target);

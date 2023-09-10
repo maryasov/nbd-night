@@ -275,7 +275,7 @@ module.exports = class Trading {
       return 5000;
     }
 
-    if (baseMinerals.includes(resource)) return 10000;
+    if (baseMinerals.includes(resource)) return 50000;
     if (t3Boosts.includes(resource)) return 25000;
     if (resource === 'G') return 10000;
     if (resource === 'ops') return 5000;

@@ -247,6 +247,7 @@ module.exports = class ExtensionOperator {
     if (!spawn) return;
     if (spawn.effects && spawn.effects.length > 0) return;
     if (!spawn.power) return;
+    if (this.creep.room.memory.noPower) return;
     // console.log('spawns', JSON.stringify(spawns))
     if (spawn) {
       let powerMetadata = POWER_INFO[PWR_OPERATE_POWER];

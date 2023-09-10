@@ -3,14 +3,14 @@ const renew = require('helper.renew');
 // const parkStructures = [STRUCTURE_STORAGE, STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_FACTORY, STRUCTURE_SPAWN];
 const sParkStructures = [STRUCTURE_POWER_BANK, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_SPAWN];
 const parkStructures = [
-  STRUCTURE_LAB,
-  STRUCTURE_EXTENSION,
-  STRUCTURE_POWER_BANK,
-  STRUCTURE_TERMINAL,
-  STRUCTURE_CONTAINER,
-  STRUCTURE_FACTORY,
-  STRUCTURE_TOWER,
   STRUCTURE_STORAGE,
+  // STRUCTURE_EXTENSION,
+  // STRUCTURE_LAB,
+  // STRUCTURE_TERMINAL,
+  STRUCTURE_POWER_BANK,
+  STRUCTURE_CONTAINER,
+  // STRUCTURE_TOWER,
+  // STRUCTURE_FACTORY,
 ];
 const blockStructures = [
   /*STRUCTURE_RAMPART*/
@@ -55,8 +55,13 @@ module.exports = {
     } else {
       if (creep.room.name !== creep.memory.target) {
         let tg;
+        let tgs;
         // if (creep.room.name !=='W20S10') {
-        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 300 });
+        // console.log('tg', JSON.stringify(tg))
+        // tgs = creep.pos.lookFor(LOOK_ENERGY);
+        // console.log('am', JSON.stringify(tgs));
+        // tg = _.sortBy(tgs, (t)=>(-t.amount))[0]
 
         if (!tg) tg = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
         // }
@@ -69,6 +74,7 @@ module.exports = {
           objs = _.filter(Object.keys(tg.store), (e) => this.resourceFilter(creep, e));
         }
 
+        // console.log('tg', tg, objs)
         if (tg && objs && objs.length > 0) {
           this.scoopWay(creep);
         } else {
@@ -130,6 +136,7 @@ module.exports = {
     }
 
     let result = null;
+    // console.log('target', target)
     if (target.store) {
       let objs;
       objs = _.filter(Object.keys(target.store), (e) => this.resourceFilter(creep, e));
@@ -137,6 +144,7 @@ module.exports = {
     } else {
       result = creep.pickup(target);
     }
+    // console.log('result', result, creep.name)
 
     if (result === ERR_NOT_IN_RANGE) {
       creep.memory.stopped = false;
@@ -150,7 +158,8 @@ module.exports = {
     }
 
 
-    let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'H' });
+    let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 300 });
+    // console.log('tg r', JSON.stringify(target))
     if (!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
     if (!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
       const blocks = creep.room

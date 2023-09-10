@@ -8,7 +8,7 @@ module.exports = {
           renewTimeout = 500;
           break;
         case 'scooper':
-          renewTimeout = 500;
+          renewTimeout = 1000;
           break;
         case 'miner':
           renewTimeout = 300;

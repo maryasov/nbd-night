@@ -10,6 +10,7 @@ const aspectsLiteNames = [
   { name: 'TowersAspect', module: 'roomaspect.towers' },
   { name: 'OperationsAspect', module: 'roomaspect.operations' },
   { name: 'ManualOperationsAspect', module: 'roomaspect.manualOperations' },
+  { name: 'FactoryAspect', module: 'roomaspect.factory' },
 ];
 
 
@@ -25,7 +26,6 @@ const aspectsNames = [
   { name: 'DefenseAspect', module: 'roomaspect.defense' },
   { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
   { name: 'MasonsAspect', module: 'roomaspect.masons' },
-  { name: 'FactoryAspect', module: 'roomaspect.factory' },
   { name: 'NukerAspect', module: 'roomaspect.nuker' },
 ];
 

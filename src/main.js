@@ -15,7 +15,7 @@ const roles = [
   // require("role.flagHunter"),
   require('role.attacker'),
   require('role.opener'),
-  // require("role.dismantler"),
+  require("role.dismantler"),
   require('role.healer'),
   require('role.hopper'),
   require('role.observer'),
@@ -97,16 +97,17 @@ const roleLimit = {
   builder: 10,
   mason: 10,
   upgrader: 12,
-  scientist: 15,
+  scientist: 5,
   factoryWorker: 15,
   observer: 15,
   powerFarmer: 15,
   healer: 15,
-  scooper: 15,
+  scooper: 1,
   reserver: 15,
   carrier: 20,
   mover: 30,
   attacker: 30,
+  dismantler: 5,
 };
 
 const powerWorks = ['healer', 'powerFarmer', 'scooper', 'picker'];

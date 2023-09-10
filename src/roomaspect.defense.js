@@ -43,17 +43,27 @@ module.exports = class DefenseAspect {
       // XLH2O 150 - build +100%
       // XLHO2 150 - heal +300%
       // XUH2O 10 - boost power miners
+      // XZH2O 10 - dismantler
       //
-      this.roomai.labs.requestBoost('XUH2O', 150);
-      this.roomai.labs.requestBoost('XLHO2', 149);
-      this.roomai.labs.requestBoost('XKH2O', 148);
+      this.roomai.labs.requestBoost('XUH2O', 10);
+      this.roomai.labs.requestBoost('XLHO2', 9);
+      if (this.hasDismantlerOperation()) {
+        this.roomai.labs.requestBoost('XZH2O', 8);
+      } else {
+        this.roomai.labs.requestBoost('XKH2O', 8);
+      }
+
       // this.roomai.labs.unloadBoost('XUH2O');
       // this.roomai.labs.unloadBoost('XLHO2');
       // this.roomai.labs.unloadBoost('XKH2O');
     } else {
       this.roomai.labs.requestBoost('XUH2O', 80);
       this.roomai.labs.requestBoost('XLHO2', 79);
-      this.roomai.labs.requestBoost('XKH2O', 78);
+      if (this.hasDismantlerOperation()) {
+        this.roomai.labs.requestBoost('XZH2O', 78);
+      } else {
+        this.roomai.labs.requestBoost('XKH2O', 78);
+      }
     }
 
     // low-level rooms can't spawn anything meaningful in defense anyways
@@ -94,6 +104,14 @@ module.exports = class DefenseAspect {
       let parts = spawnHelper.bestAvailableParts(this.room, guard.configs(), true);
       this.roomai.spawn(parts, { role: guard.name });
     }
+  }
+
+  hasDismantlerOperation() {
+    return !!_.find(Memory.operations, (op)=>{
+      if (op.attackRole === 'dismantler') {
+        return true;
+      }
+    })
   }
 
   engageSafeMode() {
