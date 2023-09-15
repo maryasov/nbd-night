@@ -28,7 +28,7 @@ Creep.prototype.goTo = function (target, options) {
     }
   }
   options.costCallback = builder.getAdditiveCallback();
-  // console.log('goTo', JSON.stringify(options))
+  // console.log('goTo', this.name, target, JSON.stringify(options))
   return this.moveTo(target, options);
 };
 

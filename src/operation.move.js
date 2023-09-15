@@ -68,7 +68,8 @@ module.exports = class MoveOperation extends Operation {
         support: this.memory.supportRoom,
         resource: this.memory.resource,
         operation: this.id,
-        renew: true,
+        oneWay: this.memory.oneWay,
+        renew: !this.memory.oneWay,
       });
     }
   }

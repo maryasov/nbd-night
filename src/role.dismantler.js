@@ -14,7 +14,7 @@ module.exports = {
     options = options || {};
     var configs = [];
     for (let force = 40; force >= 5; force -= 1) {
-      let config = Array(force).fill(WORK).concat(Array(Math.floor(force/4)).fill(MOVE));
+      let config = Array(force).fill(WORK).concat(Array(Math.floor(force/(options.useBoost ? 4 : 2))).fill(MOVE));
       if (config.length <= 50) configs.push(config);
     }
 

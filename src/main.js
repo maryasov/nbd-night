@@ -84,7 +84,7 @@ const aspectsLiteSafe = 250;
 const aspectsLimit = 9900;
 const aspectsSafe = 8000;
 const aspectsMax = 50;
-const powerSafe = 9700;
+const powerSafe = 3500;
 const safeLimit = 250;
 const commonLimit = 25;
 const roleLimit = {
@@ -94,9 +94,9 @@ const roleLimit = {
   picker: 1,
   trader: 5,
   reloader: 5,
-  builder: 10,
+  builder: 5,
   mason: 10,
-  upgrader: 12,
+  upgrader: 5,
   scientist: 5,
   factoryWorker: 15,
   observer: 15,
@@ -104,18 +104,19 @@ const roleLimit = {
   healer: 15,
   scooper: 1,
   reserver: 15,
-  carrier: 20,
-  mover: 30,
+  carrier: 5,
+  mover: 5,
   attacker: 30,
   dismantler: 5,
 };
 
-const powerWorks = ['healer', 'powerFarmer', 'scooper', 'picker'];
+// const powerWorks = ['healer', 'scooper', 'picker', 'dismantler', 'scientist', 'harvester', 'trader', 'mover'];
+const powerWorks = ['healer', 'scooper', 'picker', 'dismantler', 'trader', 'mover', 'upgrader'];
 const powerStop = [
   // 'builder',
   // 'attacker',
   // 'carrier',
-  'mover',
+  // 'mover',
   // "observer",
   // 'scientist',
   // "factoryWorker",
@@ -169,7 +170,7 @@ function runCreeps() {
     // console.log('rl', cnt, runLimit, free, role.name)
     if (PowerState.isActive) {
       // console.log('po', role.name)
-      if (powerWorks.indexOf(role.name) > -1 && bt < powerSafe) {
+      if (powerWorks.indexOf(role.name) > -1 && bt > powerSafe) {
         runLimit = cnt;
       }
       if (powerStop.indexOf(role.name) > -1 && bt < powerSafe) {

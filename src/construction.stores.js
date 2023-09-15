@@ -93,7 +93,7 @@ module.exports = {
     let result = [];
     let stores = _.filter(buildings, (b) => b.type === this.type);
 
-    if ((Game.rooms[room].ai().mode = 'way')) return;
+    if (Game.rooms[room] && (Game.rooms[room].ai().mode = 'way')) return;
 
     if (!hasStore(room.controller, stores)) {
       eachSpaceAround(room.controller, spaceFinder, (pos) => result.push({ x: pos.x, y: pos.y, link: true }));

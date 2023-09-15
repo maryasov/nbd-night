@@ -225,8 +225,8 @@ module.exports = class PathBuilder {
     let terrain = room.getTerrain();
     for (let hostile of hostiles) {
       let range = 0;
-      if (_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 5;
-      else if (_.some(hostile.body, (p) => p.type === ATTACK)) range = 5;
+      if (_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 10;
+      else if (_.some(hostile.body, (p) => p.type === ATTACK)) range = 10;
       if (range === 0) continue;
 
       for (let dx = -range; dx <= range; dx += 1) {

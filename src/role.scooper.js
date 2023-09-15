@@ -6,11 +6,11 @@ const parkStructures = [
   STRUCTURE_STORAGE,
   // STRUCTURE_EXTENSION,
   // STRUCTURE_LAB,
-  // STRUCTURE_TERMINAL,
+  STRUCTURE_TERMINAL,
   STRUCTURE_POWER_BANK,
   STRUCTURE_CONTAINER,
   // STRUCTURE_TOWER,
-  // STRUCTURE_FACTORY,
+  STRUCTURE_FACTORY,
 ];
 const blockStructures = [
   /*STRUCTURE_RAMPART*/
@@ -57,7 +57,7 @@ module.exports = {
         let tg;
         let tgs;
         // if (creep.room.name !=='W20S10') {
-        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 300 });
+        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 10 });
         // console.log('tg', JSON.stringify(tg))
         // tgs = creep.pos.lookFor(LOOK_ENERGY);
         // console.log('am', JSON.stringify(tgs));
@@ -158,8 +158,10 @@ module.exports = {
     }
 
 
-    let target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 300 });
-    // console.log('tg r', JSON.stringify(target))
+    let target;
+    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'energy' });
+    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 10 });
+    if (!target) target = creep.pos.findClosestByRange(FIND_RUINS, { filter: (t) => _.sum(t.store) > 0 });
     if (!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
     if (!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
       const blocks = creep.room
@@ -206,6 +208,11 @@ module.exports = {
         }
       }
 
+      // return;
+    }
+
+
+    if (!target) {
       return;
     }
 

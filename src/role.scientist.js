@@ -3,7 +3,7 @@ const renew = require('helper.renew');
 
 module.exports = {
   name: 'scientist',
-  parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
+  parts: spawnHelper.makeParts(20, CARRY, 10, MOVE),
   run: function (creep) {
     if (renew.check(creep)) return;
     if (!creep.room.ai()) {

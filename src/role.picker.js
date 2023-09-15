@@ -98,6 +98,10 @@ module.exports = {
       return true;
     }
 
+    if (!target) {
+      return 
+    }
+
     if (creep.pos.isNearTo(target)) {
       let resource = _.findKey(creep.store, (amount) => amount > 0);
       if (resource) {

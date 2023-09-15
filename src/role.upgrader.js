@@ -3,6 +3,7 @@ const boosting = require('helper.boosting');
 const logistic = require('helper.logistic');
 const movement = require('helper.movement');
 const renew = require('helper.renew');
+const recycle = require('helper.recycle');
 
 module.exports = {
   name: 'upgrader',
@@ -27,6 +28,7 @@ module.exports = {
     return configs;
   },
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (renew.check(creep)) return;
 
     // if(boosting.accept(creep, "XGH2O")) return;
@@ -40,7 +42,7 @@ module.exports = {
 
     creep.memory.stopped = true;
     let controller = creep.room.controller;
-    if (creep.room.storage && creep.room.storage.store.energy < 10000 && controller.ticksDowngraded() < 1000) {
+    if (creep.room.storage && creep.room.storage.store.energy < 10000/* && controller.ticksDowngraded() < 1000*/) {
       return; // strictly conserve energy when supply is very low
     }
 

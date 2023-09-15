@@ -10,6 +10,7 @@ module.exports = class AttackOperation extends Operation {
     super(memory);
 
     if (!this.memory.attackerCount) this.memory.attackerCount = 1;
+    if (this.memory.useBoost === undefined) this.memory.useBoost = true;
     if (this.memory.attackRole !== 'dismantler') this.memory.attackRole = 'attacker';
     if (this.memory.timeout) {
       this.memory.terminateAfterTick = Game.time + this.memory.timeout;
@@ -67,7 +68,7 @@ module.exports = class AttackOperation extends Operation {
     if (this.memory.useHeal) this.spawnHealers(roomai);
 
     if (this.memory.missingAttackers > 0) {
-      let memory = { role: this.attackRole.name, target: this.targetPosition, operation: this.id };
+      let memory = { role: this.attackRole.name, target: this.targetPosition, operation: this.id, useBoost: !!this.memory.useBoost };
       let configs = this.attackRole.configs();
       if (this.memory.useHeal) memory['waitFor'] = true;
       if (this.memory.useTough) configs = [this.attackRole.toughConfig(15)];

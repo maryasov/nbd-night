@@ -16,11 +16,11 @@ module.exports = {
   configsForCapacity: function (capacity, options) {
     var workParts = (options && options.workParts) || 0;
     var configs = [];
-    for (var carries = Math.max(2, Math.ceil(capacity / 50)); carries >= 2; carries -= 1) {
+    for (var carries = Math.max(2, Math.floor(capacity / 50)); carries >= 2; carries -= 1) {
       let config = Array(workParts)
         .fill(WORK)
         .concat(Array(carries).fill(CARRY))
-        .concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE));
+        .concat(Array(carries + workParts).fill(MOVE));
       // maximum creep size is 50 parts
       if (config.length <= 50) configs.push(config);
     }
@@ -50,7 +50,7 @@ module.exports = {
   approachRoom: function (creep, position) {
     // TODO: waiting (somewhere) blocks aggressive move... creep does not attack, because healer is out of range
     if (!this.shouldWait(creep)) {
-      creep.goTo(position);
+      creep.goTo(position, {avoidHostiles: true, debugCosts: true});
     }
 
     // let target = ff.findClosestHostileByRange(creep.pos);
@@ -108,6 +108,9 @@ module.exports = {
 
     // console.log('tr', JSON.stringify(transferResult))
     if (transferResult == OK) {
+      if (creep.memory.oneWay) {
+        creep.suicide();
+      }
       creep.memory.waitStart = null;
       if (creep.memory.clearResource) {
         delete creep.memory.resource;
