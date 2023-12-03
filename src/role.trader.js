@@ -1,5 +1,6 @@
 const spawnHelper = require('helper.spawning');
 const renew = require('helper.renew');
+const recycle = require('helper.recycle');
 const parking = require('helper.parking');
 
 // exporting anything does not make sense with less than
@@ -12,7 +13,13 @@ const TERMINAL_WORKING_BUFFER = 1000;
 module.exports = {
   name: 'trader',
   parts: spawnHelper.makeParts(10, CARRY, 5, MOVE),
+  configs: [
+    spawnHelper.makeParts(30, CARRY, 20, MOVE),
+    spawnHelper.makeParts(20, CARRY, 10, MOVE),
+    spawnHelper.makeParts(10, CARRY, 5, MOVE),
+  ],
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (renew.check(creep)) return;
     let trading = creep.room.ai().trading;
     let terminal = creep.room.terminal;

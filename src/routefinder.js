@@ -1,7 +1,7 @@
 const ROUTE_MY_ROOM_COST = 2;
 const ROUTE_NEUTRAL_ROOM_COST = 3;
 const ROUTE_HOSTILE_ROOM_COST = 10;
-const ROUTE_ENEMY_ROOM_COST = 200;
+const ROUTE_ENEMY_ROOM_COST = 250;
 const ROUTE_HIGHWAY_ROOM_COST = 1.5;
 
 const roomNameRegex = /^[EW]([0-9]+)[NS]([0-9]+)$/;

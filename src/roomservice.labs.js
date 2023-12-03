@@ -309,7 +309,9 @@ module.exports = class Labs {
   getPureLabs() {
     this.pureLabs = _.filter(
       this.outputs /*.concat(this.inputs)*/,
-      (s) => !s.effects || (s.effects && s.effects.length === 0)
+      (s) => {
+        // console.log('lab', s.room.name, _.sum(s.store), (!s.effects || (s.effects && s.effects.length === 0)) && _.sum(s.store) !== 0, JSON.stringify(s.store));
+        return (!s.effects || (s.effects && s.effects.length === 0)) && _.sum(s.store) !== 0}
     );
     return this.pureLabs;
   }

@@ -15,6 +15,7 @@ module.exports = class TowersAspect {
     this.warriors = [];
     this.hostiles = [];
     this.damaged = [];
+    this.extra = [];
   }
 
   run() {
@@ -30,6 +31,9 @@ module.exports = class TowersAspect {
     }
 
     let towers = this.towers;
+    if (towers.length === 0) {
+      return;
+    }
     if (this.friends.length > 0) {
       do {
         let tower = towers.shift();
@@ -68,10 +72,20 @@ module.exports = class TowersAspect {
         let tower = towers.shift();
         this.hostiles = _.sortBy(this.hostiles, (f) => f.pos.getRangeTo(tower));
         let hostile = this.hostiles.shift();
-        tower.attack(hostile);
+        let ignore = false;
+        if (_.every(hostile.body, (p) => p.type === MOVE)) {
+          ignore = true;
+        }
+        if (hostile.owner.username === 'RemarkablyAverage') {
+          ignore = false
+        }
+        if (!ignore) {
+          tower.attack(hostile);
+        }
         if (hostile.hits > 0) {
           this.hostiles.unshift(hostile);
         }
+        // console.log('d3', towers.length)
       } while (this.hostiles.length && towers.length);
 
       if (!towers.length) return;
@@ -80,24 +94,51 @@ module.exports = class TowersAspect {
     if (Memory.rooms[this.room.name] && Memory.rooms[this.room.name].mode === 'unclaim') {
       return;
     }
-    if (this.room.storage && this.room.storage.store.energy < 5000) {
-      return;
-    }
+    // if (this.room.storage && this.room.storage.store.energy < 4500) {
+    //   return;
+    // }
     towers = _.filter(towers, (tower) => tower.energy > tower.energyCapacity * 0.8);
     // console.log('tow', tower.room.name, tower.room.storage.store.energy)
-    // if (tower.room.storage.store.energy > 50000) {
-    //   fullHealthEquiv = 100000;
-    // } else if (tower.room.storage.store.energy > 100000) {
-    //   fullHealthEquiv = 150000;
-    // } else if (tower.room.storage.store.energy > 200000) {
-    //   fullHealthEquiv = 300000;
-    // } else if (tower.room.storage.store.energy > 300000) {
-    //   fullHealthEquiv = 1000000;
-    // }
+    if (this.room.storage && this.room.storage.my && this.room.storage.store.getFreeCapacity() < 10000) {
+      console.log('Storage in room ' + this.room.name + ' is overfilled! Building walls!');
+      if (this.room.storage.store.energy > 400000) {
+        fullHealthEquiv = 10000000;
+      } else if (this.room.storage.store.energy > 300000) {
+        fullHealthEquiv = 5000000;
+      } else if (this.room.storage.store.energy > 200000) {
+        fullHealthEquiv = 300000;
+      } else if (this.room.storage.store.energy > 100000) {
+        fullHealthEquiv = 150000;
+      } else if (this.room.storage.store.energy > 50000) {
+        fullHealthEquiv = 100000;
+      }
+
+    }
     if (towers.length) {
       // console.log('this.towerStack', JSON.stringify(this.towerStack.reloadPos))
+      this.extra = this.room.find(FIND_STRUCTURES, {
+        filter: (s) => s.hits < s.hitsMax && s.hits < 500,
+      });
+
+      // console.log('this.damaged', JSON.stringify(this.damaged))
+
+      if (this.extra.length) {
+        do {
+          let tower = towers.shift();
+
+          this.extra = _.sortBy(this.extra, (f) => f.pos.getRangeTo(tower));
+          let cons = this.extra.shift();
+          tower.repair(cons);
+          if (cons.hits < cons.hitsMax && cons.hits < 4500) {
+            this.extra.unshift(cons);
+          }
+        } while (this.extra.length && towers.length);
+      }
+
+      if (!towers.length) return;
+
       this.damaged = this.room.find(FIND_STRUCTURES, {
-        filter: (s) => s.hits < s.hitsMax && s.hits < 5000,
+        filter: (s) => s.hits < s.hitsMax && s.hits < 4500,
       });
 
       // console.log('this.damaged', JSON.stringify(this.damaged))
@@ -109,7 +150,7 @@ module.exports = class TowersAspect {
           this.damaged = _.sortBy(this.damaged, (f) => f.pos.getRangeTo(tower));
           let cons = this.damaged.shift();
           tower.repair(cons);
-          if (cons.hits < cons.hitsMax && cons.hits < 5000) {
+          if (cons.hits < cons.hitsMax && cons.hits < 4500) {
             this.damaged.unshift(cons);
           }
         } while (this.damaged.length && towers.length);

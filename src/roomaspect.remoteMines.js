@@ -41,7 +41,7 @@ module.exports = class RemoteMinesAspect {
   }
 
   run() {
-    if (!this.room.storage) return;
+    if (!this.room.storage/* && this.room.name !== 'W32S12'*/) return;
     if (this.remoteMines.length < targetRemoteMineCount) {
       if (Memory.enableAutoExpansion && this.roomai.intervals.planRemoteMines.isActive()) {
         this.planRemoteMines();
@@ -55,6 +55,7 @@ module.exports = class RemoteMinesAspect {
       this.roomai.trading.requiredExportFromRoom(RESOURCE_ENERGY, { showExcess: true }) >= energyExcessThreshold;
 
     for (var roomName of this.remoteMines) {
+      // console.log('rm', roomName)
       var remoteRoom = Game.rooms[roomName];
       if (remoteRoom) {
         //if(this.isInvaderRoom(remoteRoom)) continue;
@@ -63,6 +64,7 @@ module.exports = class RemoteMinesAspect {
         let res = this.spawnReserver(remoteRoom);
         //console.log(`res: ${res}`);
 
+        // console.log('remote hasExcessEnergy', roomName, hasExcessEnergy)
         if (hasExcessEnergy) continue;
 
         for (let source of remoteRoom.find(FIND_SOURCES)) {
@@ -85,7 +87,8 @@ module.exports = class RemoteMinesAspect {
 
   spawnDefender(remoteRoom) {
     let remoteOwner = remoteRoom.controller.owner && remoteRoom.controller.owner.username;
-    var hostile = ff.findHostiles(remoteRoom, { filter: (c) => c.owner.username !== remoteOwner })[0];
+    var hostile = ff.findHostiles(remoteRoom, { filter: (c) => c.owner.username !== remoteOwner && !_.every(c.body, (p) => p.type === MOVE)
+    })[0];
     if (!hostile) return false;
 
     if (!this.roomai.canSpawn()) return true;
@@ -94,7 +97,7 @@ module.exports = class RemoteMinesAspect {
     var hasDefender = _.any(spawnHelper.globalCreepsWithRole(defender.name), (c) => c.memory.room == remoteRoom.name);
     if (!hasDefender) {
       this.spawn(
-        spawnHelper.bestAvailableParts(this.room, defender.closeConfigs()),
+        spawnHelper.bestAvailableParts(this.room, defender.remoteConfigs()),
         { role: defender.name, room: remoteRoom.name, originRoom: this.room.name },
         remoteRoom.name
       );
@@ -108,7 +111,7 @@ module.exports = class RemoteMinesAspect {
 
     var needReservation =
       !remoteRoom.controller.owner &&
-      (!remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 5000);
+      (!remoteRoom.controller.reservation || remoteRoom.controller.reservation.ticksToEnd < 1000);
     var hasReserver = _.any(
       spawnHelper.globalCreepsWithRole(reserver.name),
       (c) => c.memory.target == remoteRoom.controller.id
@@ -129,7 +132,7 @@ module.exports = class RemoteMinesAspect {
     var hasMiner = _.any(spawnHelper.globalCreepsWithRole(miner.name), (c) => c.memory.target == source.id);
     if (!hasMiner) {
       this.spawn(
-        spawnHelper.bestAvailableParts(this.room, miner.energyConfigs()),
+        spawnHelper.bestAvailableParts(this.room, miner.energyRemoteConfigs()),
         {
           role: miner.name,
           target: source.id,
@@ -155,10 +158,15 @@ module.exports = class RemoteMinesAspect {
     let neededCapacity = this.neededCollectorCapacity(source);
     let missingCapacity = neededCapacity - carrierCapacity;
     if (hasStore && (carrierCapacity == 0 || missingCapacity >= secondCarrierMinCapacity)) {
+      // let dest = '';
+      // if (this.room.storage) {dest = this.room.storage.id}
+      // if (dest === '' && ['W31S12'].includes(source.room.name)) {dest = '651eabcc9013aa43cb7cd880'}
+      // if (dest === '' && ['W32S13', 'W33S13'].includes(source.room.name)) {dest = '651eac8b05e4116067f8a90c'}
       let memory = {
         role: carrier.name,
         source: source.id,
         destination: this.room.storage.id,
+        // destination: dest,
         resource: RESOURCE_ENERGY,
         selfSustaining: true,
         renew: true,
@@ -174,8 +182,29 @@ module.exports = class RemoteMinesAspect {
   }
 
   buildRoad(source) {
+    let pos;
+    if (this.room.storage) {
+      pos = this.room.storage.pos
+    } else {
+      let store = Memory.rooms[this.room.name].constructions.stack
+      pos = new RoomPosition(store.x, store.y, this.room.name)
+    }
     if (this.roomai.intervals.buildStructure.isActive() && this.neighbourRooms().includes(source.room.name)) {
-      roads.buildRoadFromTo(this.room, this.room.storage.pos, source.pos);
+      roads.buildRoadFromTo(this.room, pos, source.pos);
+    }
+  }
+
+  buildExtRoads() {
+    let storagePos = this.room.storagePos();
+    if (!this.roomai.intervals.buildStructure.isActive() || !storagePos) {
+      return;
+    }
+
+    for (let source of this.sources) {
+      let store = logistic.storeFor(source);
+      if (!store) continue;
+
+      roads.buildRoadFromTo(this.room, storagePos, store.pos);
     }
   }
 
@@ -187,7 +216,10 @@ module.exports = class RemoteMinesAspect {
 
   neededCollectorCapacity(source) {
     // back and forth while 10 energy per tick are generated
-    var needed = logistic.distanceByPath(source, this.room.storage) * 20;
+    let pos = this.room.controller;
+    // this.storeFor(this.room.controller)
+    if (this.room.storage) {pos = this.room.storage}
+    var needed = logistic.distanceByPath(source, pos) * 20;
     // adding at least one extra CARRY to make up for inefficiencies
     return _.min([needed + 60, 2000]) * 1.25;
   }

@@ -2,6 +2,7 @@ const boosting = require('helper.boosting');
 const ff = require('helper.friendFoeRecognition');
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
+const renew = require('helper.renew');
 const recycle = require('helper.recycle');
 
 module.exports = {
@@ -32,8 +33,22 @@ module.exports = {
 
     return configs;
   },
+  remoteConfigs: function () {
+    let configs = [];
+    for (let parts = 15; parts >= 4; parts -= 1) {
+      let config = spawnHelper.makeParts(parts, ATTACK, parts, MOVE);
+      let shuffled = config
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+      configs.push(shuffled);
+    }
+
+    return configs;
+  },
   run: function (creep) {
     if (recycle.check(creep)) return;
+    if (renew.check(creep)) return;
     if (creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
     creep.memory.stopped = false;
@@ -53,11 +68,17 @@ module.exports = {
       return;
     }
 
-    var target = ff.findHostiles(creep.room)[0];
+    var targets = ff.findHostiles(creep.room);
+    // if (!_.every(hostile.body, (p) => p.type === MOVE)) {
+    //   tower.attack(hostile);
+    // }
+
+    var sorted = _.sortBy(targets, (t) => t.ticksToLive)
+    var target = sorted[0];
     if (target) {
       this.attack(creep, target);
     } else {
-      if (creep.room.name === creep.memory.room) {
+      if (!creep.memory.noRecycle && creep.room.name === creep.memory.room) {
         creep.memory.goRecycle = true;
       }
       // let center = creep.room.getPositionAt(25, 25);

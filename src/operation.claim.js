@@ -29,6 +29,8 @@ module.exports = class ClaimOperation extends Operation {
   }
 
   run() {
+    // console.log('run', this.supportRoom.name, JSON.stringify(this.supportRoom.storage))
+    if (this.supportRoom && this.supportRoom.storage && this.supportRoom.storage.store.energy < 10000) {return;}
     if (!this.isValid()) return;
 
     let targetRoom = this.spawnPosition.room;
@@ -46,12 +48,18 @@ module.exports = class ClaimOperation extends Operation {
   }
 
   supportRoomCallback(room) {
+    // console.log('supp isValid', this.isValid(), room.ai().canSpawn(), JSON.stringify(this.spawnQueue))
     if (!this.isValid()) return;
 
     let spawnRequest = null;
 
     while ((spawnRequest = this.spawnQueue.shift()) && room.ai().canSpawn()) {
-      room.ai().spawn(spawnHelper.bestAvailableParts(room, spawnRequest.configs), spawnRequest.memory);
+      // console.log('supp', JSON.stringify(spawnRequest))
+      let res = room.ai().spawn(spawnHelper.bestAvailableParts(room, spawnRequest.configs), spawnRequest.memory);
+      if (!res && spawnRequest.memory.role == 'claimer') {
+        this.memory.claimers = 1 + this.memory.claimers || 0;
+      }
+      // console.log('res', res)
     }
   }
 
@@ -70,8 +78,11 @@ module.exports = class ClaimOperation extends Operation {
     let conquerors = _.filter(spawnHelper.globalCreepsWithRole(conqueror.name), (c) => c.memory.operation == this.id);
     let myRoom = remoteRoom && remoteRoom.controller.my;
     let needClaimer = claimers.length == 0 && !myRoom;
+    if (this.memory.claimers > 1) {
+      needClaimer = false;
+    }
 
-    if (needClaimer) {
+    if (!this.memory.move && needClaimer) {
       let roomCount = _.filter(Game.rooms, (r) => r.controller && r.controller.my).length;
       if (roomCount >= Game.gcl.level) {
         // do not spawn anything if we don't own the room and can't claim it yet
@@ -82,12 +93,28 @@ module.exports = class ClaimOperation extends Operation {
         configs: [claimer.parts],
         memory: { role: claimer.name, target: this.spawnPosition, operation: this.id },
       });
+
     }
 
     if (conquerors.length < 2) {
+      let configs;
+      // console.log('this.room', JSON.stringify(this.memory))
+      if (this.memory.move) {
+        configs = conqueror.configsMove(1500);
+      } else {
+        configs = conqueror.configs();
+      }
+      // let configs = conqueror.configsMove(1000);
+      // console.log('conc', JSON.stringify(configs))
       this.spawnQueue.push({
-        configs: conqueror.configs(),
-        memory: { role: conqueror.name, target: this.spawnPosition, operation: this.id },
+        configs: configs,
+        memory: {
+          role: conqueror.name,
+          target: this.spawnPosition,
+          operation: this.id ,
+          ...this.memory.move ? {move: true}:{},
+          renew: true
+        },
       });
     }
 
@@ -117,7 +144,7 @@ module.exports = class ClaimOperation extends Operation {
       // only considering maxed out miners
       let hasMiner = _.any(
         spawnHelper.globalCreepsWithRole(miner.name),
-        (c) => c.memory.target == source.id && miner.countWorkParts(c) >= 5
+        (c) => c.memory.target == source.id && miner.countWorkParts(c) >= 3
       );
       // console.log('hasMiner', hasMiner, miner.name, JSON.stringify(remoteRoom))
       if (!hasMiner) {

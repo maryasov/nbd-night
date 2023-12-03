@@ -68,7 +68,12 @@ module.exports = class ControllerAspect {
       return; // strictly conserve energy when supply is very low
     }
 
-    this.roomai.spawn(parts, { role: upgrader.name, room: this.room.name, renew: true });
+    this.roomai.spawn(parts, {
+      role: upgrader.name,
+      room: this.room.name,
+      energy: this.room.energyCapacityAvailable,
+      renew: true
+    });
   }
 
   buildCarriers() {
@@ -113,6 +118,7 @@ module.exports = class ControllerAspect {
     if (this.roomai.defense.defcon >= 4) return 1;
 
     let energy = 10;
+
     const mult = this.room.name == specialRoom ? 4 : 1;
 
     if (this.room.storage) {
@@ -129,15 +135,33 @@ module.exports = class ControllerAspect {
       let maxOutput = 15;
       // TODO: provide different prebuilt configurations depending on mode
       if (this.roomai.mode === 'store') maxOutput = 1;
+      if (this.roomai.mode === 'transit') maxOutput = 1;
       if (this.roomai.mode !== 'normal' && this.roomai.mode !== 'gcl') maxOutput = 4;
       if (this.roomai.mode !== 'gcl' && Memory.hibernateGclFarming) maxOutput = 1;
       return _.min([maxOutput, energy]);
     } else {
+      if (this.roomai.mode === 'transit' && this.room.controller.level < 3) {
+
+      }
+      if (this.roomai.mode === 'transit') {
+        if (this.room.controller.level >= 3) {
+          energy = 1;
+        } else {
+          energy = 40;
+        }
+      }
       return energy;
     }
   }
 
   upgraderCount() {
+    if (this.roomai.mode === 'transit') {
+      if (this.room.controller.level >= 3) {
+        return 1;
+      } else{
+        return 4;
+      }
+    }
     if (this.room.controller.level == 8) return 1;
     if (this.roomai.defense.defcon >= 4) return 1;
 

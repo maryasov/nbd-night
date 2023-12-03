@@ -1,5 +1,7 @@
 const logistic = require('helper.logistic');
 
+const TERMINAL_MAX_FILL = 270000;
+
 const baseMinerals = [
   RESOURCE_OXYGEN,
   RESOURCE_HYDROGEN,
@@ -36,13 +38,50 @@ module.exports = class Trading {
 
   get sellingWhitelist() {
     let wl = [
-      // "Z",
+      'H',
+      'O',
+      'L',
+      'K',
+      'Z',
+      'U',
+      'X',
+      'utrium_bar',
+      'lemergium_bar',
+      'zynthium_bar',
+      'keanium_bar',
+      'ghodium_melt',
+      'oxidant',
+      'reductant',
+      'purifier',
+
+      'ops',
+      'metal',
+      'alloy',
+      'microchip',
+      'composite',
+      'liquid',
+      'wire',
+      // 'ghodium_melt',
+      'fixtures',
+      'tube',
+      'frame',
+      'transistor',
+      'crystal',
+
       'XGH2O',
       'XUHO2',
       'XLH2O',
       'GH2O',
       'UHO2',
       'LH2O',
+
+      'XUH2O',
+      'XKH2O',
+      'XLHO2',
+      'XGHO2',
+      'XKHO2',
+      'XZHO2',
+      'XZH2O',
     ];
     // let mineral = this.room.find(FIND_MINERALS)[0];
     // if (mineral) {
@@ -53,7 +92,7 @@ module.exports = class Trading {
   }
 
   get terminalEnergyBuffer() {
-    return 10000;
+    return 15000;
   }
 
   get storeEnergyBuffer() {
@@ -73,11 +112,15 @@ module.exports = class Trading {
   }
 
   get resourcesImportableToStorage() {
-    return _.sortBy(_.filter(_.keys(this.terminal.store), (res) => this.neededImportToStorage(res) > 0), (res) => res === 'energy');
+    return _.sortBy(
+      _.filter(_.keys(this.terminal.store), (res) => this.neededImportToStorage(res) > 0),
+      (res) => res === 'energy'
+    );
   }
 
   neededImportToStorage(resource) {
-    if (this.room.ai().mode === 'unclaim') {
+    let amountInTerminal = this.terminal.store[resource];
+    if (this.room.ai().mode === 'unclaim' && amountInTerminal < maximumExportBuffer) {
       return 0;
     }
     if (this.room.ai().mode === 'stack') {
@@ -91,7 +134,6 @@ module.exports = class Trading {
       return 0;
 
     let baselineMiss = this.minNeededAmount(resource) - (this.storage.store[resource] || 0);
-    let amountInTerminal = this.terminal.store[resource];
 
     let manualExport = this.manualExports[resource];
     if (manualExport) {
@@ -109,21 +151,24 @@ module.exports = class Trading {
   }
 
   get hasTradingRequest() {
-    return _.filter(_.keys(Memory.tradeRequests), (res) => this.possibleExportFromRoom(res) > 0 && _.any(Memory.tradeRequests[res], tr=>tr.amount > 5000));
+    return _.filter(
+      _.keys(Memory.tradeRequests),
+      (res) => this.possibleExportFromRoom(res) > 0 && _.any(Memory.tradeRequests[res], (tr) => tr.amount > 5000)
+    );
   }
 
   possibleExportFromStorage(resource) {
     let amountInTerminal = this.terminal.store[resource];
     let maximumExportBufferLocal = maximumExportBuffer;
     if (resource === 'energy') {
-      maximumExportBufferLocal = 10000;
+      maximumExportBufferLocal = 15000;
     }
 
     let val = 0;
 
     let manualExport = this.manualExports[resource];
     if (manualExport) {
-      let sentAmount = manualExport.amount;
+      let sentAmount = Math.min(manualExport.amount, maximumExportBuffer);
       let transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, manualExport.room);
       if (resource === 'energy') {
         sentAmount = sentAmount + transactionPrice;
@@ -142,8 +187,12 @@ module.exports = class Trading {
       // console.log(this.room.name, resource, this.minNeededAmount(resource), this.storage.store[resource] - this.minNeededAmount(resource), maximumExportBufferLocal - amountInTerminal)
     }
     // if (val > 0) {console.log('posible', this.room.name, resource, val, this.storage.store[resource], this.minNeededAmount(resource), maximumExportBufferLocal, amountInTerminal)}
-    if (this.room.ai().mode === 'unclaim') {
+    if (this.room.ai().mode === 'unclaim' && maximumExportBufferLocal > amountInTerminal) {
       val = this.storage.store[resource];
+    }
+
+    if (_.sum(this.terminal.store) > TERMINAL_MAX_FILL && resource !== 'energy') {
+      val = 0;
     }
 
     return val;
@@ -177,7 +226,7 @@ module.exports = class Trading {
     if (this.room.ai().mode === 'stack') {
       return 0;
     }
-    if (this.room.ai().mode === 'unclaim') return 0;
+    if (this.room.ai().mode === 'unclaim' && resource !== 'energy') return 0;
     let amountInTerminal = this.terminal.store[resource];
     let amountInStorage = this.storage.store[resource];
     return Math.max(0, this.minNeededAmount(resource) - (amountInTerminal + amountInStorage));
@@ -224,7 +273,7 @@ module.exports = class Trading {
 
     if (baseMinerals.includes(resource)) {
       if (this.room.ai().labs.reactor && this.room.ai().labs.reactor.isValid() && !this.room.ai().noLabs) {
-        return 10000;
+        return 7500;
       } else {
         return 0;
       }
@@ -232,7 +281,7 @@ module.exports = class Trading {
 
     if (t3Boosts.includes(resource)) return 15000;
     if (resource === 'G') return 5000;
-    if (resource === 'ops') return 5000;
+    if (resource === 'ops') return 10000;
 
     // ensures that compounds don't get stuck in terminal
     // TODO: should we actually consider the current reaction for this,
@@ -275,10 +324,11 @@ module.exports = class Trading {
       return 5000;
     }
 
-    if (baseMinerals.includes(resource)) return 50000;
-    if (t3Boosts.includes(resource)) return 25000;
+    if (baseMinerals.includes(resource)) return 30000;
+    if (t3Boosts.includes(resource)) return 30000;
     if (resource === 'G') return 10000;
-    if (resource === 'ops') return 5000;
+    // if (resource === 'battery') return 50000;
+    if (resource === 'ops') return 100000;
     // if (resource === 'power') return 5000;
 
     if (rawCommodities.includes(resource) || refinedCommodities.includes(resource)) {

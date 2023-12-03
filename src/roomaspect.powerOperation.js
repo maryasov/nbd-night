@@ -2,7 +2,7 @@ const autopowerSpawnFlagRegex = /^autoPowerSpawn$/;
 const autopowerFlagRegex = /^autoPower([A-Z0-9]+)$/;
 const operation = require('operation.farmPower');
 
-module.exports = class ManualOperationsAspect {
+module.exports = class FarmPowerOperation {
   constructor(roomai) {
     this.roomai = roomai;
     this.room = roomai.room;
@@ -38,4 +38,4 @@ module.exports = class ManualOperationsAspect {
 };
 
 const profiler = require('screeps-profiler');
-profiler.registerClass(module.exports, 'ManualOperationsAspect');
+profiler.registerClass(module.exports, 'FarmPowerOperation');

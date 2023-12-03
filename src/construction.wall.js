@@ -55,7 +55,15 @@ module.exports = {
     if (!wall.end) return;
 
     // keeping number of construction sites in low-level rooms down
-    if (proxy.room.controller.level < 3) return;
+    let waitWalls = false;
+    if (proxy.room.controller.level < 3) {
+      waitWalls = true;
+    }
+    if (proxy.room.controller.level >= 2 && (Memory.rooms[proxy.room.name].mode === 'transit' || Memory.rooms[proxy.room.name].lowWalls)) {
+      waitWalls = false;
+    }
+
+    if (waitWalls) {return;}
 
     this.setWallAtPos(proxy, wall, { x: wall.end.x, y: wall.end.y });
     eachWallPosition(wall, (pos) => {

@@ -12,6 +12,7 @@ module.exports = {
     [WORK, WORK, MOVE, WORK, WORK, MOVE, WORK, CARRY, MOVE],
     [WORK, WORK, MOVE, WORK, CARRY, MOVE],
     [WORK, WORK, CARRY, MOVE],
+    [WORK, CARRY, MOVE],
   ],
   configsForEnergyPerTick: function (energyPerTick) {
     var configs = [];
@@ -19,7 +20,7 @@ module.exports = {
       const cnf = Array(workCount)
         .fill(WORK)
         .concat([CARRY])
-        .concat(Array(Math.ceil((workCount + 1) / 2)).fill(MOVE));
+        .concat(Array(Math.max(1, Math.ceil((workCount + 1) / 2))).fill(MOVE));
       if (cnf.length <= 50) {
         configs.push(cnf);
       }

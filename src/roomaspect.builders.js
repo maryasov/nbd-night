@@ -19,8 +19,14 @@ module.exports = class BuildersAspect {
       return;
     }
 
-    let parts = spawnHelper.bestAvailableParts(this.room, builder.configs(this.numberOfWorkParts()));
-    this.roomai.spawn(parts, { role: builder.name, room: this.room.name });
+    let configs = builder.configs(this.numberOfWorkParts())
+    let parts = spawnHelper.bestAvailableParts(this.room, configs);
+    // console.log('configs', JSON.stringify(configs))
+    this.roomai.spawn(parts, {
+      role: builder.name,
+      energy: this.room.energyCapacityAvailable,
+      room: this.room.name
+    });
   }
 
   numberOfWorkParts() {

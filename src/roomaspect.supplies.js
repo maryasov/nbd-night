@@ -67,6 +67,7 @@ module.exports = class SuppliesAspect {
         parts = spawnHelper.bestAffordableParts(this.room, partConfigsMine);
         affordable = true;
         ignoreReserved = true;
+        Memory.rooms[this.room.name].failBuildHarvester = 0;
       } else {
         parts = spawnHelper.bestAffordableParts(this.room, partConfigs);
         affordable = true;
@@ -81,8 +82,8 @@ module.exports = class SuppliesAspect {
       role: harvester.name,
       source: source.id,
       renew: true,
-      level: this.room.controller.level,
-      affordable: affordable,
+      energy: this.room.energyCapacityAvailable,
+      ...affordable?{affordable: true}:{},
     };
     if (ignoreReserved) {
       memory.ignoreReserved = ignoreReserved;
@@ -149,7 +150,9 @@ module.exports = class SuppliesAspect {
       return;
     }
 
-    this.roomai.spawn(linkCollector.parts, { role: linkCollector.name, renew: true });
+    let parts = spawnHelper.bestAvailableParts(this.room, linkCollector.partConfigs);
+
+    this.roomai.spawn(parts, { role: linkCollector.name, renew: true });
   }
 };
 

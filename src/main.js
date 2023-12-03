@@ -78,16 +78,17 @@ let freesAspoctsLite = [];
 let freesAspocts = [];
 
 const logLimit = 9500;
-const targetLimit = 10000;
-const aspectsLiteLimit = 4000;
+const targetLimit = 8000; //10000
+const aspectsLiteLimit = 15500; //4000
 const aspectsLiteSafe = 250;
-const aspectsLimit = 9900;
+const aspectsLimit = 18000; //9900
 const aspectsSafe = 8000;
 const aspectsMax = 50;
 const powerSafe = 3500;
-const safeLimit = 250;
+const safeLimit = 500;
 const commonLimit = 25;
 const roleLimit = {
+  claimer: 1,
   miner: 1,
   harvester: 1,
   linkCollector: 1,
@@ -111,7 +112,7 @@ const roleLimit = {
 };
 
 // const powerWorks = ['healer', 'scooper', 'picker', 'dismantler', 'scientist', 'harvester', 'trader', 'mover'];
-const powerWorks = ['healer', 'scooper', 'picker', 'dismantler', 'trader', 'mover', 'upgrader'];
+const powerWorks = ['healer', 'scooper', 'picker', 'dismantler', 'trader', 'mover', 'upgrader', 'claimer', 'conqueror', 'builder'];
 const powerStop = [
   // 'builder',
   // 'attacker',
@@ -124,7 +125,7 @@ const powerStop = [
   // 'harvester',
   // "healer",
   // "powerFarmer",
-  'upgrader',
+  // 'upgrader',
   // 'picker',
   // 'reserver',
   // 'discoverer',
@@ -203,6 +204,33 @@ function runCreeps() {
       if (creep.memory.goRenew) {
         mustBreake = false;
       }
+      if (creep.memory.role === 'claimer') {
+        mustBreake = false;
+      }
+      if (creep.memory.role === 'defender') {
+        mustBreake = false;
+      }
+      if (creep.memory.role === 'healer') {
+        mustBreake = false;
+      }
+      // if (creep.memory.role === 'upgrader' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
+      // if (creep.memory.role === 'builder' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
+      // if (creep.memory.role === 'conqueror' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
+      // if (creep.memory.role === 'picker' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
+      // if (creep.memory.role === 'harvester' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
+      // if (creep.memory.role === 'carrier' && Memory.rooms[creep.room.name].mode==='transit') {
+      //   mustBreake = false;
+      // }
       if (movement.isOnExit(creep)) {
         mustBreake = false;
       }
@@ -270,15 +298,21 @@ global.e = () => {
   Operation.count('energy', true);
 };
 
+global.p = () => {
+  Memory.pixel = true;
+};
+
 global.free = 0;
 global.aspestLiteFree = 0;
 global.aspestFree = 0;
 global.lastAiLiteAspect = {};
+global.lastAiAspectExtra = {};
 global.lastAiAspectLite = {};
 global.lastAiAspect = {};
 
 module.exports.loop = function () {
   profiler.wrap(function () {
+    const currentBucket = Game.cpu.bucket
     globalStatistics.initialize();
     if (Memory.lastCompletedTick < Game.time - 1) {
       Memory.stats.skippedTicks += 1;
@@ -286,18 +320,18 @@ module.exports.loop = function () {
 
     global.free = Math.min(
       100,
-      Math.ceil(Math.max(((Game.cpu.bucket - safeLimit) * 100) / (targetLimit - safeLimit), 0))
+      Math.ceil(Math.max(((currentBucket - safeLimit) * 100) / (targetLimit - safeLimit), 0))
     );
     global.aspestLiteFree = Math.min(
       100,
-      Math.ceil(Math.max(((Game.cpu.bucket - aspectsLiteSafe) * 100) / (aspectsLiteLimit - aspectsLiteSafe), 0))
+      Math.ceil(Math.max(((currentBucket - aspectsLiteSafe) * 100) / (aspectsLiteLimit - aspectsLiteSafe), 0))
     );
     global.aspestFree = Math.min(
       aspectsMax,
-      Math.ceil(Math.max(((Game.cpu.bucket - aspectsSafe) * aspectsMax) / (targetLimit - aspectsSafe), 0))
+      Math.ceil(Math.max(((currentBucket - aspectsSafe) * aspectsMax) / (aspectsLimit - aspectsSafe), 0))
     );
 
-    bucket.push(Game.cpu.bucket);
+    bucket.push(currentBucket);
     frees.push(global.free);
     freesAspoctsLite.push(global.aspestLiteFree);
     freesAspocts.push(global.aspestFree);
@@ -316,7 +350,37 @@ module.exports.loop = function () {
       freesAspocts = [];
     }
 
+    if (currentBucket < safeLimit) return;
+
+    if (Memory.pixel && currentBucket >= 6000) {
+      console.log('current bucket', currentBucket);
+      if (currentBucket == 10000) {
+        // Game.cpu.generatePixel();
+        const pRes = Game.cpu.generatePixel();
+        console.log('pRes', pRes)
+        if (pRes === OK) {
+          delete Memory.pixel;
+          return;
+        }
+      } else {
+        return;
+      }
+    }
+
+    if (!PowerState.isActive && Memory.generatePixels && currentBucket == 10000) {
+      const pRes = Game.cpu.generatePixel();
+      console.log('generatePixel ✴️', pRes)
+
+      return;
+    }
+
+    suppressErrors(() => ShardTravel.loadArrivals());
     runCreeps();
+    suppressErrors(() => ShardTravel.announceDepartures());
+
+    for (let operation of Operation.operations) {
+      suppressErrors(() => operation.run());
+    }
 
     for (let roomName in Game.rooms) {
       let room = Game.rooms[roomName];
@@ -325,6 +389,7 @@ module.exports.loop = function () {
         suppressErrors(() => room.aiLite().run());
       }
       if (room.ai()) {
+        suppressErrors(() => room.ai().runExtra());
         suppressErrors(() => room.ai().runLite());
       }
     }
@@ -337,15 +402,17 @@ module.exports.loop = function () {
       }
     }
 
-    if (Game.cpu.bucket < aspectsSafe && Game.time % 10 !== 1) return;
 
-    if (Game.cpu.bucket < (PowerState.isActive ? powerSafe : safeLimit)) {
+
+    if (currentBucket < aspectsSafe && Game.time % 10 !== 1) return;
+
+    if (currentBucket < (PowerState.isActive ? powerSafe : safeLimit)) {
       return;
     }
 
-    // if(Game.cpu.bucket < 1000 && Game.time % 2 === 0) return;
+    // if(currentBucket < 1000 && Game.time % 2 === 0) return;
 
-    if (Game.cpu.bucket < aspectsLimit && Game.time % 10 !== 1) return;
+    if (currentBucket < aspectsLimit && Game.time % 10 !== 1) return;
 
     // console.log('Game.time % 2', Game.time % 2)
 
@@ -358,10 +425,6 @@ module.exports.loop = function () {
     }
 
     suppressErrors(() => new SegmentScanner().run());
-
-    for (let operation of Operation.operations) {
-      suppressErrors(() => operation.run());
-    }
 
     // console.log('rooms', JSON.stringify(Game.rooms))
     for (let roomName in Game.rooms) {
@@ -390,10 +453,6 @@ module.exports.loop = function () {
 
     suppressErrors(() => MapKnowledge.drawMapVisuals());
     suppressErrors(() => Memory.debugRoomScores && new ExpansionPlanner().drawRoomScores());
-
-    if (Memory.generatePixels && Game.cpu.bucket >= 9999) {
-      Game.cpu.generatePixel();
-    }
 
     ExpansionPlanner.sampleCpuUsage();
 

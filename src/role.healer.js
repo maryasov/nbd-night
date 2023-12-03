@@ -2,6 +2,7 @@ const boosting = require('helper.boosting');
 const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
 const recycle = require('helper.recycle');
+const renew = require('helper.renew');
 
 module.exports = {
   name: 'healer',
@@ -25,12 +26,20 @@ module.exports = {
   },
   run: function (creep) {
     if (recycle.check(creep)) return;
+    if (renew.check(creep)) return;
     // if(boosting.accept(creep, "XLHO2")) return;
     if (creep.ticksToLive == CREEP_LIFE_TIME - 1) creep.notifyWhenAttacked(false);
 
     if (_.some(creep.body, (p) => p.type === HEAL)) {
       // console.log('accept', creep.name);
       if (boosting.accept(creep, 'XLHO2')) return;
+    }
+
+    if (creep.memory.targetRoom) {
+      if (creep.room.name !== creep.memory.targetRoom) {
+        movement.moveToRoom(creep, creep.memory.targetRoom);
+        return;
+      }
     }
 
     // if(creep.body[0].type === TOUGH) {
@@ -76,6 +85,17 @@ module.exports = {
       targets = targets.sort((t1, t2) => {
         return t1.hits - t2.hits;
       });
+      target = targets.shift();
+      creep.memory.target;
+    }
+
+    if (!target) {
+      let targets = creep.room.find(FIND_MY_CREEPS, {
+        filter: (cr) => cr.hits < cr.hitsMax,
+      });
+      // targets = targets.sort((t1, t2) => {
+      //   return t1.hits - t2.hits;
+      // });
       target = targets.shift();
       creep.memory.target;
     }

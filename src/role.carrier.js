@@ -149,7 +149,7 @@ module.exports = {
       let config = Array(workParts)
         .fill(WORK)
         .concat(Array(carries).fill(CARRY))
-        .concat(Array(Math.ceil((carries + workParts) / 2)).fill(MOVE));
+        .concat(Array(Math.max(1,Math.ceil((carries + workParts) / 2))).fill(MOVE));
       // maximum creep size is 50 parts
       if (config.length <= 50) configs.push(config);
     }
@@ -174,7 +174,7 @@ module.exports = {
     }
   },
   deliver: function (creep) {
-    if (creep.memory.selfSustaining && !(creep.room.controller && creep.room.controller.owner)) {
+    if ((creep.memory.selfSustaining && _.find(creep.body, (p) => p.type === CARRY)) && !(creep.room.controller && creep.room.controller.owner)) {
       var road = _.find(creep.pos.lookFor(LOOK_STRUCTURES), (s) => s.structureType == STRUCTURE_ROAD);
       if (road) {
         if (road.hits / road.hitsMax <= 0.6) {
@@ -205,7 +205,7 @@ module.exports = {
 
       return true;
     } else if (transferResult == ERR_NOT_IN_RANGE) {
-      creep.goTo(target);
+      creep.goTo(target, {avoidCreeps: false, preferRoads: true});
     }
   },
   pickup: function (creep) {
@@ -217,11 +217,13 @@ module.exports = {
 
     if (creep.pos.isNearTo(target)) {
       let result = this.withdraw(creep, target);
+
       if (result == OK) {
+        delete creep.memory._goto;
         return this.startWait(creep);
       }
     } else {
-      creep.goTo(target);
+      creep.goTo(target, {avoidCreeps: false, preferRoads: true});
     }
   },
   buildRoad: function (creep) {
@@ -229,6 +231,9 @@ module.exports = {
       creep.pos.lookFor(LOOK_CONSTRUCTION_SITES),
       (cs) => cs.structureType == STRUCTURE_ROAD
     );
+    // if (creep.store.getFreeCapacity() > creep.store.getCapacity() * 0.3) {
+    //   return false
+    // }
     const my = (creep) => {
       return (
         creep.room &&
@@ -241,12 +246,12 @@ module.exports = {
       return my(creep) ? creep.build(constructionSite) == OK : false;
     } else {
       // строим новую дорогу по пути домой
-      if (my(creep)) {
-        creep.pos.createConstructionSite(STRUCTURE_ROAD);
-      } else {
-        return false;
-      }
-      return true;
+      // if (my(creep)) {
+      //   creep.pos.createConstructionSite(STRUCTURE_ROAD);
+      // } else {
+      //   return false;
+      // }
+      return false;
     }
   },
   source: function (creep) {

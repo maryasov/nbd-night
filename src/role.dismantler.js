@@ -4,7 +4,7 @@ const movement = require('helper.movement');
 const spawnHelper = require('helper.spawning');
 
 const prioritizedStructures = [STRUCTURE_SPAWN, STRUCTURE_TOWER];
-const blacklistedStructures = [STRUCTURE_STORAGE, STRUCTURE_TERMINAL,STRUCTURE_LAB,STRUCTURE_FACTORY];
+const blacklistedStructures = [STRUCTURE_NUKER, STRUCTURE_STORAGE, STRUCTURE_TERMINAL,STRUCTURE_LAB,STRUCTURE_FACTORY,/*STRUCTURE_RAMPART,*/STRUCTURE_WALL/*,STRUCTURE_ROAD*/];
 
 module.exports = {
   name: 'dismantler',
@@ -14,7 +14,7 @@ module.exports = {
     options = options || {};
     var configs = [];
     for (let force = 40; force >= 5; force -= 1) {
-      let config = Array(force).fill(WORK).concat(Array(Math.floor(force/(options.useBoost ? 4 : 2))).fill(MOVE));
+      let config = Array(force).fill(WORK).concat(Array(Math.floor(force/(options.useBoost ? 4 : 1))).fill(MOVE));
       if (config.length <= 50) configs.push(config);
     }
 

@@ -1,10 +1,11 @@
 const ff = require('helper.friendFoeRecognition');
 
-const AVOID_CREEPS_COST = 50;
-const AVOID_HOSTILE_COST = 200;
+const AVOID_CREEPS_COST = 100;
+const AVOID_HOSTILE_COST = 250;
 const AVOID_EXITS = 50;
 const AVOID_BLOCK_COST = 255;
 const ROAD_COST = 1;
+const CONST_ROAD_COST = 1;
 
 const virtualsCosts = {
   block: 255,
@@ -117,13 +118,19 @@ module.exports = class PathBuilder {
       let blocked = OBSTACLE_OBJECT_TYPES.includes(structure.structureType);
       blocked = blocked || (structure.structureType === STRUCTURE_RAMPART && !(structure.my || structure.isPublic));
       if (blocked) {
+        // console.log('structure1', roomName, JSON.stringify(structure))
         matrix.set(structure.pos.x, structure.pos.y, 255);
       } else if (structure.structureType === STRUCTURE_PORTAL) {
-        matrix.set(
-          structure.pos.x,
-          structure.pos.y,
-          Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST)
-        );
+
+        if (this.creep.memory.destinationShard !== structure.destination.shard) {
+          // console.log('PORTAL', JSON.stringify(this.creep.memory), JSON.stringify(structure))
+          matrix.set(
+              structure.pos.x,
+              structure.pos.y,
+              Math.max(matrix.get(structure.pos.x, structure.pos.y), PORTAL_COST)
+          );
+        }
+
       }
     }
   }
@@ -207,12 +214,18 @@ module.exports = class PathBuilder {
     if (!room) return;
 
     let roads = room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_ROAD });
-    // let roadsC = room.find(FIND_CONSTRUCTION_SITES, { filter: (s) => s.structureType === 'road' && !_.find(Game.rooms[roomName].lookAt(s.pos.x,s.pos.y), (w) => w.type == 'terrain' && w.terrain == 'wall')});
+    let roadsC = room.find(FIND_CONSTRUCTION_SITES, { filter: (s) => s.structureType === 'road'});
     // roads = roads.concat(roadsC)
     for (let road of roads) {
       // console.log('cur', matrix.get(road.pos.x, road.pos.y))
       if (matrix.get(road.pos.x, road.pos.y) == 0) {
         matrix.set(road.pos.x, road.pos.y, ROAD_COST);
+      }
+    }
+    for (let road of roadsC) {
+      // console.log('cur', matrix.get(road.pos.x, road.pos.y))
+      if (matrix.get(road.pos.x, road.pos.y) == 0) {
+        matrix.set(road.pos.x, road.pos.y, CONST_ROAD_COST);
       }
     }
   }
@@ -222,12 +235,17 @@ module.exports = class PathBuilder {
     if (!room) return;
 
     let hostiles = ff.findHostiles(room);
+    // if (hostiles.length) {
+    //   console.log('hostiles', roomName, hostiles)
+    // }
     let terrain = room.getTerrain();
     for (let hostile of hostiles) {
       let range = 0;
-      if (_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 10;
-      else if (_.some(hostile.body, (p) => p.type === ATTACK)) range = 10;
+      if (_.some(hostile.body, (p) => p.type === RANGED_ATTACK)) range = 3;
+      else if (_.some(hostile.body, (p) => p.type === ATTACK)) range = 1;
+      // else range = 2;
       if (range === 0) continue;
+      // console.log('hostile', range)
 
       for (let dx = -range; dx <= range; dx += 1) {
         for (let dy = -range; dy <= range; dy += 1) {
@@ -237,6 +255,10 @@ module.exports = class PathBuilder {
         }
       }
     }
+    // if (hostiles.length) {
+    //   console.log('matrix', JSON.stringify(matrix))
+    // }
+
   }
 
   drawCosts(roomName, matrix) {

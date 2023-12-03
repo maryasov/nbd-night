@@ -1,7 +1,7 @@
 const spawnHelper = require('helper.spawning');
 const trader = require('role.trader');
 
-const MAX_TRANSFER = 5000;
+const MAX_TRANSFER = 10000;
 const TERMINAL_MAX_FILL = 270000;
 
 const allowedSalesHistoryDeviation = 0.5;
@@ -121,14 +121,19 @@ module.exports = class TradingAspect {
         } else if (Game.time % 10 === 1) {
           // set 0 disale sales
           let sellable = this.trading.sellableAmount(resource);
-          if (sellable >= this.trading.minimumExportAmount(resource)) {
+          if (Memory.sellResources && sellable >= this.trading.minimumExportAmount(resource)) {
             // console.log('sellable', resource, sellable);
             if (Memory.onlySellToNpcs) {
-              if (this.sellToNpcs(resource, sellable)) return true;
+              if (this.sellToNpcs(resource, sellable)) {
+                console.log('🗺️ sellToNpcs', resource, sellable);
+                return true;
+              }
             } else {
               let res = this.sellToFreeMarket(resource, sellable);
-              // console.log('res', res);
-              if (res) return true;
+
+              if (res) {
+                console.log('🗺️ sellToFreeMarket', this.room.name, resource, sellable, res);  return true;
+              }
             }
           }
         }
@@ -155,20 +160,30 @@ module.exports = class TradingAspect {
 
   performManualExport(resource) {
     let exportDescription = this.trading.manualExports[resource];
+    // console.log('exp', JSON.stringify(exportDescription))
     if (!exportDescription) return false;
+    if (!exportDescription.amount) {
+      // console.log('zero amound. delete.', resource)
+      delete this.trading.manualExports[resource];
+      return false;
+    }
 
     let exportable = Math.min(exportDescription.amount, this.terminal.store[resource] || 0);
     exportable = Math.min(exportable, MAX_TRANSFER);
-    console.log('me', exportable, this.trading.minimumExportAmount(resource))
+    // console.log('me', exportable, this.trading.minimumExportAmount(resource))
     if (exportable >= this.trading.minimumExportAmount(resource)) {
       let result = this.terminal.send(resource, exportable, exportDescription.room, 'Manual export');
+      const transactionPrice = Game.market.calcTransactionCost(exportable, this.terminal.room.name, exportDescription.room);
+
       if (result === OK) {
-        console.log('Manual export', this.terminal.room.name, '📦', exportDescription.room, resource, exportable);
+        console.log('Manual export', this.terminal.room.name, '📦', exportDescription.room, resource, exportable, '('+transactionPrice+')');
         exportDescription.amount -= exportable;
         if (exportDescription.amount < this.trading.minimumExportAmount(resource)) {
           delete this.trading.manualExports[resource];
         }
         return true;
+      } else {
+        console.log('❌', 'Manual export', result, this.terminal.room.name, '📦', exportDescription.room, resource, exportable, '('+transactionPrice+')');
       }
     }
     return false;
@@ -180,24 +195,32 @@ module.exports = class TradingAspect {
     if (choice) {
       let sentAmount = Math.min(amount, MAX_TRANSFER, Math.max(100, choice.miss));
       let transactionPrice = 0;
+      transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, choice.room.name);
+
       if (resource === 'energy') {
-        transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, choice.room.name);
         sentAmount = sentAmount - transactionPrice;
+        transactionPrice = Game.market.calcTransactionCost(sentAmount, this.terminal.room.name, choice.room.name);
       }
       if (sentAmount < this.trading.minimumExportAmount(resource)) return false;
       let status = this.terminal.send(resource, sentAmount, choice.room.name, 'empire balancing');
-      if (status == 0 && sentAmount > transactionPrice) {
+      if (status == 0) {
         console.log(
           'Balance rooms',
           this.terminal.room.name,
           '📨',
           choice.room.name,
           resource,
-          sentAmount/*,
-          transactionPrice*/
+          sentAmount,
+          transactionPrice
         );
       } else {
-        // console.log('-balanceToEmpire', status, this.terminal.room.name, resource, sentAmount, choice.room.name)
+        console.log('❌', 'Balance rooms', status,
+            this.terminal.room.name,
+            '📨',
+            choice.room.name,
+            resource,
+            sentAmount,
+            transactionPrice)
       }
       cache.reduceMiss(choice.room, resource, sentAmount);
       return true;
@@ -218,8 +241,14 @@ module.exports = class TradingAspect {
 
     let sendingAmount = Math.min(amount, target.amount, MAX_TRANSFER);
     if (sendingAmount < this.trading.minimumExportAmount(resource)) return false;
-    this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
-    console.log('Supporting allied forces', this.terminal.room.name, '🌐', target.room, resource, sendingAmount);
+    let status = this.terminal.send(resource, sendingAmount, target.room, 'Supporting allied forces');
+    if (status == 0) {
+      console.log('Supporting allied forces', this.terminal.room.name, '🌐', target.room, resource, sendingAmount);
+
+    } else {
+      console.log('❌', 'Supporting allied forces', status, this.terminal.room.name, '🌐', target.room, resource, sendingAmount);
+
+    }
     target.amount -= sendingAmount;
 
     if (target.amount > 0) {
@@ -305,7 +334,8 @@ module.exports = class TradingAspect {
       this.trading.resourcesExportableFromStorage.length > 0 ||
       this.trading.resourcesImportableToStorage.length > 0
     ) {
-      this.roomai.spawn(trader.parts, { role: trader.name, renew: true });
+      const parts = spawnHelper.bestAvailableParts(this.room, trader.configs);
+      this.roomai.spawn(parts, { role: trader.name, renew: true });
     }
   }
 
@@ -313,6 +343,10 @@ module.exports = class TradingAspect {
     let yOffset = 0;
     for (let resource in this.trading.manualExports) {
       let exportDescription = this.trading.manualExports[resource];
+      if (exportDescription.amount === 0) {
+        delete this.trading.manualExports[resource];
+        continue;
+      }
       this.room.visual.text(
         resource + ': ' + exportDescription.amount,
         this.terminal.pos.x + 1,

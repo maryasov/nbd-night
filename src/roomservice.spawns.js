@@ -2,7 +2,8 @@ module.exports = class Spawns {
   constructor(room) {
     this.room = room;
     this.spawns = room.find(FIND_MY_SPAWNS);
-    this.availableSpawns = _.filter(this.spawns, (s) => !s.spawning);
+    this.firstSpawn = _.last(this.spawns);
+    this.availableSpawns = _.filter(this.spawns, (s, i) => !s.spawning);
     this.availableSpawnsBoosted = _.filter(this.spawns, (s) => !s.spawning && s.effects && s.effects.length > 0);
     this.busySpawns = _.filter(this.spawns, (s) => s.spawning && (!s.effects || (s.effects && s.effects.length === 0)));
     this.pureSpawns = _.filter(this.spawns, (s) => !s.effects);
@@ -28,20 +29,29 @@ module.exports = class Spawns {
       return mySpawn;
     }
     let freeSpawns = _.sortBy(spawns, (s) => {
-      const effect = s.effects && s.effects.length > 0 ? 2 : 1;
       const shift = s.memory.lastRenew ? s.memory.lastRenew : Game.time - 10;
       const shiftNorm = Game.time - shift > 10 ? 10 : Game.time - shift;
-      return -shiftNorm * effect;
+      return -shiftNorm;
     });
     // let fs = _.map(freeSpawns, (p,i) => p.name+' '+i+ ' '+(Game.time - (p.memory.lastRenew?p.memory.lastRenew:Game.time-100)))
     // if (creep.room.name === 'W9N9') console.log('fs', creep.room.name, creep.name, fs.join(','))
     let spawn = freeSpawns[0];
     return spawn;
   }
-  spawn(parts, memory) {
-    let spawn = this.availableSpawnsBoosted[0];
+  spawn(parts, memory, safe = false) {
+    let spawn;
+    let pending = this.countPendingRenew(this.room)
+    if (['harvester', 'miner'].includes(memory.role)) {
+      pending = 0;
+    }
+    if (safe) {
+      spawn = (pending < this.spawns.length) && this.firstSpawn;
+    } else {
+      spawn = _.filter(this.availableSpawnsBoosted, (s, i) => pending < i+1)[0];
+    }
+
     if (!spawn) {
-      spawn = this.availableSpawns[0];
+      spawn = _.filter(this.availableSpawns, (s, i) => pending < i+1)[0];
     }
     if (!spawn || (this.spawnReserved && !memory.ignoreReserved)) {
       // console.log('no', spawn ,this.spawnReserved)
@@ -58,13 +68,14 @@ module.exports = class Spawns {
     //     energyStructures: this.energyStructures, parts
     // })
     if (result === OK) {
+      spawn.memory.lastCreep = memory;
       this.availableSpawns.shift();
       return name; // be compatible with old spawn API
     } else if (result === ERR_NOT_ENOUGH_ENERGY) {
       this.spawnReserved = true;
     } else {
-      console.log(this.room.name + ' - Unexpected spawn result: ' + result);
-      console.log('Name was: ' + name + ' Parts were ' + parts);
+      // console.log(this.room.name + ' - Unexpected spawn result: ' + result);
+      // console.log('Name was: ' + name + ' Parts were ' + parts);
     }
 
     return result;
@@ -87,6 +98,12 @@ module.exports = class Spawns {
 
   canSpawn() {
     return !this.spawnReserved && this.availableSpawns.length > 0;
+  }
+
+  countPendingRenew(r) {
+    let olds = spawnHelper.localCreepsForRenew({room:Game.rooms[r.name]});
+    // console.log('c', r.name, olds.length)
+    return olds.length;
   }
 
   canSpawnHarv() {
@@ -148,4 +165,5 @@ module.exports = class Spawns {
 };
 
 const profiler = require('screeps-profiler');
+const spawnHelper = require("./helper.spawning");
 profiler.registerClass(module.exports, 'Spawns');

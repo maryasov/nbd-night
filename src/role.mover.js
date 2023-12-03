@@ -3,7 +3,8 @@ const profitVisual = require('visual.roomProfit');
 const renew = require('helper.renew');
 const recycle = require('helper.recycle');
 
-const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
+const storeStructures = [STRUCTURE_CONTAINER, STRUCTURE_STORAGE];
+const storeStructures2 = [STRUCTURE_CONTAINER, STRUCTURE_LINK/*, STRUCTURE_STORAGE*/];
 const wayStructures = [STRUCTURE_POWER_BANK];
 
 module.exports = {
@@ -38,6 +39,21 @@ module.exports = {
       if (this.deliver(creep)) this.pickup(creep);
     } else {
       // if(creep.room.name == creep.memory.target) {
+      if (creep.memory.to == creep.room.name && creep.memory.oneWay){
+        creep.memory.calcDistance = true;
+        this.deliver(creep)
+        return;
+      }
+      if (creep.memory.calcDistance) {
+        let to = Game.map.getRoomLinearDistance(creep.room.name, creep.memory.to)
+        let from = Game.map.getRoomLinearDistance(creep.room.name, creep.memory.from)
+        console.log('calc', to, from)
+        if (to < from) {
+          this.deliver(creep)
+          return;
+        }
+      }
+
       if (this.pickup(creep)) this.deliver(creep);
       // } else {
       //     // if(this.pickupWay(creep)) {/*this.deliver(creep)*/} else {
@@ -59,8 +75,8 @@ module.exports = {
     // }
   },
   deliver: function (creep) {
-    // console.log(creep.memory.home)
-    let tg = AbsolutePosition.toRoom(creep.memory.home);
+    // console.log(creep.memory.to)
+    let tg = AbsolutePosition.toRoom(creep.memory.to);
     // console.log(tg)
 
     if (creep.pos.roomName !== tg.roomName) {
@@ -83,13 +99,13 @@ module.exports = {
     let targets = [];
     let target;
     let room = creep.room;
-    if (room && room.storage) {
+    if (room && room.storage/* && room.controller && room.controller.my*/) {
       targets = targets.concat((room && room.storage) || []);
     } else {
       targets = targets.concat(
         creep.room.find(FIND_STRUCTURES, {
           filter: (s) =>
-            storeStructures.includes(s.structureType) &&
+              storeStructures2.includes(s.structureType) &&
             _.sum(s.store) < s.storeCapacity &&
             s.storeCapacity - _.sum(s.store) > _.sum(creep.store),
         })
@@ -108,7 +124,7 @@ module.exports = {
 
     // console.log('tr', JSON.stringify(transferResult))
     if (transferResult == OK) {
-      if (creep.memory.oneWay) {
+      if (creep.memory.oneWay/* && _.sum(creep.store) == 0*/) {
         creep.suicide();
       }
       creep.memory.waitStart = null;
@@ -122,7 +138,7 @@ module.exports = {
 
       return true;
     } else if (transferResult == ERR_NOT_IN_RANGE) {
-      creep.goTo(target);
+      creep.goTo(target, {avoidCreeps: false, preferRoads: true});
     }
   },
   pickupWay: function (creep) {
@@ -194,7 +210,7 @@ module.exports = {
     }
   },
   source: function (creep) {
-    let room = Game.rooms[creep.memory.target];
+    let room = Game.rooms[creep.memory.from];
     // console.log('mover sou', room.storage, JSON.stringify(room))
     let target;
     let targets = [];
@@ -220,7 +236,7 @@ module.exports = {
     return Game.getObjectById(target.id);
   },
   destination: function (creep) {
-    let room = Game.rooms[creep.memory.home];
+    let room = Game.rooms[creep.memory.to];
     // console.log('mover dest', room.storage, JSON.stringify(room))
     let target;
     let targets = [];

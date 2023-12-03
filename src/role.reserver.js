@@ -1,8 +1,9 @@
 module.exports = {
   name: 'reserver',
   partConfigs: [
+    [CLAIM, CLAIM, CLAIM, MOVE, MOVE, MOVE],
     [CLAIM, CLAIM, MOVE, MOVE],
-    [CLAIM, MOVE],
+    [CLAIM, MOVE, MOVE],
   ],
   run: function (creep) {
     var target = Game.getObjectById(creep.memory.target);

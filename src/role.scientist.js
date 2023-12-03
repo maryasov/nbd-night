@@ -259,12 +259,12 @@ module.exports = {
     this.store(creep, reactor);
   },
   needToWork(creep){
-    let inps = creep.room.ai().labs.reactor.inputs
-    let ops = creep.room.ai().labs.reactor.outputs
-    return _.find(
+    let inps = creep.room.ai().labs.reactor && creep.room.ai().labs.reactor.inputs
+    let ops = creep.room.ai().labs.reactor && creep.room.ai().labs.reactor.outputs
+    return inps && ops && _.find(
         inps.concat(ops),
         (b) => b.resource && b.lab.mineralType && b.lab.mineralType !== b.resource
-    )
+    );
   },
   compoundAmount(creep, reactor, compound) {
     let inStore = creep.room.storage.store[compound]

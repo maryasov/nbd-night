@@ -1,8 +1,9 @@
 var spawnHelper = require('helper.spawning');
 var logistic = require('helper.logistic');
 var renew = require('helper.renew');
+const recycle = require('helper.recycle');
 const parking = require('helper.parking');
-const factoryWorker = require("./role.factoryWorker");
+const movement = require("./helper.movement");
 
 const storeStructures = [STRUCTURE_STORAGE, STRUCTURE_CONTAINER];
 
@@ -29,13 +30,22 @@ module.exports = {
     [WORK, CARRY, MOVE],
   ],
   run: function (creep) {
+    if (recycle.check(creep)) return;
     if (renew.check(creep)) {
       if (!creep.memory.delivering && creep.store.energy > 0) {
         creep.memory.delivering = true;
       }
       return;
     }
-    // check if our carry  has something else than energy and drop it (e.g. due to overfilling protection)
+    if (!creep.memory.source) {
+      var source = creep.pos.findClosestByRange(FIND_SOURCES);
+      creep.memory.source = source.id;
+    }
+    if (creep.memory.room && creep.room.name !== creep.memory.room) {
+      movement.moveToRoom(creep, creep.memory.room);
+      return;
+    }
+      // check if our carry  has something else than energy and drop it (e.g. due to overfilling protection)
     let wrongCarryResource = _.find(Object.keys(creep.store), (r) => r != 'energy');
     if (wrongCarryResource) {
       creep.drop(wrongCarryResource);
@@ -46,13 +56,13 @@ module.exports = {
     if (creep.memory.delivering && creep.store.energy == 0) {
       creep.memory.delivering = false;
     }
-    if (!creep.memory.delivering && creep.store.energy > 0) {
+    if (!creep.memory.delivering && creep.store.energy === creep.store.getCapacity()) {
       creep.memory.delivering = true;
     }
 
     if (creep.store.getFreeCapacity() > 0 && creep.pos.isNearTo(creep.room.storage)) {
       // Safety valve: protect storage from overflowing with anything but energy
-      if (creep.room.storage.my && creep.room.storage.store.getFreeCapacity() < 2000) {
+      if (creep.room.storage && creep.room.storage.my && creep.room.storage.store.getFreeCapacity() < 5000) {
         let excessResource = _.invert(creep.room.storage.store)[_.sortBy(creep.room.storage.store, (r) => -r)[0]];
         console.log('Storage in room ' + creep.room.name + ' is overfilled! Removing excess ' + excessResource);
         creep.withdraw(creep.room.storage, excessResource);
@@ -71,6 +81,9 @@ module.exports = {
   deliver: function (creep) {
     let targets = this.findTargets(creep);
     // let myNumber = this.harvesterIdx(creep);
+    targets = _.sortBy(targets, (s) => {
+      // console.log('f', s.store.getFreeCapacity('energy'), s.store.getUsedCapacity('energy'))
+      return - s.store.getFreeCapacity('energy')/s.store.getCapacity('energy')})
     let target = targets.shift(); // myNumber % 2 == 1 ? _.first(targets) : _.last(targets);
     if (target) {
       creep.memory.stopped = false;
@@ -174,4 +187,5 @@ module.exports = {
 const profiler = require('screeps-profiler');
 const linkCollector = require('./role.linkCollector');
 const boosting = require('./helper.boosting');
+const layout = require("./helper.layout");
 profiler.registerObject(module.exports, 'harvester');

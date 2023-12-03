@@ -1,9 +1,40 @@
 module.exports = {
   check: function (creep) {
+    if (
+      creep.memory.closestPlain &&
+      creep.memory.renewOk &&
+      creep.memory.renewOk + 10 > Game.time &&
+      creep.pos.getRangeTo(
+        new RoomPosition(creep.memory.closestPlain.x, creep.memory.closestPlain.y, creep.room.name)
+      ) > 0
+    ) {
+      // console.log('range', creep.pos.getRangeTo(new RoomPosition(creep.memory.closestPlain.x, creep.memory.closestPlain.y, creep.room.name)))
+      creep.say('Flee!', true);
+      creep.moveTo(creep.memory.closestPlain.x, creep.memory.closestPlain.y);
+    } else {
+      delete creep.memory.renewOk;
+      delete creep.memory.closestPlain;
+      delete creep.memory.renewSpawn;
+    }
+    if (creep.memory.renewSpawn && creep.memory.renewOk && creep.memory.renewOk + 10 > Game.time) {
+      let spawn = Game.getObjectById(creep.memory.renewSpawn);
+      let res = creep.fleeFrom(spawn, 4);
+      if (res === OK) {
+        creep.say('Flee!', true);
+        return true;
+      }
+    } else {
+      delete creep.memory.renewOk;
+      delete creep.memory.closestPlain;
+      delete creep.memory.renewSpawn;
+    }
     if (creep.memory.renew && !creep.memory.goRenew) {
-      let renewTimeout = 100;
+      let renewTimeout = 150;
 
       switch (creep.memory.role) {
+        case 'builder':
+          renewTimeout = 200;
+          break;
         case 'mover':
           renewTimeout = 500;
           break;
@@ -11,7 +42,7 @@ module.exports = {
           renewTimeout = 1000;
           break;
         case 'miner':
-          renewTimeout = 300;
+          renewTimeout = 200;
           break;
         case 'harvester':
           renewTimeout = 200;
@@ -20,7 +51,7 @@ module.exports = {
           renewTimeout = 200;
           break;
         case 'carrier':
-          renewTimeout = 200;
+          renewTimeout = creep.memory.selfSustaining ? 500 : 200;
           break;
       }
       if (creep.ticksToLive < renewTimeout) {
@@ -51,6 +82,9 @@ module.exports = {
       }
       return;
     }
+    // TODO weak first
+    // let nextTo = spawn.pos.findInRange(FIND_MY_CREEPS, 2, { filter: (s) => s.memory.goRenew });
+    // let tooWeak = _.filter(nextTo, )
     let res = spawn.renewCreep(creep);
     // console.log('renew res', res)
     if (res === ERR_NOT_IN_RANGE) {
@@ -71,6 +105,27 @@ module.exports = {
       delete spawn.memory.lastRenewCreep;
       delete spawn.memory.lastRenew;
       creep.say("❤️I'm ok!", true);
+      const area = creep.room.lookAtArea(spawn.pos.y - 5, spawn.pos.x - 5, spawn.pos.y + 5, spawn.pos.x + 5, true);
+      // console.log('area', JSON.stringify(area))
+      const plains = _.filter(area, (t) => {
+        const range = spawn.pos.getRangeTo(new RoomPosition(t.x, t.y, spawn.room.name));
+        const look = new RoomPosition(t.x, t.y, spawn.room.name).look();
+        // console.log('look', t.x, t.y, look.length, JSON.stringify(look))
+        return t.type == 'terrain' && t.terrain == 'plain' && range > 1 && range < 5 && look.length == 1;
+      });
+      // console.log('plains', creep.name, JSON.stringify(plains))
+      if (plains.length > 0) {
+        var closestPlain = _.sortBy(plains, (t) =>
+          creep.pos.getRangeTo(new RoomPosition(t.x, t.y, spawn.room.name))
+        )[0];
+        // console.log('closest', creep.name, JSON.stringify(closestPlain))
+        creep.memory.closestPlain = { x: closestPlain.x, y: closestPlain.y };
+      } else {
+        creep.memory.renewSpawn = spawn.id;
+      }
+
+      creep.memory.renewOk = Game.time;
+      //TODO расчитать путь отхода от спавна
     }
     if (res === OK) {
       spawn.memory.lastRenewCreep = creep.name;
@@ -110,9 +165,16 @@ module.exports = {
     if (creep.memory.role === 'scooper' && creep.memory.home !== creep.room.name) return false;
     if (
       creep.memory.role === 'harvester' &&
-      (creep.memory.level !== creep.room.controller.level || creep.memory.affordable)
+      (creep.memory.energy < creep.room.energyCapacityAvailable || creep.memory.affordable)
     )
       return false;
+    if (
+      creep.memory.role === 'mener' &&
+      (creep.memory.energy < creep.room.energyCapacityAvailable || creep.memory.affordable)
+    )
+      return false;
+    if (creep.memory.role === 'builder' && creep.memory.energy < creep.room.energyCapacityAvailable) return false;
+    if (creep.memory.role === 'upgrader' && creep.memory.energy < creep.room.energyCapacityAvailable) return false;
     if (creep.memory.role === 'carrier' && creep.memory.home !== creep.room.name) return false;
     return true;
   },

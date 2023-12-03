@@ -4,6 +4,10 @@ const parking = require('helper.parking');
 module.exports = {
   name: 'linkCollector',
   parts: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE],
+  partConfigs: [
+    [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE],
+    [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE],
+  ],
   run: function (creep) {
     if (renew.check(creep)) return;
     let roomai = creep.room.ai();

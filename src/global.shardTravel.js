@@ -41,7 +41,11 @@ module.exports = class ShardTravel {
       let departures = loadRemoteTravelMemory(sourceShard).departures;
       if (!departures[creep.name]) continue;
 
-      creep.memory = departures[creep.name].memory;
+      if (departures[creep.name].memory.ww) {
+        creep.memory = departures[creep.name].memory.memory;
+      } else {
+        creep.memory = departures[creep.name].memory;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 const allowedSalesHistoryDeviation = 0.5;
-const minPixelAmount = 500;
+const minPixelAmount = 3000;
 
 module.exports = class PixelTrader {
   constructor() {}

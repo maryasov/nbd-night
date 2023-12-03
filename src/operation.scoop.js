@@ -61,7 +61,7 @@ module.exports = class ScoopOperation extends Operation {
     let scoopers = _.filter(spawnHelper.globalCreepsWithRole(scooper.name), (c) => c.memory.operation === this.id);
 
     if (scoopers.length < this.memory.scooperCount) {
-      roomai.spawn(spawnHelper.bestAvailableParts(room, scooper.configs(1000)), {
+      roomai.spawn(spawnHelper.bestAvailableParts(room, scooper.configs(1500)), {
         role: scooper.name,
         home: room.name,
         target: this.memory.targetRoom,

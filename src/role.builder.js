@@ -8,23 +8,25 @@ const fullHealthEquiv = 10000;
 const emergencyHitPercent = 0.3;
 
 const highPriorityStructures = [
-  STRUCTURE_LINK,
+  STRUCTURE_WALL,
+  /*STRUCTURE_RAMPART,*/
+  STRUCTURE_LINK, STRUCTURE_ROAD,
   /*STRUCTURE_STORAGE,*/ STRUCTURE_EXTENSION,
-  STRUCTURE_ROAD,
   /*STRUCTURE_CONTAINER,*/ STRUCTURE_SPAWN,
   STRUCTURE_TOWER,
-  STRUCTURE_WALL,
 ];
 
 module.exports = {
   name: 'builder',
   configs: function (workParts) {
     var configs = [];
-    for (let work = workParts; work >= 2; work -= 1) {
-      let carry = Math.floor(work * 2);
-      let move = work + carry;
-      let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
-      if (config.length <= 50) configs.push(config);
+    for (let work = workParts; work >= 1; work -= 1) {
+      for (let carry = Math.max(25, work * 4); carry >= Math.floor(work * 2); carry -= 1) {
+        // let carry = Math.floor(work * 2);
+        let move = work + carry;
+        let config = Array(work).fill(WORK).concat(Array(carry).fill(CARRY)).concat(Array(move).fill(MOVE));
+        if (config.length <= 50) configs.push(config);
+      }
     }
 
     // TODO: probably more handcrafted configs for low tiers?
@@ -53,7 +55,7 @@ module.exports = {
 
     const trg = Game.getObjectById(creep.memory.lastTarget);
     if (trg) {
-      if (Game.rooms[creep.room.name].ai().mode === 'way') {
+      if (Game.rooms[creep.room.name].ai() && Game.rooms[creep.room.name].ai().mode === 'way') {
         if (trg.structureType == 'constructedWall' && trg.hits > 100000) {
           creep.memory.lastTarget = null;
           console.log(1);
@@ -71,7 +73,7 @@ module.exports = {
       const trg = Game.getObjectById(creep.memory.lastTarget);
       // console.log('trg', JSON.stringify(trg))
       if (trg) {
-        if (Game.rooms[creep.room.name].ai().mode === 'way') {
+        if (Game.rooms[creep.room.name].ai() && Game.rooms[creep.room.name].ai().mode === 'way') {
           if (trg.structureType == 'constructedWall' && trg.hits > 100000) {
             creep.memory.lastTarget = null;
             console.log(3);
@@ -95,9 +97,9 @@ module.exports = {
     } else {
       //console.log(`store: ${creep.room.storage} ${creep.room.storage.store.energy}`);
       if (creep.room.storage) {
-        if (creep.room.storage.store.energy > 3000) {
+        // if (creep.room.storage.store.energy > 3000) {
           this.harvestEnergy(creep);
-        }
+        // }
       } else {
         this.harvestEnergy(creep);
       }
@@ -120,7 +122,7 @@ module.exports = {
 
     let constructions = _.sortBy(creep.room.find(FIND_MY_CONSTRUCTION_SITES), (cs) => cs.pos.getRangeTo(creep.pos));
     let target;
-    if (Game.rooms[creep.room.name].ai().mode === 'way') {
+    if (Game.rooms[creep.room.name].ai() && Game.rooms[creep.room.name].ai().mode === 'way') {
       target = this.getAllTargets(creep, constructions);
     } else {
       target = this.getConstructionTargets(creep, constructions);
@@ -152,8 +154,8 @@ module.exports = {
     return _.find(
       constructions,
       (cs) =>
-        (cs.structureType !== STRUCTURE_ROAD || terrain.get(cs.pos.x, cs.pos.y) === TERRAIN_MASK_SWAMP) &&
-        cs.structureType != STRUCTURE_RAMPART
+        (cs.structureType !== STRUCTURE_ROAD || terrain.get(cs.pos.x, cs.pos.y) === TERRAIN_MASK_SWAMP)/* &&
+        cs.structureType != STRUCTURE_RAMPART*/
     );
   },
   findLowPriorityConstructionTarget: function (creep, constructions) {
@@ -250,7 +252,17 @@ module.exports = {
   },
   harvestEnergy: function (creep) {
     var source = creep.pos.findClosestByRange(FIND_SOURCES);
-    let result = logistic.obtainEnergy(creep, source, true, true);
+    let result;
+    // if (Game.rooms[creep.room.name].ai().mode === 'transit') {
+    //   result= logistic.obtainEnergy(creep, source, true);
+    //
+    // } else {
+    if (creep.room.storage && creep.room.storage.store && creep.room.storage.store.energy > 1000) {
+      result= logistic.obtainEnergy(creep, source, true, true);
+    } else {
+      result= logistic.obtainEnergy(creep, source, false, true);
+    }
+    // }
     if (result == logistic.obtainResults.withdrawn) {
       creep.memory.building = true;
     }

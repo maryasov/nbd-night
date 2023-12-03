@@ -63,14 +63,14 @@ module.exports = class MoveOperation extends Operation {
     if (movers.length < this.memory.moverCount) {
       roomai.spawn(spawnHelper.bestAvailableParts(room, mover.configsForCapacity(2000)), {
         role: mover.name,
-        home: this.memory.home,
-        target: this.memory.target,
+        to: this.memory.to,
+        from: this.memory.from,
         support: this.memory.supportRoom,
         resource: this.memory.resource,
         operation: this.id,
         oneWay: this.memory.oneWay,
         renew: !this.memory.oneWay,
-      });
+      }, !this.memory.unsafe);
     }
   }
 

@@ -9,7 +9,9 @@ module.exports = {
     empty: 5,
   },
   obtainEnergy: function (creep, source, considerStorage, full = false) {
-    this.pickupSpareEnergy(creep);
+    if (this.pickupSpareEnergy(creep)) {
+      return;
+    }
     var terminalStore = creep.room.terminal;
     var getFromTerminal = false;
     var need = creep.carryCapacity - _.sum(creep.store);
@@ -116,14 +118,47 @@ module.exports = {
     return null;
   },
   pickupSpareEnergy: function (creep) {
-    var resources = creep.pos.lookFor(LOOK_ENERGY);
-    // TODO: fix to work with any resource (and not pickup resource even if we want energy)
-    if (resources.length > 0 && resources[0].resourceType == RESOURCE_ENERGY) {
-      return creep.pickup(resources[0]) == OK;
+    // var resources = creep.pos.lookFor(LOOK_ENERGY);
+    // var resources = creep.pos.lookFor(LOOK_ENERGY);
+    const targets = this.findTargets(creep);
+    let target = targets.shift(); // myNumber % 2 == 1 ? _.first(targets) : _.last(targets);
+    if (target) {
+      let result = null;
+      if (target.store) {
+        result = creep.withdraw(target, 'energy');
+      } else {
+        result = creep.pickup(target);
+      }
+      if (result == ERR_NOT_IN_RANGE) {
+        creep.goTo(target);
+      } else if (result == OK) {
+        target = targets.shift();
+        if (target && !creep.pos.isNearTo(target)) {
+          creep.goTo(target);
+        }
+      }
+      return true;
+    } else {
+      return false;
     }
-
     return false;
   },
+  findTargets: function (creep) {
+    // console.log('findTargets creep', JSON.stringify(creep))
+    // let myNumber = this.harvesterIdx(creep);
+    // let evenOdd = myNumber % 2;
+    const range = 5;
+    let targets = creep.pos
+        .findInRange(FIND_DROPPED_RESOURCES, range, { filter: (r) => r.amount > creep.pos.getRangeTo(r) && r.resourceType === 'energy' })
+        .concat(creep.pos.findInRange(FIND_TOMBSTONES, range, { filter: (t) => t.store['energy'] > 0 }))
+        .concat(creep.pos.findInRange(FIND_RUINS, range, { filter: (t) => t.store['energy'] > 0 }));
+
+    // const targetsByTime = _.sortBy(targets, (t) => true || t.ticksToDecay);
+    const targetsByTime = _.sortBy(targets, (t) => creep.pos.getRangeTo(t));
+
+    return targetsByTime;
+  },
+
   pickupRecycled: function (creep) {
     // let extentionsBlock =
     // let tombstones = this.room.find(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
@@ -150,7 +185,7 @@ module.exports = {
       }
     }
 
-    var structures = target.pos.findInRange(FIND_STRUCTURES, 2);
+    var structures = target.pos.findInRange(FIND_STRUCTURES, 3);
     var store = _.find(
       structures,
       (r) => storeStructures.includes(r.structureType) && (!structureType || structureType == r.structureType)

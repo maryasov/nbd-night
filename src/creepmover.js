@@ -29,17 +29,25 @@ module.exports = class CreepMover {
     if (this.target.shard && this.target.shard !== Game.shard.name) {
       this.creep.memory.destinationShard = this.target.shard;
       let crossing = CreepMover.nextCrossing(this.creep.room.name);
+
       let pos = new RoomPosition(25, 25, crossing);
       if (this.creep.room.name === crossing) {
         let portal = this.creep.room.find(FIND_STRUCTURES, {
           filter: (s) => s.structureType === STRUCTURE_PORTAL && s.destination.shard === this.target.shard,
         })[0];
 
-        if (portal) pos = portal.pos;
+        if (portal) {
+          targetRange = 0;
+          pos = portal.pos;
+        }
       }
       target = { pos: pos, range: 0 };
       this.routeFinder.destinationRoom = crossing;
     }
+
+    // if (this.creep.memory.destinationShard) {
+    //   console.log('this.creep.pos.getRangeTo(target) <= targetRange', this.creep.name, this.creep.pos.getRangeTo(target), targetRange, this.creep.pos.getRangeTo(target) <= targetRange)
+    // }
 
     if (this.creep.pos.getRangeTo(target) <= targetRange) return OK;
 
@@ -91,6 +99,10 @@ module.exports = class CreepMover {
       this.pathBuilder.avoidCreeps = true;
     }
 
+    if (this.creep.memory.lastRoom !== this.creep.room.name) {
+      data.path = null;
+    }
+
     if (!data.path) {
       data.target = target.pos;
       if (this.creep.pos.isNearTo(target)) {
@@ -121,6 +133,7 @@ module.exports = class CreepMover {
     // let coo = this.coordsByPath(this.creep.pos, data.path);
     // console.log('data', coo);
     // this.creep.room.visual.poly(coo, {stroke: '#ffffff', strokeWidth: .8, opacity: .2, lineStyle: 'dashed'});
+    this.creep.memory.lastRoom = this.creep.room.name;
     return this.creep.move(this.nextDir(data));
   }
 
@@ -138,6 +151,7 @@ module.exports = class CreepMover {
 
   configurePathBuilder(creep, builderOptions) {
     let builder = new PathBuilder();
+    builder.creep = creep;
     if (creep.memory.debugPath) builder.debugCosts = true;
     if (builderOptions.avoidHostiles) builder.avoidHostiles = true;
     if (builderOptions.preferRoads === false) builder.preferRoads = false;

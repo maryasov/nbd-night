@@ -8,7 +8,7 @@ const parkStructures = [
   // STRUCTURE_LAB,
   STRUCTURE_TERMINAL,
   STRUCTURE_POWER_BANK,
-  STRUCTURE_CONTAINER,
+  // STRUCTURE_CONTAINER,
   // STRUCTURE_TOWER,
   STRUCTURE_FACTORY,
 ];
@@ -57,7 +57,7 @@ module.exports = {
         let tg;
         let tgs;
         // if (creep.room.name !=='W20S10') {
-        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 10 });
+        tg = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 0 });
         // console.log('tg', JSON.stringify(tg))
         // tgs = creep.pos.lookFor(LOOK_ENERGY);
         // console.log('am', JSON.stringify(tgs));
@@ -108,6 +108,9 @@ module.exports = {
         creep.transfer(target, resource);
       } else {
         creep.memory.returningHome = false;
+        if (creep.memory.renew) {
+          creep.memory.goRenew = true;
+        }
       }
     } else {
       creep.memory.stopped = false;
@@ -159,9 +162,13 @@ module.exports = {
 
 
     let target;
-    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'energy' });
-    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.amount > 10 });
     if (!target) target = creep.pos.findClosestByRange(FIND_RUINS, { filter: (t) => _.sum(t.store) > 0 });
+    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType !== 'energy' });
+    if (!target) target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType === 'energy' && t.amount > 100 });
+
+    // let tgs = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (t) => t.resourceType === 'energy' })
+    // let tgsA = _.sortBy(tgs, (t)=>{t.amount})
+    // if (!target && tgsA.length) target = tgsA[0];
     if (!target) target = creep.pos.findClosestByRange(FIND_TOMBSTONES, { filter: (t) => _.sum(t.store) > 0 });
     if (!target && (!creep.room.controller || (creep.room.controller && !creep.room.controller.my))) {
       const blocks = creep.room
@@ -242,7 +249,9 @@ module.exports = {
   resourceFilter: function (creep, r) {
     if (creep.memory.resource === 'power') {
       return ['power'].indexOf(r) >= 0
-    }
+    }/* else {
+      return ['energy'].indexOf(r) >= 0
+    }*/
     return ignoreResources.indexOf(r) < 0
   },
   cancelSpawning: function (creep) {

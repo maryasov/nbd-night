@@ -58,6 +58,10 @@ module.exports = {
     );
     return _.filter(creeps, (creep) => creep.memory.role == role);
   },
+  localCreepsForRenew: function (roomai, role) {
+    let creeps = roomai.room.find(FIND_MY_CREEPS);
+    return _.filter(creeps, (creep) => creep.memory.goRenew);
+  },
   localPowerCreeps: function (roomai) {
     let creeps = roomai.room.find(FIND_MY_POWER_CREEPS);
     return creeps;

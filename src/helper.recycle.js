@@ -12,7 +12,7 @@ module.exports = {
   },
   recycle: function (creep) {
     let storage = creep.room.storage;
-    if (!storage) return;
+    // if (!storage) return;
 
     let spawns = creep.room.find(FIND_MY_SPAWNS);
     const byDist = _.sortBy(spawns, (t) => t.pos.getRangeTo(storage));

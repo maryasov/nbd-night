@@ -51,12 +51,20 @@ module.exports = class SourcesAspect {
 
     let existingMiners = spawnHelper.localCreepsWithRole(this.roomai, miner.name);
     let longLivingMiners = _.filter(existingMiners, (c) => !c.renew && (!c.ticksToLive || c.ticksToLive > spawnDuration));
+    let fullEnergy = this.room.energyAvailable == this.room.energyCapacityAvailable
     for (let source of this.sources) {
+      let hasOtherMener = _.any(existingMiners, (m) => m.memory.target !== source.id)
+      //TODO разобраться со слабыти майнерами
       if (!_.any(longLivingMiners, (m) => m.memory.target == source.id)) {
-        let parts = _.any(existingMiners, (m) => m.memory.target == source.id) ? idealParts : minimalParts;
+
+        let ideal = fullEnergy || hasOtherMener || _.any(existingMiners, (m) => m.memory.target == source.id)
+        let parts = ideal ? idealParts : minimalParts;
+        console.log('miner', ideal, JSON.stringify(parts))
         let memory = {
           role: miner.name,
           target: source.id,
+          energy: this.room.energyCapacityAvailable,
+          ...!ideal?{affordable: true}:{},
           resource: RESOURCE_ENERGY,
           renew: true,
         };

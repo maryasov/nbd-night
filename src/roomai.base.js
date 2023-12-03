@@ -1,14 +1,18 @@
-const aspectsLiteNames = [
+const aspectsExtraNames = [
   { name: 'ControllerAspect', module: 'roomaspect.controller' },
+  { name: 'TowersAspect', module: 'roomaspect.towers' },
+];
+
+
+let aspectsExtra = [];
+
+const aspectsLiteNames = [
   { name: 'FarmPowerOperation', module: 'roomaspect.powerOperation' },
   { name: 'PowerMinesAspect', module: 'roomaspect.powerMines' },
   { name: 'TradingAspect', module: 'roomaspect.trading' },
   { name: 'PowerAspect', module: 'roomaspect.power' },
   { name: 'VirtualsAspect', module: 'roomaspect.virtuals' },
-  { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
   { name: 'LabsAspect', module: 'roomaspect.labs' },
-  { name: 'TowersAspect', module: 'roomaspect.towers' },
-  { name: 'OperationsAspect', module: 'roomaspect.operations' },
   { name: 'ManualOperationsAspect', module: 'roomaspect.manualOperations' },
   { name: 'FactoryAspect', module: 'roomaspect.factory' },
 ];
@@ -19,10 +23,11 @@ let aspectsLite = [];
 const aspectsNames = [
   { name: 'SuppliesAspect', module: 'roomaspect.supplies' },
   { name: 'SourcesAspect', module: 'roomaspect.sources' },
+  { name: 'RemoteMinesAspect', module: 'roomaspect.remoteMines' },
+  { name: 'OperationsAspect', module: 'roomaspect.operations' },
   { name: 'BuildersAspect', module: 'roomaspect.builders' },
   { name: 'ScooperAspect', module: 'roomaspect.scooper' },
   { name: 'MineralsAspect', module: 'roomaspect.minerals' },
-  { name: 'RemoteMinesAspect', module: 'roomaspect.remoteMines' },
   { name: 'DefenseAspect', module: 'roomaspect.defense' },
   { name: 'ConstructionsAspect', module: 'roomaspect.constructions' },
   { name: 'MasonsAspect', module: 'roomaspect.masons' },
@@ -64,34 +69,56 @@ module.exports = class RoomAI {
     this.noLabs = this.room.memory.noLabs || false;
   }
 
+  rotLeft(inp, N) {
+    let a = [...inp]
+    for(let i = 1;i <= N; i++){
+
+      // Remove first element
+      let firstElement = a.shift()
+
+      // Append first element at the last
+      a.push(firstElement);
+
+    }
+    return a
+  }
+
+  runExtra() {
+    aspectsExtra = _.map(aspectsExtraNames, a=>(a.module)).map(require);
+    for (const [idx, aspect] of aspectsExtra.entries()) {
+        new aspect(this).run(true);
+    }
+    this.links.fullfillRequests();
+  }
+
   runLite() {
     if (!global.lastAiAspectLite[this.room.name]) {
       const rnd = _.random(0, aspectsLiteNames.length - 1)
       // console.log('set rnd', this.room.name, rnd, aspectsNames[rnd] && aspectsNames[rnd].name)
       global.lastAiAspectLite[this.room.name] = aspectsLiteNames[rnd].name;
     }
-    let lastAspectIndex = _.findIndex(aspectsLiteNames, a=>(a.name === global.lastAiAspectLite[this.room.name]));
-    let shiftedAspectsNames = [];
-    if (lastAspectIndex > -1) {
-      shiftedAspectsNames = aspectsLiteNames.slice(lastAspectIndex+1).concat(aspectsLiteNames.slice(0, lastAspectIndex+1))
-    } else {
-      shiftedAspectsNames = aspectsLiteNames
-    }
-    aspectsLite = _.map(shiftedAspectsNames, a=>(a.module)).map(require);
-    let aspectsCnt = aspectsLite.length;
-    // console.log('aspects', JSON.stringify(_.map(aspects, (a) => a.name)));
-    let runLimit = Math.min(aspectsCnt, Math.max(Math.round((aspectsCnt * aspestLiteFree) / 100), 1));
-    // console.log('global.lastAiAspect', runLimit, global.lastAiAspectLite[this.room.name], lastAspectIndex/*, JSON.stringify(shiftedAspectsNames)*/);
+    let lastAspectLiteIndex = _.findIndex(aspectsLiteNames, a=>(a.name === global.lastAiAspectLite[this.room.name])) + 1;
+    let shiftedLiteAspectsNames = [];
 
-    for (const [idx, aspect] of aspectsLite.entries()) {
+      shiftedLiteAspectsNames = this.rotLeft(aspectsLiteNames, lastAspectLiteIndex)
+
+    let aspectsCnt = shiftedLiteAspectsNames.length;
+    // console.log('aspects', JSON.stringify(_.map(aspectsLite, (a) => a.name)));
+    let runLimit = Math.min(aspectsCnt, Math.max(Math.round((aspectsCnt * aspestLiteFree) / 100), 1));
+    // if (this.room.name === 'W29S11'){
+    //   console.log('global.lastAiAspect', this.room.name, runLimit, global.lastAiAspectLite[this.room.name], lastAspectLiteIndex, JSON.stringify(_.map(aspectsLiteNames, a=>(a.name))));
+    //   console.log('global.lastAiAspect', this.room.name, runLimit, global.lastAiAspectLite[this.room.name], lastAspectLiteIndex, JSON.stringify(_.map(shiftedLiteAspectsNames, a=>(a.name))));
+    // }
+
+    for (const [idx, aspectR] of shiftedLiteAspectsNames.entries()) {
       if (idx + 1 <= runLimit) {
+        const aspect = require(aspectR.module)
         global.lastAiAspectLite[this.room.name] = aspect.name;
         new aspect(this).run(true);
       }
 
     }
     this.observer.performObservation();
-    this.links.fullfillRequests();
   }
 
   run() {
@@ -100,24 +127,22 @@ module.exports = class RoomAI {
       // console.log('set rnd', this.room.name, rnd, aspectsNames[rnd] && aspectsNames[rnd].name)
       global.lastAiAspect[this.room.name] = aspectsNames[rnd].name;
     }
-    let lastAspectIndex = _.findIndex(aspectsNames, a=>(a.name === global.lastAiAspect[this.room.name]));
+    let lastAspectIndex = _.findIndex(aspectsNames, a=>(a.name === global.lastAiAspect[this.room.name])) + 1;
     let shiftedAspectsNames = [];
-    if (lastAspectIndex > -1) {
-      shiftedAspectsNames = aspectsNames.slice(lastAspectIndex+1).concat(aspectsNames.slice(0, lastAspectIndex+1))
-    } else {
-      shiftedAspectsNames = aspectsNames
-    }
-    aspects = _.map(shiftedAspectsNames, a=>(a.module)).map(require);
-    let aspectsCnt = aspects.length;
+    shiftedAspectsNames = this.rotLeft(aspectsNames, lastAspectIndex)
+
+    // aspects = _.map(shiftedAspectsNames, a=>(a.module)).map(require);
+    let aspectsCnt = shiftedAspectsNames.length;
     // console.log('aspects', JSON.stringify(_.map(aspects, (a) => a.name)));
     let runLimit = Math.min(aspectsCnt, Math.max(Math.round((aspectsCnt * aspestFree) / 100), 1));
     // console.log('global.lastAiAspect', runLimit, global.lastAiAspect[this.room.name], lastAspectIndex/*, JSON.stringify(shiftedAspectsNames)*/);
     if (PowerState.isActive) {
       runLimit = 1;
     }
-    for (const [idx, aspect] of aspects.entries()) {
-      // console.log('asp', JSON.stringify(aspect))
+    for (const [idx, aspectR] of shiftedAspectsNames.entries()) {
       if (idx + 1 <= runLimit) {
+        const aspect = require(aspectR.module)
+        // console.log('asp', this.room.name, JSON.stringify(aspectR))
         global.lastAiAspect[this.room.name] = aspect.name;
         new aspect(this).run();
       }
@@ -130,9 +155,9 @@ module.exports = class RoomAI {
     this.renderModeOverlay();
   }
 
-  spawn(parts, memory) {
-    var res = this.spawns.spawn(parts, memory);
-    // console.log('spawn res', res, parts, JSON.stringify(memory))
+  spawn(parts, memory, safe = false) {
+    var res = this.spawns.spawn(parts, memory, safe);
+    // console.log('spawn res', res, parts, safe, JSON.stringify(memory))
     return res;
   }
 

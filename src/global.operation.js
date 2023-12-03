@@ -92,6 +92,18 @@ global.Operation = class Operation {
     return instance;
   }
 
+  static toggleBlock(bRoom, bX, bY) {
+    if (Memory.rooms[bRoom].virtuals.block) {
+      let index = _.findIndex(Memory.rooms[bRoom].virtuals.block, (p) => p.x == bX && p.y == bY);
+      if (index >= 0) {
+        Memory.rooms[bRoom].virtuals.block.splice(index, 1);
+        console.log('clearBlock');
+      } else {
+        Memory.rooms[bRoom].virtuals.block.push({ x: bX, y: bY });
+        console.log('addBlock');
+      }
+    }
+  }
   static count(material, byRooms, base) {
     if (material === '') {
       material = undefined;
@@ -104,7 +116,7 @@ global.Operation = class Operation {
     }
     let store = {};
     let rooms = [];
-    let baseMaterials = ['energy', 'power', 'ops', 'O', 'H', 'K', 'L', 'Z', 'U', 'X', 'G'];
+    let baseMaterials = ['energy', 'power', 'battery', 'ops', 'O', 'H', 'K', 'L', 'Z', 'U', 'X', 'G'];
     let myRooms = _.filter(Game.rooms, (r) => r.controller && r.controller.owner && r.controller.my);
     _.forEach(myRooms, (cr) => {
       rooms.push(cr.name);
@@ -220,7 +232,7 @@ global.Operation = class Operation {
       }
     });
     console.log('Total materials');
-    _.sortBy(store, (e)=> (e))
+    _.sortBy(store, (e) => e);
     let total = {};
     if (byRooms) {
       _.forEach(store, (data, mat) => {
@@ -233,13 +245,15 @@ global.Operation = class Operation {
             total[mat][amount.r] = {};
           }
           // console.log('amount', JSON.stringify(amount))
-          total[mat][amount.r]['s'] = total[mat][amount.r]['s'] !== undefined ? total[mat][amount.r]['s'] + amount.s : amount.s;
-          total[mat][amount.r]['t'] = total[mat][amount.r]['t'] !== undefined ? total[mat][amount.r]['t'] + amount.t : amount.t;
+          total[mat][amount.r]['s'] =
+            total[mat][amount.r]['s'] !== undefined ? total[mat][amount.r]['s'] + amount.s : amount.s;
+          total[mat][amount.r]['t'] =
+            total[mat][amount.r]['t'] !== undefined ? total[mat][amount.r]['t'] + amount.t : amount.t;
           mTotal = mTotal + amount.s + amount.t;
         });
         console.log(mat, ' (' + mTotal + ')');
         _.forEach(total[mat], (a, r) => {
-          console.log(r, `s: ${a.s} t: ${a.t} (${a.s+a.t})`);
+          console.log(r, `s: ${a.s} t: ${a.t} (${a.s + a.t})`);
         });
       });
     } else {

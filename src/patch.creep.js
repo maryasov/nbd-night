@@ -36,7 +36,26 @@ Creep.prototype.fleeFrom = function (hostiles, range) {
   if (!Array.isArray(hostiles)) hostiles = [hostiles];
   hostiles = _.map(hostiles, (h) => ({ pos: h.pos, range: range }));
   let result = PathFinder.search(this.pos, hostiles, { flee: true });
-  return this.moveByPath(result.path);
+  if (result.path.length > 0) {
+    let pos = result.path.reverse()[0];
+    // console.log('hostiles', pos, this.pos.getDirectionTo(pos), JSON.stringify(hostiles), JSON.stringify(result.path))
+    return this.moveTo(pos);
+  }
+
+  // return this.moveByPath(result.path);
+};
+
+Creep.prototype.plain = function (hostiles, range) {
+  if (!Array.isArray(hostiles)) hostiles = [hostiles];
+  hostiles = _.map(hostiles, (h) => ({ pos: h.pos, range: range }));
+  let result = PathFinder.search(this.pos, hostiles, { flee: true });
+  if (result.path.length > 0) {
+    let pos = result.path.reverse()[0];
+    // console.log('hostiles', pos, this.pos.getDirectionTo(pos), JSON.stringify(hostiles), JSON.stringify(result.path))
+    return this.moveTo(pos);
+  }
+
+  // return this.moveByPath(result.path);
 };
 
 Creep.prototype.canAttack = function () {
